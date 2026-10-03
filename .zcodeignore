@@ -1,0 +1,52 @@
+# version control history
+.git/
+
+# dependencies
+node_modules/
+
+# build output & generated files
+dist/
+.astro/
+*.tsbuildinfo
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# environment variables & secrets — never send to the model
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+
+# logs
+logs/
+*.log
+
+# caches & package manager state (may contain auth tokens)
+.npm/
+.pnpm-store/
+.cache/
+.vercel/
+.netlify/
+
+# test coverage
+coverage/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# editor folders
+.idea/
+
+# binary assets (no value as text context)
+*.woff
+*.woff2
+*.ttf
+*.otf
+*.eot
+*.ico
