@@ -35,7 +35,9 @@ const fatal = (msg) => {
 function isRootSelector(sel) {
   const s = sel.trim();
   if (!s) return false;
-  return s.split(',').every((part) => /^:root([\s:[.#*].*)?$/i.test(part.trim()));
+  // 与 check-tokens.mjs 同款收紧：只认「同一元素的复合选择器」（:root、:root[attr]、:root:not(…)），
+  // 含组合器的后代块（:root[data-theme="dark"] .foo）是组件规则块，不是令牌定义位（终审遗留 #12）。
+  return s.split(',').every((part) => /^:root([:[.#*][^\s>+~]*)?$/i.test(part.trim()));
 }
 
 /** 返回 [{selector, media, decls}]，只收集 :root 系块；decls 为 {--x: value} */

@@ -34,11 +34,14 @@ const errors = [];
 let filesScanned = 0;
 let linesScanned = 0;
 
-/** 判断选择器是否是 :root 系（:root、:root[data-theme=…]、:root:not(…)；多选择器须每段都是） */
+/** 判断选择器是否是 :root 系（:root、:root[data-theme=…]、:root:not(…)；多选择器须每段都是）。
+ *  只允许「同一元素的复合选择器」后缀（[attr]/:pseudo/.class/#id/*），
+ *  含组合器（空格、>、+、~）的后代/子代选择器不算 —— 那是组件规则块，不是令牌定义位
+ *  （终审遗留 #12：原 [\s:[.#*] 会放行 `:root[data-theme="dark"] .theme-toggle` 一类块）。 */
 function isRootSelector(buf) {
   const sel = buf.trim();
   if (!sel) return false;
-  return sel.split(',').every((part) => /^:root([\s:[.#*].*)?$/i.test(part.trim()));
+  return sel.split(',').every((part) => /^:root([:[.#*][^\s>+~]*)?$/i.test(part.trim()));
 }
 
 /**
