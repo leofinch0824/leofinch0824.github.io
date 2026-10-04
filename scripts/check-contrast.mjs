@@ -4,7 +4,7 @@
  *
  * 从 src/styles/global.css 解析亮、暗两套令牌（暗色有 @media(prefers-color-scheme)
  * 与 :root[data-theme="dark"] 两份重复定义，先校验两份一致，再任取合并结果计算），
- * 自实现 WCAG 相对亮度与对比度，对六组关键前景/背景断言 ≥ AA（4.5:1）：
+ * 自实现 WCAG 相对亮度与对比度，对七对关键前景/背景断言 ≥ AA（4.5:1）：
  *
  *   正文 --fg/--bg · 次要 --muted/--bg · 强调 --accent/--bg ·
  *   主按钮文字 --surface/--accent · 代码三档 --code-kw / --code-str / --code-num
@@ -310,7 +310,7 @@ if (driftErrors.length) process.exit(1);
 // 暗色合并结果 = 亮色为基础、暗色覆写（与浏览器级联一致）
 const dark = { ...light, ...darkMedia };
 
-/* ── 6. 六组关键前景/背景 × 亮暗 ─────────────────────────────────────────── */
+/* ── 6. 七对关键前景/背景 × 亮暗 ─────────────────────────────────────────── */
 
 const PAIRS = [
   { name: '正文', fg: '--fg', bg: '--bg' },
@@ -382,10 +382,10 @@ const all = [...lightRows, ...darkRows];
 const worstPair = all.reduce((w, r) => (r.worst < w.worst ? r : w));
 if (failed) {
   const bad = all.filter((r) => !r.ok).length;
-  console.error(`\n✗ ${bad} 对前景/背景低于 AA ${AA}:1（共 ${all.length} 对 × 亮暗两套）`);
+  console.error(`\n✗ ${bad} 项断言低于 AA ${AA}:1（${PAIRS.length} 对前景/背景 × 亮暗两套 = ${all.length} 项）`);
   process.exit(1);
 }
 console.log(
-  `\n✓ 全部通过：${PAIRS.length} 对前景/背景 × 亮暗两套 = ${all.length * 2} 项门禁断言 ≥ ${AA}:1` +
+  `\n✓ 全部通过：${PAIRS.length} 对前景/背景 × 亮暗两套 = ${all.length} 项门禁断言 ≥ ${AA}:1` +
     `（最低：${worstPair.pair.name} ${worstPair.worst.toFixed(2)}:1）`,
 );
