@@ -3,18 +3,18 @@ import { Image } from 'astro:assets';
 import AboutHeroImage from '../assets/test-pool/portrait.jpg';
 import Base from '../layouts/Base.astro';
 
-// 关于页（批4，对照 reference/prototype/about.tpl.html）：
-// 脱离 BlogPost 版面、用 Base 独立成页 —— 关于页是双栏 hero + backface + spec，
-// 不是文章（迁移方案 §2.1「必须脱离 BlogPost layout」）。
+// 关于页（2026-10-04 重构为社交属性个人主页，docs/about-page-redesign.md）：
+// 肖像独开场（拍立得居中 + h1 一句身份定位）→ 照片背面（唯一人设卡）→
+// 为什么写 → 制作说明 → 找到我。英雄区文字列（眉标/h1/导语/intro-meta）已删。
 // 人设事实（作者 2026-10-04 提供）：算法工程师，喜欢健身，喜欢看电影；
 // 肖像用 docs/images-test/portrait.jpg（拷入 src/assets/test-pool/）。
-// 仍待作者提供：名字、坐标、桌上、联系方式邮箱 —— 对应字段保持「待补」占位。
+// 仍待作者提供：名字、坐标、邮箱、GitHub 及其他社交账号 —— 对应字段保持「待补」。
 // 「制作说明」只写本仓库当前为真的事实。
 ---
 
 <Base
 	title="关于 · 拾光集"
-	description="关于拾光集：为什么写、这个站是怎么搭起来的，以及站在它后面的人。"
+	description="关于作者：一名算法工程师，业余举铁、看电影、写字。"
 	lang="zh-CN"
 >
 	<style>
@@ -24,6 +24,19 @@ import Base from '../layouts/Base.astro';
 			max-width: none;
 			margin: 0;
 			padding: 0;
+		}
+		/* 肖像开场（重构）：拍立得居中放大，h1 身份句走 .intro 格言档后居中。
+		   只写布局，颜色全部来自令牌。 */
+		.about-opening {
+			text-align: center;
+		}
+		.about-opening .wall-item {
+			max-width: 360px;
+			margin-inline: auto;
+		}
+		.about-opening h1 {
+			max-width: 20em;
+			margin-inline: auto;
 		}
 		/* 原型 about.tpl.html 的三处内联间距，收进布局样式 */
 		.why-prose {
@@ -37,26 +50,12 @@ import Base from '../layouts/Base.astro';
 		}
 	</style>
 	<main id="content">
-		<section class="section" data-od-id="about-intro">
-			<div class="container about-hero">
-				<div>
-					<p class="eyebrow eyebrow-lead">关于 · 第 01 版</p>
-					<h1>关于拾光集，<br class="brk" />和它背后的人。</h1>
-					<p class="lead">
-						一名算法工程师的暗房：白天和算法打交道，闲下来举铁、看电影。这里把想留下来的东西冲出来、晾干，再贴到墙上——文字也是一种影像记录。
-					</p>
-					{/* 元信息条：结构照搬 about.tpl.html 的 .intro-meta。
-					    已提供的事实如实填写；未提供的字段保持待补（不虚构）。 */}
-					<div class="intro-meta">
-						<span class="meta">现在 <b class="num">算法工程师</b></span>
-						<span class="meta">爱好 <b class="num">健身 · 电影</b></span>
-						<span class="meta">坐标 <b class="num">待补</b></span>
-					</div>
-				</div>
+		<section class="section intro about-opening" data-od-id="about-intro">
+			<div class="container">
+				{/* 肖像独开场（重构）：零文字主视觉，身份句在照片下方。
+				    layout="none" 只给 width，不裁切（AGENTS.md 硬约束）。 */}
 				<div class="wall-item" style="--rot:-0.6deg; --i:0">
 					<figure class="print">
-						{/* 肖像（作者提供，docs/images-test/portrait.jpg）：
-						    layout="none" 只给 width，不裁切（AGENTS.md 硬约束）。 */}
 						<Image
 							class="print-img"
 							src={AboutHeroImage}
@@ -72,28 +71,8 @@ import Base from '../layouts/Base.astro';
 						</figcaption>
 					</figure>
 				</div>
-			</div>
-		</section>
-
-		<section class="section" data-od-id="about-why">
-			<div class="container">
-				<div class="measure">
-					<p class="eyebrow">为什么写</p>
-					<h2>这里原本只打算放些文字。</h2>
-					<div class="prose why-prose">
-						<p>
-							这个站最初只是想给文字找个存放的地方。写着写着发现，每一篇都被保存成了一张可以回看的快照——什么时候写的、当时在想什么，翻回去都还在。
-						</p>
-						<p>
-							「文字也是一种影像记录」在这里不是比喻。一次记录和一张照片做的是同一件事：把某一刻从时间线上剪下来，钉住。区别只是照片用光，文字用词。
-						</p>
-						<p>所以这里既有技术笔记，也有生活片段。它们在本站是同一类东西：被保存下来的记忆快照。</p>
-					</div>
-					<blockquote class="pullquote why-quote">
-						写下来的那一刻，它其实已经不是当时了——但至少它还在。
-						<p class="pullquote-author">— 关于本站</p>
-					</blockquote>
-				</div>
+				{/* 身份定位一句（h1，格言档与首页同语言）；全部为已提供事实，不虚构 */}
+				<h1>算法工程师，业余举铁、看电影、写字。</h1>
 			</div>
 		</section>
 
@@ -116,14 +95,45 @@ import Base from '../layouts/Base.astro';
 								<p class="backface-val">待补。</p>
 							</div>
 							<div class="backface-row">
-								<span class="backface-key">坐标</span>
-								<p class="backface-val">待补。</p>
-							</div>
-							<div class="backface-row">
-								<span class="backface-key">更新</span>
-								<p class="backface-val">不定期。</p>
-							</div>
+									<span class="backface-key">坐标</span>
+									<p class="backface-val">待补。</p>
+								</div>
+								{/* 社交字段（重构新增）：账号待作者提供，占位不虚构 */}
+								<div class="backface-row">
+									<span class="backface-key">邮箱</span>
+									<p class="backface-val">待补。</p>
+								</div>
+								<div class="backface-row">
+									<span class="backface-key">GitHub</span>
+									<p class="backface-val">待补。</p>
+								</div>
+								<div class="backface-row">
+									<span class="backface-key">更新</span>
+									<p class="backface-val">不定期。</p>
+								</div>
 						</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="section" data-od-id="about-why">
+			<div class="container">
+				<div class="measure">
+					<p class="eyebrow">为什么写</p>
+					<h2>这里原本只打算放些文字。</h2>
+					<div class="prose why-prose">
+						<p>
+							这个站最初只是想给文字找个存放的地方。写着写着发现，每一篇都被保存成了一张可以回看的快照——什么时候写的、当时在想什么，翻回去都还在。
+						</p>
+						<p>
+							「文字也是一种影像记录」在这里不是比喻。一次记录和一张照片做的是同一件事：把某一刻从时间线上剪下来，钉住。区别只是照片用光，文字用词。
+						</p>
+						<p>所以这里既有技术笔记，也有生活片段。它们在本站是同一类东西：被保存下来的记忆快照。</p>
+					</div>
+					<blockquote class="pullquote why-quote">
+						写下来的那一刻，它其实已经不是当时了——但至少它还在。
+						<p class="pullquote-author">— 关于本站</p>
+					</blockquote>
 				</div>
 			</div>
 		</section>
@@ -177,9 +187,9 @@ import Base from '../layouts/Base.astro';
 
 		<section class="section cta" id="contact" data-od-id="cta-strip">
 			<div class="container">
-				<h2>想聊点什么？</h2>
+				<h2>找到我</h2>
 				<p class="lead">
-					关于技术、照片，或者只是路过打个招呼，都可以写信。联系邮箱目前是占位，待作者提供。
+					关于技术、照片，或者只是路过打个招呼，都可以写信；也可以用 RSS 订阅更新。
 				</p>
 				<div class="cta-actions">
 					<a class="btn btn-primary" href="mailto:hi@example.com"

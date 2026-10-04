@@ -553,9 +553,8 @@ b.num{ font-weight:600; color:var(--fg); }
 /* 窄栏一律左对齐到版心，不要居中：各节左边缘对不齐会显得散 */
 .measure{ max-width:760px; }
 .measure .prose{ max-width:none; margin-inline:0; }
-.about-hero{ display:grid; grid-template-columns:1.02fr .98fr; gap:clamp(32px,5vw,72px); align-items:center; }
-.about-hero .intro-meta{ margin-top:var(--gap-lg); }
-@media (max-width:920px){ .about-hero{ grid-template-columns:1fr; gap:clamp(28px,5vw,40px); } }
+/* .about-hero 双栏已随关于页重构删除（2026-10-04，docs/about-page-redesign.md）；
+   肖像开场布局在 about.astro 的组件样式块里，页面私有。 */
 
 /* 相纸下的手写注脚 */
 .print-note{
