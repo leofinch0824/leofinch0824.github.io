@@ -18,6 +18,21 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const { title, description, image = FallbackImage } = Astro.props;
 ---
 
+<!-- 无闪主题初始化（批1）：必须先于任何样式表执行。
+     localStorage['sg-theme'] 为 'dark' / 'light' 时覆写 <html data-theme>，
+     否则不动 —— 跟随系统偏好（docs/astro-blog-design-migration.md §2.1）。 -->
+<script is:inline>
+	(() => {
+		var t;
+		try {
+			t = localStorage.getItem('sg-theme');
+		} catch (e) {}
+		if (t === 'dark' || t === 'light') {
+			document.documentElement.setAttribute('data-theme', t);
+		}
+	})();
+</script>
+
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />

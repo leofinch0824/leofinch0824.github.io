@@ -1,0 +1,57 @@
+---
+// 深浅色切换按钮（批1，docs/astro-blog-design-migration.md §2.2）。
+// 按钮外观样式全部来自 global.css 的 .theme-toggle 规则（34px 圆形 ghost 钮，
+// 亮色显月亮 / 暗色显太阳），组件内不写颜色。
+// markup 自带 hidden：Astro 组件脚本是打包后的 deferred module，
+// 无 JS（或脚本未跑）时按钮保持隐藏，页面跟随系统偏好；
+// 下方脚本解锁显示 —— 即原型「.theme-toggle[hidden] 靠脚本解锁」的机制。
+---
+
+<button class="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色" hidden>
+	<svg
+		class="ti-moon"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="1.6"
+		aria-hidden="true"
+	><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" /></svg
+	><svg
+		class="ti-sun"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="1.6"
+		aria-hidden="true"
+	><circle cx="12" cy="12" r="4.2" /><path
+			d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4 17 7M7 17l-1.6 1.6"
+		/></svg>
+</button>
+
+<script>
+	// 移植 reference/prototype/home.tpl.html 第 332-354 行：
+	// 点击切换 <html data-theme> 并持久化到 localStorage['sg-theme']。
+	(function () {
+		var root = document.documentElement;
+		var btn = document.querySelector('.theme-toggle');
+		if (!btn) return;
+		btn.hidden = false;
+		function systemDark() {
+			return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+		}
+		function current() {
+			var t = root.getAttribute('data-theme');
+			if (t === 'dark' || t === 'light') return t;
+			return systemDark() ? 'dark' : 'light';
+		}
+		btn.addEventListener('click', function () {
+			var next = current() === 'dark' ? 'light' : 'dark';
+			root.setAttribute('data-theme', next);
+			try {
+				localStorage.setItem('sg-theme', next);
+			} catch (e) {}
+			btn.setAttribute('aria-pressed', String(next === 'dark'));
+		});
+		btn.setAttribute('aria-pressed', String(current() === 'dark'));
+	})();
+</script>
