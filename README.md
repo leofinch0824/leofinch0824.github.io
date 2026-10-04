@@ -15,7 +15,7 @@
 src/pages/         路由：/ 记忆墙橱窗（最近 12 张）、/blog/ 最新年相册、
                    /blog/[year]/ 年份相册、/about/、文章页
 src/components/    Header / Footer / MemoryWall / YearTrail / YearAlbum 等
-src/content/blog/  文章（Content Collections；现处占位样文阶段，test2.md 为真实文）
+src/content/blog/  文章（Content Collections；现仅剩版式验收文占位，待真实文章进场）
 src/styles/        global.css —— 颜色只在 :root 令牌定义，组件样式只引用令牌
 scripts/           check-tokens / check-contrast 门禁脚本
 ```
