@@ -1,0 +1,126 @@
+---
+import { Image } from 'astro:assets';
+import SubscribeCta from './SubscribeCta.astro';
+import { yearPath, type WallCard, type YearGroup } from '../utils/posts';
+
+// 年份相册页主体（分页三步抽出的共用组件，docs/pagination-design.md）：
+// /blog/（承载最新一年）与 /blog/[year]/（其余年份）共用同一形态——
+// 眉标 h1 + year-jump 年际胶囊（当年 aria-current）+ 大年份 + 相册行
+// + 上/下一年翻页。年份胶囊与翻页的 href 走 yearPath：最新一年 → /blog/。
+
+interface Props {
+	/** 当前年份分组 */
+	group: YearGroup;
+	/** 该年相纸（pubDate 新→旧） */
+	cards: WallCard[];
+	/** 全部年份（胶囊），新→旧 */
+	allYears: YearGroup[];
+	/** 更近的一年（翻页左；最新年为 undefined） */
+	newer?: YearGroup;
+	/** 更早的一年（翻页右） */
+	older?: YearGroup;
+	/** 由 /blog/ 承载的年份（最新一年）：胶囊与翻页 href 特判 */
+	homeYear: number;
+}
+
+const { group, cards, allYears, newer, older, homeYear } = Astro.props;
+const { year, count, categories } = group;
+
+// 相册行日期只到「月 · 日」——年份已在 .year-head 里（原型 archive.tpl.html:66 的形态）
+const monthDay = (date: Date) =>
+	`${String(date.getMonth() + 1).padStart(2, '0')} · ${String(date.getDate()).padStart(2, '0')}`;
+---
+
+<main id="content">
+	<section class="section intro" data-od-id="archive-year">
+		<div class="container">
+			{/* 眉标即页面 h1（.eyebrow 类规格盖过全局 h1）：归档直达年份，
+			    不再有「先选年份」的总览态。 */}
+			<h1 class="eyebrow">归档 · {year}</h1>
+			<nav class="year-jump" aria-label="跳转到年份">
+				{
+					allYears.map((y) => (
+						<a href={yearPath(y.year, homeYear)} aria-current={y.year === year ? 'page' : undefined}>
+							{y.year} · {y.count}
+						</a>
+					))
+				}
+			</nav>
+
+			<div class="year-album">
+				<div class="year-head">
+					<h2 class="year-title">{year}</h2>
+					<span class="year-rule" aria-hidden="true" />
+					<span class="year-meta">
+						{count} 张 · {categories.join(' · ')}
+					</span>
+				</div>
+				<ul class="album">
+					{cards.map((card) => (
+						<li class="album-row">
+							<a href={`/blog/${card.post.id}/`}>
+								<span class:list={['album-thumb', { 'album-thumb--empty': !card.post.data.heroImage }]}>
+									{card.post.data.heroImage && (
+										<Image
+											src={card.post.data.heroImage}
+											alt=""
+											width={200}
+											layout="none"
+											loading="lazy"
+											decoding="async"
+										/>
+									)}
+								</span>
+								<div class="album-body">
+									<p class="album-date">{monthDay(card.post.data.pubDate)}</p>
+									<h3>{card.post.data.title}</h3>
+									<p class="album-dek">{card.post.data.description}</p>
+								</div>
+								<span class="album-tag tag">{card.post.data.category}</span>
+								<span class="album-frame">№ {card.no}</span>
+							</a>
+						</li>
+					))}
+				</ul>
+			</div>
+
+			<nav class="page-turn" aria-label="相邻年份">
+				{newer && (
+					<a class="turn" href={yearPath(newer.year, homeYear)}>
+						<span class="turn-label">← 更近的一年</span>
+						<span class="turn-title">{newer.year}</span>
+					</a>
+				)}
+				{older && (
+					<a class="turn turn-next" href={yearPath(older.year, homeYear)}>
+						<span class="turn-label">更早的一年 →</span>
+						<span class="turn-title">{older.year}</span>
+					</a>
+				)}
+			</nav>
+		</div>
+	</section>
+
+	<SubscribeCta />
+</main>
+
+<style>
+	/* 过渡兜底解除（批3 的做法）：global.css 末尾暂留的 main{width:720px}
+	   是给旧版 /blog 列表页的居中列用的；归档是通栏容器布局。只写布局。 */
+	main {
+		width: auto;
+		max-width: none;
+		margin: 0;
+		padding: 0;
+	}
+	/* 无照片文章的归档缩略位：空的 .album-thumb 只有内边距、塌成 104×11 细条，
+	   像 3:2 的空相框卡位（表面色/发丝线/投影继承 .album-thumb 令牌样式）。只写布局。 */
+	.album-thumb--empty {
+		width: 100%;
+		aspect-ratio: 3 / 2;
+		align-self: start;
+	}
+	.year-album {
+		margin-top: var(--gap-lg);
+	}
+</style>

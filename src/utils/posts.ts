@@ -10,6 +10,13 @@ export type BlogPost = CollectionEntry<'blog'>;
  *  超出部分不进 DOM；全量翻阅走归档按年路由。单一来源，首页与断言共用。 */
 export const WALL_LIMIT = 12;
 
+/** 年份的归档路径（docs/pagination-design.md 三步）：最新一年的相册由
+ *  /blog/ 直接承载（归档直达，不再先选年份），其余年份走 /blog/[year]/。
+ *  homeYear 传 wall.years[0].year。 */
+export function yearPath(year: number, homeYear: number): string {
+  return year === homeYear ? '/blog/' : `/blog/${year}/`;
+}
+
 /** 墙上一张相纸：内容条目 + 构建时算出的展示数据。 */
 export interface WallCard {
 	post: BlogPost;

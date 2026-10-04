@@ -1,11 +1,13 @@
 ---
-import type { Wall } from '../utils/posts';
+import { yearPath, type Wall } from '../utils/posts';
 
 interface Props {
 	wall: Wall;
 }
 
 const { wall } = Astro.props;
+// 最新一年的相册由 /blog/ 承载（分页三步），胶片带链接随之特判。
+const homeYear = wall.years[0]?.year ?? -1;
 ---
 
 <section class="section" data-od-id="years">
@@ -17,7 +19,7 @@ const { wall } = Astro.props;
 		<div class="year-strip" id="years">
 			{
 				wall.years.map((group) => (
-					<a class="year-tick" href={`/blog/${group.year}/`}>
+					<a class="year-tick" href={yearPath(group.year, homeYear)}>
 						<span class="tick-num">{group.year}</span>
 						<span class="tick-count">{group.count} 张</span>
 					</a>

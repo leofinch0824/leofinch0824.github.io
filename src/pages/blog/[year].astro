@@ -1,15 +1,12 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import SubscribeCta from '../../components/SubscribeCta.astro';
+import YearAlbum from '../../components/YearAlbum.astro';
 import { prepareWall, type WallCard, type YearGroup } from '../../utils/posts';
 import { SITE_TITLE } from '../../consts';
 
-// 归档 · 年份相册页（2026-10 分页改造，docs/pagination-design.md）：
-// 每年一页 /blog/[year]/：year-jump 年际胶囊（当年 aria-current）
-// + .year-head 大年份 + .album 相册行（模板承自原 /blog/ 全量页）
-// + .page-turn 上/下一年（复用文章页翻页语言）。
+// 归档 · 年份相册页（2026-10 分页改造；三步起最新一年由 /blog/ 承载，
+// 此路由只为更早的年份生成，docs/pagination-design.md）。
 export async function getStaticPaths() {
 	const wall = prepareWall(await getCollection('blog'));
 	const byYear = new Map<number, WallCard[]>();
@@ -18,15 +15,18 @@ export async function getStaticPaths() {
 		if (bucket) bucket.push(card);
 		else byYear.set(card.year, [card]);
 	}
-	// years 新→旧：i-1 是更近的一年、i+1 是更早的一年（首/末年自然 undefined）
-	return wall.years.map((group, i) => ({
+	const homeYear = wall.years[0]?.year;
+	// years.slice(1)：跳过最新年（/blog/ 即它的家）。切片后 i 对应原索引 i+1，
+	// 原数组上 i 是更近的一年、i+2 是更早的一年；首/末自然为 undefined。
+	return wall.years.slice(1).map((group, i) => ({
 		params: { year: String(group.year) },
 		props: {
 			group,
 			cards: byYear.get(group.year) ?? [],
-			newer: i > 0 ? wall.years[i - 1] : undefined,
-			older: i < wall.years.length - 1 ? wall.years[i + 1] : undefined,
+			newer: wall.years[i],
+			older: wall.years[i + 2],
 			allYears: wall.years,
+			homeYear,
 		},
 	}));
 }
@@ -37,109 +37,16 @@ interface Props {
 	newer?: YearGroup;
 	older?: YearGroup;
 	allYears: YearGroup[];
+	homeYear: number;
 }
 
-const { group, cards, newer, older, allYears } = Astro.props;
-const { year, count, categories } = group;
-
-// 相册行日期只到「月 · 日」——年份已在 .year-head 里（原型 archive.tpl.html:66 的形态）
-const monthDay = (date: Date) =>
-	`${String(date.getMonth() + 1).padStart(2, '0')} · ${String(date.getDate()).padStart(2, '0')}`;
+const { group } = Astro.props;
 ---
 
 <Base
-	title={`${year} · 归档 · ${SITE_TITLE}`}
-	description={`${year} 年的 ${count} 张相纸：${categories.join('、')}。`}
+	title={`${group.year} · 归档 · ${SITE_TITLE}`}
+	description={`${group.year} 年的 ${group.count} 张相纸：${group.categories.join('、')}。`}
 	lang="zh-CN"
 >
-	<style>
-		/* 过渡兜底解除（同 /blog/ 总览）：通栏容器布局。只写布局。 */
-		main {
-			width: auto;
-			max-width: none;
-			margin: 0;
-			padding: 0;
-		}
-		/* 无照片文章的归档缩略位：空的 .album-thumb 只有内边距、塌成 104×11 细条，
-		   像 3:2 的空相框卡位（表面色/发丝线/投影继承 .album-thumb 令牌样式）。只写布局。 */
-		.album-thumb--empty {
-			width: 100%;
-			aspect-ratio: 3 / 2;
-			align-self: start;
-		}
-		.year-album {
-			margin-top: var(--gap-lg);
-		}
-	</style>
-	<main id="content">
-		<section class="section intro" data-od-id="archive-year">
-			<div class="container">
-				{/* 眉标即页面 h1（同 /blog/ 总览）：.eyebrow 类规格盖过全局 h1。 */}
-				<h1 class="eyebrow">归档 · {year}</h1>
-				<nav class="year-jump" aria-label="跳转到年份">
-					{
-						allYears.map((y) => (
-							<a href={`/blog/${y.year}/`} aria-current={y.year === year ? 'page' : undefined}>
-								{y.year} · {y.count}
-							</a>
-						))
-					}
-				</nav>
-
-				<div class="year-album">
-					<div class="year-head">
-						<h2 class="year-title">{year}</h2>
-						<span class="year-rule" aria-hidden="true" />
-						<span class="year-meta">
-							{count} 张 · {categories.join(' · ')}
-						</span>
-					</div>
-					<ul class="album">
-						{cards.map((card) => (
-							<li class="album-row">
-								<a href={`/blog/${card.post.id}/`}>
-									<span class:list={['album-thumb', { 'album-thumb--empty': !card.post.data.heroImage }]}>
-										{card.post.data.heroImage && (
-											<Image
-												src={card.post.data.heroImage}
-												alt=""
-												width={200}
-												layout="none"
-												loading="lazy"
-												decoding="async"
-											/>
-										)}
-									</span>
-									<div class="album-body">
-										<p class="album-date">{monthDay(card.post.data.pubDate)}</p>
-										<h3>{card.post.data.title}</h3>
-										<p class="album-dek">{card.post.data.description}</p>
-									</div>
-									<span class="album-tag tag">{card.post.data.category}</span>
-									<span class="album-frame">№ {card.no}</span>
-								</a>
-							</li>
-						))}
-					</ul>
-				</div>
-
-				<nav class="page-turn" aria-label="相邻年份">
-					{newer && (
-						<a class="turn" href={`/blog/${newer.year}/`}>
-							<span class="turn-label">← 更近的一年</span>
-							<span class="turn-title">{newer.year}</span>
-						</a>
-					)}
-					{older && (
-						<a class="turn turn-next" href={`/blog/${older.year}/`}>
-							<span class="turn-label">更早的一年 →</span>
-							<span class="turn-title">{older.year}</span>
-						</a>
-					)}
-				</nav>
-			</div>
-		</section>
-
-		<SubscribeCta />
-	</main>
+	<YearAlbum {...Astro.props} />
 </Base>

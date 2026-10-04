@@ -1,58 +1,41 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import SubscribeCta from '../../components/SubscribeCta.astro';
+import YearAlbum from '../../components/YearAlbum.astro';
 import { prepareWall } from '../../utils/posts';
 import { SITE_TITLE } from '../../consts';
 
-// 归档 · 年份总览（2026-10 分页改造，docs/pagination-design.md）：
-// /blog/ 只放年份墙（每年一格链接）；全量相册在 /blog/[year]/ 每年一页。
-// 数据复用 prepareWall（src/utils/posts.ts）：年份分组与「分类首现序」
-// 都是构建时算好的。
+// 归档 · 直达最新一年（2026-10 分页三步，docs/pagination-design.md）：
+// 点「归档」直接落到当前（最新）年份的相册（所有者拍板：不要「先选年份」的
+// 总览态）；年际切换交给页首 year-jump 胶囊。最新一年的路由就是 /blog/ 本身，
+// /blog/{最新年}/ 不再生成（避免重复页面）。
 const wall = prepareWall(await getCollection('blog'));
-const { years } = wall;
-const latestYear = years[0]?.year;
-const earliestYear = years[years.length - 1]?.year;
+const homeGroup = wall.years[0];
 ---
 
 <Base
 	title={`归档 · ${SITE_TITLE}`}
-	description={`按年份翻阅的相册：${earliestYear} 至 ${latestYear} 年的全部文章。`}
+	description={homeGroup ? `${homeGroup.year} 年的 ${homeGroup.count} 张相纸：${homeGroup.categories.join('、')}。` : '按年份翻阅的相册。'}
 	lang="zh-CN"
 >
-	<style>
-		/* 过渡兜底解除（同首页，批3 的做法）：global.css 末尾暂留的 main{width:720px}
-		   是给旧版 /blog 列表页的居中列用的；归档是通栏容器布局。只写布局。 */
-		main {
-			width: auto;
-			max-width: none;
-			margin: 0;
-			padding: 0;
-		}
-		.archive-note {
-			margin-top: var(--gap-md);
-		}
-	</style>
-	<main id="content">
-		<section class="section intro" data-od-id="archive-intro">
-			<div class="container">
-				{/* 眉标即页面 h1（精修第 2 轮 #8）：.eyebrow 类规格盖过全局 h1，
-				    视觉与眉标一致。年份墙 = 相册的总目录。 */}
-				<h1 class="eyebrow">归档 · {earliestYear} — {latestYear}</h1>
-				<div class="grid-4 year-grid">
-					{
-						years.map((group) => (
-							<a class="year-cell" href={`/blog/${group.year}/`}>
-								<span class="year-num">{group.year}</span>
-								<span class="year-meta">{group.count} 张 · {group.categories.join(' · ')}</span>
-							</a>
-						))
-					}
-				</div>
-				<p class="meta archive-note">整本相册按年份摞好；点开一年，翻到那年的相册页。</p>
-			</div>
-		</section>
-
-		<SubscribeCta />
-	</main>
+	{
+		homeGroup ? (
+			<YearAlbum
+				group={homeGroup}
+				cards={wall.cards.filter((card) => card.year === homeGroup.year)}
+				allYears={wall.years}
+				older={wall.years[1]}
+				homeYear={homeGroup.year}
+			/>
+		) : (
+			<main id="content">
+				<section class="section intro">
+					<div class="container">
+						<h1 class="eyebrow">归档</h1>
+						<p class="meta">相册还是空的——第一张相纸冲出来后，这里就是它的家。</p>
+					</div>
+				</section>
+			</main>
+		)
+	}
 </Base>

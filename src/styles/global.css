@@ -356,27 +356,10 @@ b.num{ font-weight:600; color:var(--fg); }
 }
 .wall-item{ animation:lay-down .6s cubic-bezier(.16,.84,.3,1) both; animation-delay:calc(var(--i,0) * 45ms); }
 
-/* ── 年份轨迹 ─────────────────────────────────────────────────────────── */
-.year-grid{ gap:0; border-top:1px solid var(--rule); }
-/* 年份格自 2026-10 分页改造起是链接（首页时间线/归档总览 → /blog/[year]/），
-   原 button 的展开态标记（aria-expanded 底色 + 年份数字下标圆点）随之移除。 */
-.year-cell{
-  display:flex; flex-direction:column; gap:6px; width:100%; text-align:center;
-  font:inherit; color:inherit; cursor:pointer; background:none; border:0;
-  text-decoration:none;
-  padding:24px 20px; border-bottom:1px solid var(--rule-faint);
-  border-right:1px solid var(--rule-faint);
-  transition:background .22s ease;
-}
-.year-cell:last-child{ border-right:0; }
-.year-cell:hover{ background:var(--fg-soft); }
-.year-num{ font-family:var(--font-display); font-size:clamp(28px,3vw,38px); line-height:1; letter-spacing:-0.02em; }
-.year-meta{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); letter-spacing:0.05em; }
-
 /* ── 时间线：胶片年份带（首页专用，2026-10 分页改造二步）─────────────────
    年份跨度大时的形态（docs/pagination-design.md）：横排 mono 刻度、上下发丝线
-   围合，像底片边缘的年份编号；与归档总览的大格墙（.year-grid/.year-cell）
-   拉开层级——首页速览、归档总目录。年份多时自动换行，高度可控。 */
+   围合，像底片边缘的年份编号。年份多时自动换行，高度可控。三步起归档直达
+   最新年（/blog/ 即年份相册），大格墙（.year-grid/.year-cell）随之退役删除。 */
 .year-strip{
   display:flex; flex-wrap:wrap;
   border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
@@ -411,6 +394,7 @@ b.num{ font-weight:600; color:var(--fg); }
 .year-head{ display:flex; align-items:baseline; gap:var(--gap-md); flex-wrap:wrap; margin-bottom:var(--gap-lg); }
 .year-title{ font-family:var(--font-display); font-size:clamp(40px,6vw,68px); line-height:1; letter-spacing:-0.03em; color:var(--fg); }
 .year-head .year-rule{ flex:1; height:1px; background:var(--rule); min-width:24px; }
+.year-meta{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); letter-spacing:0.05em; }
 
 .album{ list-style:none; margin:0; padding:0; }
 .album-row + .album-row{ border-top:1px solid var(--rule-faint); }
@@ -641,16 +625,11 @@ b.num{ font-weight:600; color:var(--fg); }
   .grid-2,.grid-3,.grid-4{ grid-template-columns:1fr; }
   .wall{ grid-template-columns:repeat(2,1fr); }
   .wall-item.wide{ grid-column:span 2; }
-  .year-grid{ grid-template-columns:repeat(2,1fr); }
-  .year-cell:nth-child(2n){ border-right:0; }
   .prose{ font-size:17px; line-height:1.88; }
 }
 @media (max-width:600px){
   .wall{ grid-template-columns:1fr; gap:26px; }
   .wall-item.wide{ grid-column:span 1; }
-  .year-grid{ grid-template-columns:1fr; }
-  /* 年份格居中后不再需要贴左补偿的 padding-right:0（设计精修 #5），只留单列去边线 */
-  .year-cell{ border-right:0; }
   .year-tick{ padding:12px 16px; }
   .prose{ font-size:16.5px; line-height:1.86; }
   .prose .katex-display{ padding:15px 16px; }
