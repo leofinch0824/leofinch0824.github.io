@@ -13,16 +13,16 @@ const open = new Set(wall.openYears);
 const shown = wall.cards.filter((card) => open.has(card.year)).length;
 const folded = wall.cards.length - shown;
 const initialStatus =
-	'已摊开 ' +
+	'已翻开 ' +
 	wall.openYears.join('、') +
 	'；' +
-	(folded ? `还有 ${folded} 张按年份收着。` : `全部 ${shown} 张都在墙上了。`);
+	(folded ? `还有 ${folded} 张沉在相册深处，点一下年份就能取回。` : `整本相册都翻开了，${shown} 张回忆都在墙上。`);
 ---
 
 <section class="section" data-od-id="years">
 	<div class="container">
-		<p class="eyebrow">生活轨迹</p>
-		<h2 class="years-title">摊开某一年</h2>
+		<p class="eyebrow">时间线</p>
+		<h2 class="years-title">按年份展开</h2>
 		<div class="grid-4 year-grid" id="years">
 			{
 				wall.years.map((group) => (

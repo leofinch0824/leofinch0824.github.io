@@ -358,9 +358,9 @@ b.num{ font-weight:600; color:var(--fg); }
 /* ── 年份轨迹 ─────────────────────────────────────────────────────────── */
 .year-grid{ gap:0; border-top:1px solid var(--rule); }
 .year-cell{
-  display:flex; flex-direction:column; gap:6px; width:100%; text-align:left;
+  display:flex; flex-direction:column; gap:6px; width:100%; text-align:center;
   font:inherit; color:inherit; cursor:pointer; background:none; border:0;
-  padding:24px 20px 24px 0; border-bottom:1px solid var(--rule-faint);
+  padding:24px 20px; border-bottom:1px solid var(--rule-faint);
   border-right:1px solid var(--rule-faint);
   transition:background .22s ease;
 }
@@ -637,7 +637,8 @@ b.num{ font-weight:600; color:var(--fg); }
   .wall{ grid-template-columns:1fr; gap:26px; }
   .wall-item.wide{ grid-column:span 1; }
   .year-grid{ grid-template-columns:1fr; }
-  .year-cell{ border-right:0; padding-right:0; }
+  /* 年份格居中后不再需要贴左补偿的 padding-right:0（设计精修 #5），只留单列去边线 */
+  .year-cell{ border-right:0; }
   .intro h1{ max-width:none; }
   .prose{ font-size:16.5px; line-height:1.86; }
   .prose .katex-display{ padding:15px 16px; }

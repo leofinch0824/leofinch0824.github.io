@@ -11,13 +11,12 @@ const open = new Set(wall.openYears);
 ---
 
 <section class="section" data-od-id="wall">
-	<div class="container">
-		<div class="wall-head">
-			<h2>记忆墙</h2>
-			<a class="btn btn-ghost btn-arrow" href="/blog">打开整本相册</a>
-		</div>
-		<p class="meta wall-hint">墙上默认摊开最近的两年。点下面的年份，就在这一页把那一年也摊开。</p>
-		<div class="wall" id="wall-items">
+		<div class="container">
+			<div class="wall-head">
+				<h2>最近回忆录</h2>
+				<a class="btn btn-ghost btn-arrow" href="/blog">打开整本相册</a>
+			</div>
+			<div class="wall" id="wall-items">
 			{wall.cards.map((card) => (
 				<PostCard post={card} rot={card.rot} index={card.i} hidden={!open.has(card.year)} />
 			))}
@@ -26,10 +25,7 @@ const open = new Set(wall.openYears);
 </section>
 
 <style>
-	/* 只写布局：提示行的负边距来自原型 home.tpl.html:58 的内联样式 */
-	.wall-hint {
-		margin: -16px 0 var(--gap-lg);
-	}
+	/* 只写布局（原 .wall-hint 规则随提示行一并移除，设计精修 #4）。 */
 </style>
 
 <script>
@@ -64,7 +60,7 @@ const open = new Set(wall.openYears);
 				.map((cell) => cell.dataset.year)
 				.join('、');
 			statusEl.textContent =
-				'已摊开 ' + list + '；' + (folded ? '还有 ' + folded + ' 张按年份收着。' : '全部 ' + shown + ' 张都在墙上了。');
+				'已翻开 ' + list + '；' + (folded ? '还有 ' + folded + ' 张沉在相册深处，点一下年份就能取回。' : '整本相册都翻开了，' + shown + ' 张回忆都在墙上。');
 		}
 
 		cells.forEach((cell) => {
