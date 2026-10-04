@@ -44,6 +44,13 @@ const monthDay = (date: Date) =>
 			margin: 0;
 			padding: 0;
 		}
+		/* 无照片文章的归档缩略位：空的 .album-thumb 只有内边距、塌成 104×11 细条，
+		   像 3:2 的空相框卡位（表面色/发丝线/投影继承 .album-thumb 令牌样式）。只写布局。 */
+		.album-thumb--empty {
+			width: 100%;
+			aspect-ratio: 3 / 2;
+			align-self: start;
+		}
 	</style>
 	<main id="content">
 		<section class="section intro" data-od-id="archive-intro">
@@ -78,7 +85,7 @@ const monthDay = (date: Date) =>
 							{(albumByYear.get(group.year) ?? []).map((card) => (
 								<li class="album-row">
 									<a href={`/blog/${card.post.id}/`}>
-										<span class="album-thumb">
+										<span class:list={['album-thumb', { 'album-thumb--empty': !card.post.data.heroImage }]}>
 											{card.post.data.heroImage && (
 												<Image
 													src={card.post.data.heroImage}

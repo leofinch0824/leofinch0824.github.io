@@ -1,6 +1,6 @@
 ---
 title: 'Markdown 语法与版式验收'
-description: '本文同时是一篇版式验收文：行内与独立公式、多行推导（带 \\tag 编号）、带文件名条的长代码块、宽表格，都应在手机上不撑破版面。'
+description: '本文同时是一篇版式验收文：行内与独立公式、多行推导（带 \\tag 编号）、长代码块（390px 横向滚动）、宽表格，都应在手机上不撑破版面。'
 pubDate: 'Jun 19 2024'
 heroImage: '../../assets/blog-placeholder-1.jpg'
 category: '技术'
@@ -9,7 +9,7 @@ tags: ['markdown']
 
 Here is a sample of some basic Markdown syntax that can be used when writing Markdown content in Astro.
 
-> 本文在 starter 语法样例之上扩为**版式验收文**（docs/astro-blog-design-migration.md §8.4 批 5）：数学公式（行内 / 独立 / 多行推导 + `\tag` 编号）、带文件名元信息的长代码块、宽表格。验收口径见 docs/project-direction.md §6：这些内容在 390px 视口都不得撑破版面，且必须可完整阅读。
+> 本文在 starter 语法样例之上扩为**版式验收文**（docs/astro-blog-design-migration.md §8.4 批 5）：数学公式（行内 / 独立 / 多行推导 + `\tag` 编号）、长代码块、宽表格。验收口径见 docs/project-direction.md §6：这些内容在 390px 视口都不得撑破版面，且必须可完整阅读。
 
 ## Headings
 
@@ -131,9 +131,9 @@ we can use 3 backticks ``` in new line and write snippet and close with 3 backti
 </html>
 ```
 
-### 验收：带文件名元信息的长代码块
+### 验收：长代码块（横向滚动）
 
-下面的围栏块带有 `title="src/algorithms/lis-fast.ts"` 文件名元信息——文件名条（左侧文件名、右侧语言标签）是原型 `.code-head` 的规格（reference/prototype/post.tpl.html:78）。代码体刻意包含一行超过 80 列的长注释：在 390px 视口里它应当**横向滚动**，而不是撑破版心或被折行截断。
+下面的围栏块带有 `title="src/algorithms/lis-fast.ts"` 文件名元信息。**如实说明**：当前 Shiki 管线不渲染文件名条（原型 `.code-head` 规格，见 reference/prototype/post.tpl.html:78，未实现——PRODUCT.md 已记录该偏差），`title=` 在产物中被静默丢弃；保留它是为了将来接入 Expressive Code 时无需改文直接生效。本节真正要验收的是：代码体刻意包含一行超过 80 列的长注释，在 390px 视口里它应当**横向滚动**，而不是撑破版心或被折行截断。
 
 ```ts title="src/algorithms/lis-fast.ts"
 // 最长递增子序列 O(n log n)：树状数组维护「值域前缀上的最大 dp 值」，
