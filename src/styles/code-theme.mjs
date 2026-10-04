@@ -28,12 +28,15 @@ const fn = 'color-mix(in oklch, var(--fg) 72%, var(--bg))'; // .tok-fn 的规格
 
 export const codeTheme = {
 	name: 'shiguangji',
-	type: 'light',
+	// JSDoc 窄化：astro check 下 shiki 的 type 只收 "light" | "dark"，裸字符串会放宽成 string
+	type: /** @type {"light"} */ ('light'),
 	colors: {
 		'editor.background': 'var(--code-bg)',
 		'editor.foreground': 'var(--fg)',
 	},
-	tokenColors: [
+	// TextMate 原生格式用 settings（shiki 4.5 的 ThemeRegistrationRaw 要求此键；
+	// 运行时 tokenColors 也会被归一成 settings，两者等价，直接写 settings 少一步转换）
+	settings: [
 		// 注释：.tok-cmt 规格含斜体
 		{ scope: ['comment'], settings: { foreground: comment, fontStyle: 'italic' } },
 		// 字符串（含模板串、转义）

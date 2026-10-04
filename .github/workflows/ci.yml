@@ -1,0 +1,33 @@
+# CI（docs/astro-blog-design-migration.md §4.3）：可验证性进流水线。
+# 每次推送 / PR：npm ci → astro check + 令牌纪律 + 对比度断言 → 构建自证。
+# 部署另见 deploy.yml（main 推送触发 GitHub Pages 发布），本文件不承担部署。
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check（astro check + 令牌纪律 + 对比度）
+        run: npm run check
+
+      - name: Build
+        run: npm run build

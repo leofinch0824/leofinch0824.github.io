@@ -82,7 +82,7 @@ const open = new Set(wall.openYears);
 						document.querySelectorAll('.wall-item.is-added').forEach((el) => el.classList.remove('is-added'));
 						void (firstItem as HTMLElement).offsetWidth;
 						firstItem.classList.add('is-added');
-						firstLink.focus();
+						(firstLink as HTMLElement).focus();
 					}
 				}
 			});
