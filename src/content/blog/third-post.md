@@ -2,7 +2,7 @@
 title: 'Third post'
 description: 'Lorem ipsum dolor sit amet'
 pubDate: 'Jul 22 2022'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/test-pool/travel.jpg'
 category: '生活'
 tags: ['随笔']
 ---

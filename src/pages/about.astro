@@ -1,20 +1,20 @@
 ---
 import { Image } from 'astro:assets';
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
+import AboutHeroImage from '../assets/test-pool/portrait.jpg';
 import Base from '../layouts/Base.astro';
 
 // 关于页（批4，对照 reference/prototype/about.tpl.html）：
 // 脱离 BlogPost 版面、用 Base 独立成页 —— 关于页是双栏 hero + backface + spec，
 // 不是文章（迁移方案 §2.1「必须脱离 BlogPost layout」）。
-// 人设一律中性占位：PRODUCT.md「明确未决」明确杭州 / 写后端 / X100V / FM2 / 一只猫
-// 是原型的占位虚构，真实身份信息待作者提供 —— 一律不搬，逐行写成「待作者提供」式表述；
-// 原型的虚构引言署名（「写在第十篇之后」）同样不搬。
-// 「制作说明」只写本仓库当前为真的事实：KaTeX 尚未接入（PRODUCT.md Operating Context）。
+// 人设事实（作者 2026-10-04 提供）：算法工程师，喜欢健身，喜欢看电影；
+// 肖像用 docs/images-test/portrait.jpg（拷入 src/assets/test-pool/）。
+// 仍待作者提供：名字、坐标、桌上、联系方式邮箱 —— 对应字段保持「待补」占位。
+// 「制作说明」只写本仓库当前为真的事实。
 ---
 
 <Base
 	title="关于 · 拾光集"
-	description="关于拾光集：为什么写、这个站是怎么搭起来的，以及站在它后面的人（简介待补）。"
+	description="关于拾光集：为什么写、这个站是怎么搭起来的，以及站在它后面的人。"
 	lang="zh-CN"
 >
 	<style>
@@ -43,24 +43,24 @@ import Base from '../layouts/Base.astro';
 					<p class="eyebrow eyebrow-lead">关于 · 第 01 版</p>
 					<h1>关于拾光集，<br class="brk" />和它背后的人。</h1>
 					<p class="lead">
-						这里把想留下来的东西冲出来、晾干，再贴到墙上——文字也是一种影像记录。作者简介与肖像均待作者提供，本页暂以占位呈现。
+						一名算法工程师的暗房：白天和算法打交道，闲下来举铁、看电影。这里把想留下来的东西冲出来、晾干，再贴到墙上——文字也是一种影像记录。
 					</p>
-					{/* 元信息条：结构照搬 about.tpl.html 的 .intro-meta；三枚值均为中性占位
-					    （原型的 杭州/写后端/X100V 是 PRODUCT.md「明确未决」的虚构人设，不搬）。 */}
+					{/* 元信息条：结构照搬 about.tpl.html 的 .intro-meta。
+					    已提供的事实如实填写；未提供的字段保持待补（不虚构）。 */}
 					<div class="intro-meta">
+						<span class="meta">现在 <b class="num">算法工程师</b></span>
+						<span class="meta">爱好 <b class="num">健身 · 电影</b></span>
 						<span class="meta">坐标 <b class="num">待补</b></span>
-						<span class="meta">现在 <b class="num">待补</b></span>
-						<span class="meta">随身 <b class="num">待补</b></span>
 					</div>
 				</div>
 				<div class="wall-item" style="--rot:-0.6deg; --i:0">
 					<figure class="print">
-						{/* 占位肖像：layout="none" 只给 width，不裁切（AGENTS.md 硬约束）；
-						    alt 留空：占位照片不承载语义，页面文字自足（与批3 PostCard 同一决策）。 */}
+						{/* 肖像（作者提供，docs/images-test/portrait.jpg）：
+						    layout="none" 只给 width，不裁切（AGENTS.md 硬约束）。 */}
 						<Image
 							class="print-img"
 							src={AboutHeroImage}
-							alt=""
+							alt="作者的肖像照片"
 							width={900}
 							layout="none"
 							loading="eager"
@@ -68,7 +68,7 @@ import Base from '../layouts/Base.astro';
 							decoding="async"
 						/>
 						<figcaption class="print-cap">
-							<p class="print-note">占位照片 · 待作者提供肖像。</p>
+							<p class="print-note">作者肖像。</p>
 						</figcaption>
 					</figure>
 				</div>
@@ -102,32 +102,28 @@ import Base from '../layouts/Base.astro';
 				<div class="measure">
 					<p class="eyebrow">照片背面</p>
 					<h2 class="facts-title">一些可以写在相纸背面的事实。</h2>
-					<div class="backface">
-						<div class="backface-row">
-							<span class="backface-key">名字</span>
-							<p class="backface-val">这里将写作者的名字，待作者提供。</p>
+						<div class="backface">
+							<div class="backface-row">
+								<span class="backface-key">现在</span>
+								<p class="backface-val">算法工程师。</p>
+							</div>
+							<div class="backface-row">
+								<span class="backface-key">爱好</span>
+								<p class="backface-val">健身，和看电影。举铁与长片轮流占用晚上的时间。</p>
+							</div>
+							<div class="backface-row">
+								<span class="backface-key">名字</span>
+								<p class="backface-val">待补。</p>
+							</div>
+							<div class="backface-row">
+								<span class="backface-key">坐标</span>
+								<p class="backface-val">待补。</p>
+							</div>
+							<div class="backface-row">
+								<span class="backface-key">更新</span>
+								<p class="backface-val">不定期。</p>
+							</div>
 						</div>
-						<div class="backface-row">
-							<span class="backface-key">坐标</span>
-							<p class="backface-val">这里将写所在的城市，待作者提供。</p>
-						</div>
-						<div class="backface-row">
-							<span class="backface-key">现在</span>
-							<p class="backface-val">这里将写作者眼下在做的事，待作者提供。</p>
-						</div>
-						<div class="backface-row">
-							<span class="backface-key">相机</span>
-							<p class="backface-val">这里将写常用的相机，待作者提供。</p>
-						</div>
-						<div class="backface-row">
-							<span class="backface-key">桌上</span>
-							<p class="backface-val">这里将写桌上摊着什么，待作者提供。</p>
-						</div>
-						<div class="backface-row">
-							<span class="backface-key">更新</span>
-							<p class="backface-val">这里将写更新节奏，待作者确认。</p>
-						</div>
-					</div>
 				</div>
 			</div>
 		</section>
