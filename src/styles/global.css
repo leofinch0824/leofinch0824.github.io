@@ -62,7 +62,7 @@
   --fs-h3:   18px;
   --fs-lead: 18px;
   --fs-body: 16px;
-  --fs-meta: 13px;
+  --fs-meta: 14px;
 
   /* ── 间距 ── */
   --gap-xs:8px; --gap-sm:12px; --gap-md:20px; --gap-lg:32px; --gap-xl:56px; --gap-2xl:96px;
@@ -184,13 +184,14 @@ h1,h2,h3,h4{ text-wrap:balance; }
 .h3,h3{ font-family:var(--font-display); font-size:var(--fs-h3); font-weight:600; line-height:1.4; letter-spacing:0; margin:0; }
 .lead{ font-size:var(--fs-lead); line-height:1.78; color:var(--muted); max-width:56ch; margin:0; }
 .eyebrow{
-  font-family:var(--font-mono); font-size:13px; font-weight:400; letter-spacing:0.13em;
+  font-family:var(--font-mono); font-size:var(--fs-meta); font-weight:400; letter-spacing:0.13em;
   text-transform:uppercase; color:var(--muted); margin:0 0 var(--gap-md);
 }
 .eyebrow-lead{ color:var(--accent); }           /* 全站仅此一处 + 主按钮 = 2 次 */
-/* 页面级眉标 h1（归档/年份页「归档 · YYYY」，精修第 4 轮）：同 mono 语言
-   但明确高出一档（15px），读起来是页面标记而非普通小字。 */
-.intro h1.eyebrow{ font-size:15px; }
+/* 页面级眉标 h1（归档/年份页「归档 · YYYY」）：同 mono 语言但明确高出
+   一档，读起来是页面标记而非普通小字。二轮覆写后 label 档 14px，
+   页标 16px，保住两档之间的档差。 */
+.intro h1.eyebrow{ font-size:16px; }
 .meta{ font-family:var(--font-mono); font-size:var(--fs-meta); color:var(--muted); letter-spacing:0.02em; }
 .num{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
 b.num{ font-weight:600; color:var(--fg); }
@@ -267,7 +268,7 @@ b.num{ font-weight:600; color:var(--fg); }
 .tag{
   display:inline-flex; align-items:center; padding:3px 9px; background:transparent;
   color:var(--muted); border:1px solid var(--rule-faint); border-radius:999px;
-  font-family:var(--font-mono); font-size:12.5px; letter-spacing:0.05em;
+  font-family:var(--font-mono); font-size:13px; letter-spacing:0.05em;
 }
 
 /* ── 卷首语 ───────────────────────────────────────────────────────────── */
@@ -325,8 +326,8 @@ b.num{ font-weight:600; color:var(--fg); }
 /* 元信息行里「最新」带边框与内边距，比同行的编号/日期高一截；
    align-items:center 会把整行撑到它的高度，导致首卡相纸比其他卡高 7px。
    基线对齐 + 给标签一个不吃行高的盒模型，让首卡与其余卡等高。 */
-.print-meta{ margin:9px 0 0; font-family:var(--font-mono); font-size:13px; letter-spacing:0.04em; color:var(--muted); display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
-.print-meta .tag{ align-self:center; padding:1px 8px; font-size:12.5px; line-height:1.5; }
+.print-meta{ margin:9px 0 0; font-family:var(--font-mono); font-size:var(--fs-meta); letter-spacing:0.04em; color:var(--muted); display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.print-meta .tag{ align-self:center; padding:1px 8px; font-size:13px; line-height:1.5; }
 .print-meta .dot{ align-self:center; }
 /* 底片编号：曾用 color-mix(fg 45%, bg) 合成出 oklch(0.627…) → 实测仅 3.37:1，
    低于 AA 正文阈值。改用 --muted（5.53:1），保留等宽与字距的材质感。 */
@@ -374,7 +375,7 @@ b.num{ font-weight:600; color:var(--fg); }
 .year-tick:last-child{ border-right:0; }
 .year-tick:hover{ background:var(--fg-soft); }
 .tick-num{ font-family:var(--font-mono); font-size:15px; font-weight:500; color:var(--fg); letter-spacing:0.04em; font-variant-numeric:tabular-nums; }
-.tick-count{ font-family:var(--font-mono); font-size:13px; color:var(--muted); letter-spacing:0.05em; }
+.tick-count{ font-family:var(--font-mono); font-size:var(--fs-meta); color:var(--muted); letter-spacing:0.05em; }
 
 /* ── CTA ──────────────────────────────────────────────────────────────── */
 .cta{ text-align:center; border-top:1px solid var(--rule); }
@@ -384,7 +385,7 @@ b.num{ font-weight:600; color:var(--fg); }
 /* ── 归档：按年份翻相册 ───────────────────────────────────────────────── */
 .year-jump{ display:flex; flex-wrap:wrap; gap:10px; margin-top:var(--gap-lg); }
 .year-jump a{
-  font-family:var(--font-mono); font-size:13px; letter-spacing:0.06em; color:var(--muted);
+  font-family:var(--font-mono); font-size:var(--fs-meta); letter-spacing:0.06em; color:var(--muted);
   padding:5px 13px; border:1px solid var(--rule); border-radius:999px;
   transition:color .18s ease, border-color .18s ease, background .18s ease;
 }
@@ -396,7 +397,7 @@ b.num{ font-weight:600; color:var(--fg); }
 .year-head{ display:flex; align-items:baseline; gap:var(--gap-md); flex-wrap:wrap; margin-bottom:var(--gap-lg); }
 .year-title{ font-family:var(--font-display); font-size:clamp(40px,6vw,68px); line-height:1; letter-spacing:-0.03em; color:var(--fg); }
 .year-head .year-rule{ flex:1; height:1px; background:var(--rule); min-width:24px; }
-.year-meta{ font-family:var(--font-mono); font-size:13px; color:var(--muted); letter-spacing:0.05em; }
+.year-meta{ font-family:var(--font-mono); font-size:var(--fs-meta); color:var(--muted); letter-spacing:0.05em; }
 
 .album{ list-style:none; margin:0; padding:0; }
 .album-row + .album-row{ border-top:1px solid var(--rule-faint); }
@@ -415,8 +416,8 @@ b.num{ font-weight:600; color:var(--fg); }
 .album-body{ min-width:0; }
 .album-body h3{ font-size:18px; }
 .album-dek{ margin:5px 0 0; color:var(--muted); font-size:14px; line-height:1.62; }
-.album-date{ margin:0 0 4px; font-family:var(--font-mono); font-size:13px; color:var(--muted); letter-spacing:0.04em; }
-.album-frame{ font-family:var(--font-mono); font-size:13px; color:var(--muted); text-align:right; }
+.album-date{ margin:0 0 4px; font-family:var(--font-mono); font-size:var(--fs-meta); color:var(--muted); letter-spacing:0.04em; }
+.album-frame{ font-family:var(--font-mono); font-size:var(--fs-meta); color:var(--muted); text-align:right; }
 @media (max-width:760px){
   .album-row a{ grid-template-columns:76px minmax(0,1fr); row-gap:10px; }
   .album-row .album-tag,.album-row .album-frame{ grid-column:2; }
@@ -446,7 +447,7 @@ b.num{ font-weight:600; color:var(--fg); }
 }
 .plate-img{ width:100%; height:auto; border-radius:1px; filter:brightness(var(--photo-brightness)); }
 .plate figcaption{
-  font-family:var(--font-mono); font-size:13px; letter-spacing:0.05em;
+  font-family:var(--font-mono); font-size:var(--fs-meta); letter-spacing:0.05em;
   color:var(--muted); padding:13px 4px 15px; display:flex; gap:10px; align-items:center;
 }
 .plate figcaption::before{ content:'▣'; opacity:.45; }
@@ -526,9 +527,9 @@ b.num{ font-weight:600; color:var(--fg); }
 .prose .katex .tag{
   /* KaTeX 的公式编号类名 .tag 与站点标签胶囊（本文件上方 .tag）撞名：
      胶囊的边框/内边距/圆角会套到公式编号上，这里复位，
-     只保留 .formula-num 规格（等宽 13px、褪色的墨）。 */
+     只保留 .formula-num 规格（等宽 meta 档、褪色的墨）。 */
   display:inline; padding:0; border:0; border-radius:0; background:none;
-  font-family:var(--font-mono); font-size:13px; color:var(--muted); letter-spacing:normal;
+  font-family:var(--font-mono); font-size:var(--fs-meta); color:var(--muted); letter-spacing:normal;
 }
 
 /* 翻页 */
@@ -544,7 +545,7 @@ b.num{ font-weight:600; color:var(--fg); }
 .turn:hover{ border-color:var(--rule); background:var(--surface); transform:translateY(-3px); }
 .turn-next{ text-align:right; align-items:flex-end; }
 .turn-title{ font-family:var(--font-display); font-size:18px; line-height:1.4; }
-.turn-label{ font-family:var(--font-mono); font-size:13px; color:var(--muted); letter-spacing:0.05em; }
+.turn-label{ font-family:var(--font-mono); font-size:var(--fs-meta); color:var(--muted); letter-spacing:0.05em; }
 @media (max-width:640px){ .page-turn{ grid-template-columns:1fr; } .turn-next{ text-align:left; align-items:flex-start; } }
 
 /* ── 关于页 ───────────────────────────────────────────────────────────── */
@@ -573,12 +574,14 @@ b.num{ font-weight:600; color:var(--fg); }
   line-height:1.76; color:color-mix(in oklch, var(--fg) 86%, var(--bg));
 }
 .pullquote-author{
-  margin:16px 0 0; font-family:var(--font-mono); font-size:13px;
+  margin:16px 0 0; font-family:var(--font-mono); font-size:var(--fs-meta);
   letter-spacing:.06em; color:var(--muted);
 }
 .cta-actions{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
 
 /* ── footer ───────────────────────────────────────────────────────────── */
+/* 页脚小字（栏标 13 / 订阅面板 13 / 基准 13.5）：所有者指定不随 meta 档
+   放大（2026-10-05 二轮覆写），页脚保持收束，不与正文抢阅读。 */
 .pagefoot{ padding-block:var(--gap-xl) var(--gap-lg); margin-top:clamp(40px,6vw,72px); border-top:1px solid var(--rule); color:var(--muted); font-size:13.5px; }
 .foot-grid{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:var(--gap-lg); }
 .foot-name{ font-family:var(--font-display); font-size:19px; color:var(--fg); margin:0 0 8px; }

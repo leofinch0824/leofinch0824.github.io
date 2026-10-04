@@ -9,7 +9,7 @@ import Base from '../layouts/Base.astro';
 // 1. 开场 = 双卡叠压纯视觉（无文字栏；前卡肖像 + 后卡数字化身，dev-master）；
 //    语义 h1 用 .sr-only 承担。
 // 2. 技能 · 工具 = 朴素 Markdown 列表观感（所有者：简单易改写）。
-// 3. 一些零碎的 = poster 巨型衬线碎片（零散但连续的自然表达）。
+// 3. 一些零碎的 = 正文规格衬线短句（所有者拍板：属正文内容，不做标题化字号）。
 // 4. 「为什么写」与 backface/id-matrix 全部移除（所有者拍板）。
 // 5. 制作说明 = credits 相纸卡（内容按本仓库现实：KaTeX/Shiki 已接入）。
 // 6. 找到我 + findme 单行链接条（社交位待补，占位不虚构）。
@@ -98,9 +98,9 @@ import Base from '../layouts/Base.astro';
 			color: var(--fg);
 		}
 
-		/* ── 一些零碎的：poster 巨型衬线碎片（原型 .poster-list）。
-		   用墨不用锈红：巨型文字的力量来自字号；li 按 em 限宽，
-		   中文长句不会拖成一条细线。 ── */
+		/* ── 一些零碎的：正文规格的衬线短句（所有者拍板：属正文内容，
+		   不做标题化的大字号设置）。中文印刷的正文传统即宋体，故保留
+		   衬线语系、字重回到 400；一条一句，keep-all 防词内断行。 ── */
 		.poster-list {
 			list-style: none;
 			margin: 0;
@@ -108,24 +108,16 @@ import Base from '../layouts/Base.astro';
 		}
 		.poster-list li {
 			font-family: var(--font-display);
-			font-weight: 600;
-			font-size: clamp(26px, 4vw, 45px);
-			line-height: 1.28;
-			letter-spacing: -0.014em;
+			font-weight: 400;
+			font-size: 17.5px;
+			line-height: 1.92;
 			color: color-mix(in oklch, var(--fg) 92%, var(--bg));
-			max-width: 18em;
-			text-wrap: balance;
 			/* 中文词不拆行（「就像」不能断成「就/像」），超长串兜底 */
 			word-break: keep-all;
 			overflow-wrap: anywhere;
 		}
 		.poster-list li + li {
-			margin-top: clamp(9px, 1.3vw, 16px);
-		}
-		@media (max-width: 920px) {
-			.poster-list li {
-				font-size: clamp(23px, 5.8vw, 32px);
-			}
+			margin-top: 0.85em;
 		}
 
 		/* ── 制作说明：印在相纸上的参数表（原型 .credits），卡内两列微字 ── */
@@ -156,7 +148,7 @@ import Base from '../layouts/Base.astro';
 			display: block;
 			margin-bottom: 5px;
 			font-family: var(--font-mono);
-			font-size: 13px;
+			font-size: var(--fs-meta);
 			letter-spacing: 0.12em;
 			text-transform: uppercase;
 			color: var(--muted);
@@ -189,7 +181,7 @@ import Base from '../layouts/Base.astro';
 			max-width: 46ch;
 			border-top: 1px solid var(--rule-faint);
 			font-family: var(--font-mono);
-			font-size: 13px;
+			font-size: var(--fs-meta);
 			letter-spacing: 0.03em;
 		}
 		.findme-label {
@@ -269,16 +261,18 @@ import Base from '../layouts/Base.astro';
 			</div>
 		</section>
 
-		{/* ── 一些零碎的：零散但连续的自然表达（巨型衬线，一条一句） ── */}
+		{/* ── 一些零碎的：零散但连续的自然表达（正文规格衬线，一条一句） ── */}
 		<section class="section" data-od-id="about-poster">
 			<div class="container">
-				<p class="eyebrow">一些零碎的</p>
-				<ul class="poster-list">
-					<li>举铁不为形，为的是给一天收个尾。</li>
-					<li>好电影舍不得快进，就像好文章舍不得翻完。</li>
-					<li>想清楚了才写，写完就发。</li>
-					<li>走错路，才到过一些好地方。</li>
-				</ul>
+				<div class="measure">
+					<p class="eyebrow">一些零碎的</p>
+					<ul class="poster-list">
+						<li>举铁不为形，为的是给一天收个尾。</li>
+						<li>好电影舍不得快进，就像好文章舍不得翻完。</li>
+						<li>想清楚了才写，写完就发。</li>
+						<li>走错路，才到过一些好地方。</li>
+					</ul>
+				</div>
 			</div>
 		</section>
 

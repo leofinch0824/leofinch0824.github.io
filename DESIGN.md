@@ -83,34 +83,28 @@ typography:
     lineHeight: 1.78
   label:
     fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
-    fontSize: "13px"
+    fontSize: "14px"
     fontWeight: 400
     letterSpacing: "0.13em"
   meta:
     fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
-    fontSize: "13px"
+    fontSize: "14px"
     fontWeight: 400
     letterSpacing: "0.04em"
   page-mark:
     fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
-    fontSize: "15px"
+    fontSize: "16px"
     fontWeight: 400
     letterSpacing: "0.13em"
   tag:
     fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
-    fontSize: "12.5px"
+    fontSize: "13px"
     fontWeight: 400
     letterSpacing: "0.05em"
   tick:
     fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
     fontSize: "15px"
     fontWeight: 500
-  poster:
-    fontFamily: "Iowan Old Style, Palatino Linotype, Palatino, Songti SC, Noto Serif SC, Source Han Serif SC, STSong, Georgia, serif"
-    fontSize: "clamp(26px, 4vw, 45px)"
-    fontWeight: 600
-    lineHeight: 1.28
-    letterSpacing: "-0.014em"
   prose:
     fontFamily: "-apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Segoe UI, system-ui, sans-serif"
     fontSize: "17.5px"
@@ -150,7 +144,7 @@ typography:
     fontWeight: 400
   caption:
     fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
-    fontSize: "13px"
+    fontSize: "14px"
     fontWeight: 400
     letterSpacing: "0.04em"
   micro:
@@ -255,7 +249,7 @@ components:
 角色阶（2026-10-05 typeset 审计收敛，`docs/typography-audit.md`）：同角色同值，
 跨档必须 ≥1.5px 或有明确语境；新增组件只允许引用下表规格。
 
-**衬线（display）族 —— 只属于标题与「相纸上的手写」：**
+**衬线（display）族 —— 属于标题、「相纸上的手写」与关于页零碎句：**
 
 | 角色 | 规格 | 用在哪 |
 |---|---|---|
@@ -268,6 +262,7 @@ components:
 | 卡标题 | 600, 18px, 1.4–1.42 | 相纸卡标题、归档行标题、翻页标题、`prose h3` |
 | 格言 | 500, 21px, 1.66, 字距 0 | 首页/关于的卷首一句话（`.intro h1`，非 h3 角色） |
 | 手写注脚 | 400, 相纸语境 15px / 关于页注脚 21px | `print-note` |
+| 零碎短句 | 400, 17.5px / 1.92, keep-all | 关于页「一些零碎的」（2026-10-05 拍板：属正文内容，不做标题化字号；衬线承中文印刷正文传统） |
 
 **无衬线（body）族 —— 正文与 UI：**
 
@@ -284,18 +279,22 @@ components:
 
 | 角色 | 规格 | 用在哪 |
 |---|---|---|
-| 页面级眉标 h1 | 400, 15px, 0.13em 字距 | 归档/年份页「归档 · YYYY」（2026-10-05 所有者覆写：小字档整体放大，页面标记须读得出是标题） |
-| label | 400, 13px, 0.13em 字距 | 眉标、页脚栏标、题注、引言署名、credit-key |
-| meta | 400, 13px, 0.02–0.06em | 日期、底片编号、年份胶囊、元信息条、翻页 label、订阅面板小字、findme |
-| tag | 400, 12.5px | 标签胶囊（略小于 meta 的徽章角色） |
+| 页面级眉标 h1 | 400, 16px, 0.13em 字距 | 归档/年份页「归档 · YYYY」（二轮覆写后随 label 档升，保住档差） |
+| label | 400, 14px, 0.13em 字距 | 眉标、题注、引言署名、credit-key |
+| meta | 400, 14px, 0.02–0.06em | 日期、底片编号、年份胶囊、元信息条、翻页 label、findme、公式编号 |
+| tag | 400, 13px | 标签胶囊（略小于 meta 的徽章角色） |
 | tick | 500, 15px, tabular-nums | 胶片年份带的年份数字 |
-| 代码 | 13.5px（块）/ 13px（行内）/ 0.86em（码内） | 代码与公式编号 |
+| 代码 | 13.5px（块）/ 13px（行内）/ 0.86em（码内） | 代码 |
+| 页脚小字 | 400, 13px（钉住） | 页脚栏标、订阅面板（所有者指定不随 meta 档放大） |
 
-> 2026-10-05 所有者覆写：label/meta 原为原型继承的 11.5/12px，判定过小影响阅读，
-> 全档放大至 13px（docs/typography-audit.md 第 2 步）；tag 随调 12.5。
+> 2026-10-05 所有者覆写（两轮）：label/meta 原为原型继承的 11.5/12px，判定过小
+> 影响阅读，先放大至 13px（第 2 步）；所有者看后仍觉小，同日二轮升至 14px
+> （第 3 步），tag 随调 13、页面级眉标 15→16 保档差；页脚小字按所有者指定
+> 钉在 13/13.5 不动。巨型 poster 角色同日退役：关于页零碎句属正文内容，
+> 降为衬线 17.5/400。
 
 特例（有空间或角色理由，不再外扩）：顶栏副标 10.5px（空间敏感）、站名 20px、
-页脚基准 13.5px、正文内代码 `--fs-meta` 引用。数字一律 `tabular-nums`。
+页脚基准 13.5px。数字一律 `tabular-nums`。
 
 **加粗规则**：600 只有标题族；500 只有「当前态/强调位」（站名、格言、
 tick 年份、导航当前页、RSS 强调链）；正文与元信息永远 400——要强调时用
