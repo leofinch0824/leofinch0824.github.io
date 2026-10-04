@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>归档 · 拾光集</title>
+<meta name="description" content="按年份翻阅的相册：2023 至 2026 年的全部文章。">
+<script>
+/* 主题决定必须在首次绘制前完成，否则会闪一下亮色。
+   优先级：localStorage 记忆 > 系统偏好。 */
+(function(){try{var t=localStorage.getItem('sg-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();
+</script>
+<style>
+/* ══════════════════════════════════════════════════════════════════════════
+   拾光集 · 记忆快照设计系统
+   基于 web-prototype seed 扩展。六个基础令牌 = 调色板与字体的唯一来源，
+   页面中任何颜色都必须写成 var(--x) 或它们的 color-mix()。
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root{
+  /* ── 六个基础令牌 ─────────────────────────────────────────────────────
+     暖纸底、墨色字、锈红强调色。低饱和是硬约束：这是相册纸与相纸，
+     不是屏幕。强调色每屏最多出现两次。 */
+  --bg:      #f2eee6;   /* 相册纸 */
+  --surface: #fbf9f4;   /* 相纸白 —— 暖白，绝不用 #fff */
+  --fg:      #201d18;   /* 墨 —— 暖黑，绝不用 #000 */
+  --muted:   #665e4f;   /* 褪色的墨 */
+  --border:  #e2dbcc;   /* 发丝线 */
+  --accent:  #a9503a;   /* 暗房锈红 */
+
+  /* ── 派生 ── */
+  --accent-soft: color-mix(in oklch, var(--accent) 12%, transparent);
+  --accent-hover: color-mix(in oklch, var(--accent) 86%, black);   /* 亮色 hover 向墨压深；暗色块里反向提亮 */
+  --fg-soft:     color-mix(in oklch, var(--fg) 5%, transparent);
+  --rule:        color-mix(in oklch, var(--fg) 13%, transparent);
+  --rule-faint:  color-mix(in oklch, var(--fg) 7%, transparent);
+
+  /* ── 相纸的投影：贴着桌面的一层 + 抬起来的一层 ──
+     投影用 --shade 而不是 --fg：亮色下两者同值，暗色下必须分开。
+     --fg 在暗色里是暖白，拿它当投影色，相纸就会在暗桌上发光晕。 */
+  --shade: var(--fg);   /* 投影墨 —— 暗色下另给一个比桌面更暗的值 */
+  --lift-1: 0 1px 1px color-mix(in oklch, var(--shade) 7%, transparent),
+            0 10px 20px -14px color-mix(in oklch, var(--shade) 45%, transparent);
+  --lift-2: 0 2px 3px color-mix(in oklch, var(--shade) 9%, transparent),
+            0 28px 44px -22px color-mix(in oklch, var(--shade) 45%, transparent);
+
+  /* ── 纸张颗粒 ── */
+  --grain: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='0.055'/%3E%3C/svg%3E");
+  --grain-opacity: 0.055;
+
+  /* ── 照片亮度：夜里相纸会反光，整页黑着一块照片亮着最刺眼。
+     暗色下收一点亮度，别让照片成为唯一光源。1 = 原样不处理。 ── */
+  --photo-brightness: 1;
+
+  /* ── 代码语法：作用域令牌，全部低饱和，不参与强调色预算 ── */
+  --code-bg:  color-mix(in oklch, var(--fg) 5%, var(--surface));
+  --code-kw:  #7c4a39;
+  --code-str: #59684f;
+  --code-num: #8a6335;
+  --code-cmt: color-mix(in oklch, var(--muted) 92%, transparent);   /* 72% 仅 3.1:1，低于 AA；提到 92% 过 4.5:1 */
+
+  /* ── 字体：显示用衬线（含中文宋体），正文用无衬线，数值用等宽 ── */
+  --font-display: 'Iowan Old Style','Palatino Linotype',Palatino,'Songti SC','Noto Serif SC','Source Han Serif SC','STSong',Georgia,'Times New Roman',serif;
+  --font-body:    -apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Segoe UI',system-ui,sans-serif;
+  --font-mono:    ui-monospace,'SF Mono','JetBrains Mono',Menlo,Consolas,monospace;
+
+  color-scheme: light;
+
+  /* ── 字号 ── */
+  --fs-h1:   clamp(38px, 5.2vw, 64px);
+  --fs-h2:   clamp(27px, 3.2vw, 40px);
+  --fs-h3:   21px;
+  --fs-lead: 18px;
+  --fs-body: 16px;
+  --fs-meta: 12.5px;
+
+  /* ── 间距 ── */
+  --gap-xs:8px; --gap-sm:12px; --gap-md:20px; --gap-lg:32px; --gap-xl:56px; --gap-2xl:96px;
+  --container: 1180px;
+  --gutter: 32px;
+
+  --radius: 8px;
+  --radius-lg: 14px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   暗色模式 · 暗房
+   同一套六个令牌，换一组值：纸不是被照亮，而是压在暗桌上的印相。
+   夜间阅读优先 —— 底色不死黑（避免高对比眩光），正文不用纯白，
+   锈红提亮到暗底上仍过 AA。派生值基本由令牌自动重算，只有投影例外：
+   投影色必须跟桌面比暗，不能跟着墨色一起翻白，所以 --shade 与
+   --lift-* 在这里单独给一组值（见下）。
+   跟随系统偏好；页头的切换按钮会覆写 <html data-theme>。
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ color-scheme: dark;
+    --bg:      #1c1917;   /* 暗房底 —— 暖黑，不是纯黑 */
+    --surface: #262220;   /* 印相纸 —— 比底色亮一档，仍带暖度 */
+    --fg:      #ece7dd;   /* 暖白墨 —— 绝不用 #fff，降低夜间眩光 */
+    --muted:   #a49a8a;   /* 褪色的墨（暗底上约 7:1） */
+    --border:  #3a3430;   /* 发丝线 */
+    --accent:  #d0785c;   /* 暗房锈红 · 提亮版 */
+    --accent-hover: color-mix(in oklch, var(--accent) 88%, white);   /* 暗色 hover 反向提亮，印相纸深字仍 5.7:1 */
+    --code-kw: #d08a72;  --code-str: #9db08a;  --code-num: #d0a86a;
+
+    /* 投影：暗底上影子要更实、更贴，才镇得住纸边 */
+    --shade:   #0b0a09;   /* 比暗房底再暗一档 —— 相纸是压在桌上，不是浮在光里 */
+    --lift-1: 0 1px 1px color-mix(in oklch, var(--shade) 50%, transparent),
+              0 12px 22px -14px color-mix(in oklch, var(--shade) 72%, transparent);
+    --lift-2: 0 2px 4px color-mix(in oklch, var(--shade) 55%, transparent),
+              0 30px 46px -22px color-mix(in oklch, var(--shade) 80%, transparent);
+    --photo-brightness: .93;   /* 夜里收掉 7% 亮度，照片不再当唯一光源 */
+  }
+}
+/* 手动切换：优先级高于系统偏好 */
+:root[data-theme="dark"]{ color-scheme: dark;
+  --bg:      #1c1917;
+  --surface: #262220;
+  --fg:      #ece7dd;
+  --muted:   #a49a8a;
+  --border:  #3a3430;
+  --accent:  #d0785c;
+  --accent-hover: color-mix(in oklch, var(--accent) 88%, white);
+  --code-kw: #d08a72;  --code-str: #9db08a;  --code-num: #d0a86a;
+
+  --shade:   #0b0a09;
+  --lift-1: 0 1px 1px color-mix(in oklch, var(--shade) 50%, transparent),
+            0 12px 22px -14px color-mix(in oklch, var(--shade) 72%, transparent);
+  --lift-2: 0 2px 4px color-mix(in oklch, var(--shade) 55%, transparent),
+            0 30px 46px -22px color-mix(in oklch, var(--shade) 80%, transparent);
+  --photo-brightness: .93;
+}
+
+
+
+/* ── reset & base ─────────────────────────────────────────────────────── */
+*,*::before,*::after{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+body{
+  margin:0;
+  background-color:var(--bg);
+  background-image:none;
+  color:var(--fg);
+  font-family:var(--font-body);
+  font-size:var(--fs-body);
+  line-height:1.62;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+img,svg{ display:block; max-width:100%; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; cursor:pointer; }
+/* 纸纹单独成层：浓度可按主题调，暗色下减半（同样的噪点在暗底上视觉重量翻倍） */
+body::before{
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:var(--grain); background-repeat:repeat;
+  opacity:var(--grain-opacity);
+}
+body > *{ position:relative; z-index:1; }
+:root[data-theme="dark"]{ --grain-opacity:0.028; }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --grain-opacity:0.028; }
+}
+
+p{ text-wrap:pretty; }
+h1,h2,h3,h4{ text-wrap:balance; }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:2px; }
+
+/* ── layout primitives ────────────────────────────────────────────────── */
+.container{ max-width:var(--container); margin-inline:auto; padding-inline:var(--gutter); }
+.section{ padding-block:clamp(48px,7vw,88px); }
+.section + .section{ border-top:0; }           /* 相册里没有框线，只有留白 */
+.stack{ display:flex; flex-direction:column; }
+.stack > * + *{ margin-top:var(--gap-md); }
+.row{ display:flex; align-items:center; gap:var(--gap-md); }
+.row-between{ display:flex; align-items:center; justify-content:space-between; gap:var(--gap-md); }
+.grid-2{ display:grid; grid-template-columns:repeat(2,1fr); gap:var(--gap-lg); }
+.grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--gap-lg); }
+.grid-4{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--gap-md); }
+
+/* ── type ─────────────────────────────────────────────────────────────── */
+.h1,h1{ font-family:var(--font-display); font-size:var(--fs-h1); line-height:1.1; letter-spacing:-0.015em; font-weight:600; margin:0; }
+.h2,h2{ font-family:var(--font-display); font-size:var(--fs-h2); line-height:1.18; letter-spacing:-0.012em; font-weight:600; margin:0; }
+.h3,h3{ font-family:var(--font-display); font-size:var(--fs-h3); font-weight:600; line-height:1.4; letter-spacing:0; margin:0; }
+.lead{ font-size:var(--fs-lead); line-height:1.78; color:var(--muted); max-width:56ch; margin:0; }
+.eyebrow{
+  font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.13em;
+  text-transform:uppercase; color:var(--muted); margin:0 0 var(--gap-md);
+}
+.eyebrow-lead{ color:var(--accent); }           /* 全站仅此一处 + 主按钮 = 2 次 */
+.meta{ font-family:var(--font-mono); font-size:var(--fs-meta); color:var(--muted); letter-spacing:0.02em; }
+.num{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
+b.num{ font-weight:600; color:var(--fg); }
+
+/* ── chrome ───────────────────────────────────────────────────────────── */
+.topnav{
+  position:sticky; top:0; z-index:20;
+  background:color-mix(in oklch, var(--bg) 88%, transparent);
+  backdrop-filter:blur(14px) saturate(1.1);
+  -webkit-backdrop-filter:blur(14px) saturate(1.1);
+  border-bottom:1px solid var(--rule-faint);
+}
+.topnav-inner{ display:flex; align-items:center; justify-content:space-between; gap:var(--gap-md); padding-block:13px; }
+.topnav .logo{ font-family:var(--font-display); font-size:20px; font-weight:600; letter-spacing:-0.01em; display:flex; align-items:baseline; gap:9px; }
+.topnav .logo .logo-sub{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); font-weight:400; }
+.topnav nav{ display:flex; gap:var(--gap-lg); }
+.topnav nav a{ font-size:14px; color:var(--muted); transition:color .18s ease; }
+.topnav nav a:hover{ color:var(--fg); }
+.topnav nav a.is-current{ color:var(--fg); font-weight:500; }
+.topnav nav a.is-current::after{ content:''; display:block; height:1px; margin-top:3px; background:var(--fg); }
+@media (max-width:760px){
+  .topnav nav{ gap:var(--gap-md); }
+  .topnav .logo .logo-sub{ display:none; }
+}
+/* 站名与导航词都不许在词中间断行 —— 手机上「拾光集」会断成「拾光/集」、
+   「记忆墙」断成「记忆/墙」，顶栏被撑成两行高，随滚动一直占着。
+   到 560px 以下再撤掉页头的订阅按钮：页面末尾本来就有订阅区，
+   留着它只会把剩下三个导航词挤到没地方。 */
+.topnav .logo,
+.topnav nav a{ white-space:nowrap; }
+@media (max-width:560px){
+  .topnav nav{ gap:var(--gap-sm); }
+  .topnav .btn-secondary{ display:none; }
+}
+
+/* ── buttons ──────────────────────────────────────────────────────────── */
+.btn{
+  display:inline-flex; align-items:center; gap:8px; padding:10px 18px;
+  border-radius:var(--radius); border:1px solid transparent; font-size:14.5px;
+  font-weight:500; letter-spacing:0; white-space:nowrap;
+  transition:transform .18s cubic-bezier(.2,.7,.2,1), background .2s ease, border-color .2s ease, color .2s ease;
+}
+.btn:active{ transform:translateY(1px); }
+.btn-primary{ background:var(--accent); color:var(--surface); border-color:var(--accent); }
+.btn-primary:hover{ background:var(--accent-hover); border-color:var(--accent-hover); }
+.btn-secondary{ background:transparent; color:var(--fg); border-color:var(--rule); }
+.btn-secondary:hover{ border-color:var(--fg); }
+.btn-ghost{ background:transparent; color:var(--muted); border-color:transparent; padding-inline:6px; }
+.btn-ghost:hover{ color:var(--fg); }
+.btn-arrow::after{ content:'→'; transition:transform .2s cubic-bezier(.2,.7,.2,1); }
+.btn-arrow:hover::after{ transform:translateX(3px); }
+
+/* ── 深浅色切换 ───────────────────────────────────────────────────────── */
+.theme-toggle[hidden]{ display:none; }
+.theme-toggle{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:34px; height:34px; padding:0; flex:none;
+  background:transparent; color:var(--muted);
+  border:1px solid var(--rule); border-radius:50%;
+  transition:color .2s ease, border-color .2s ease, background .2s ease;
+}
+.theme-toggle:hover{ color:var(--fg); border-color:var(--fg); background:var(--fg-soft); }
+.theme-toggle svg{ width:16px; height:16px; }
+/* 亮色下显示月亮（点了变暗）、暗色下显示太阳 —— 图标说明的是「按下去会怎样」 */
+.theme-toggle .ti-sun{ display:none; }
+:root[data-theme="dark"] .theme-toggle .ti-moon{ display:none; }
+:root[data-theme="dark"] .theme-toggle .ti-sun{ display:block; }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .theme-toggle .ti-moon{ display:none; }
+  :root:not([data-theme="light"]) .theme-toggle .ti-sun{ display:block; }
+}
+
+/* ── tags ─────────────────────────────────────────────────────────────── */
+.tag{
+  display:inline-flex; align-items:center; padding:3px 9px; background:transparent;
+  color:var(--muted); border:1px solid var(--rule-faint); border-radius:999px;
+  font-family:var(--font-mono); font-size:11px; letter-spacing:0.05em;
+}
+
+/* ── 卷首语 ───────────────────────────────────────────────────────────── */
+.intro{ padding-block:clamp(56px,8vw,104px) clamp(40px,5vw,64px); }
+/* 中文标题按 em 限宽，ch 是西文 "0" 的宽度，用在中文上会误断词。
+   窄屏不强制换行，交给 text-wrap:balance 平分成两行，避免末行只剩一两个字。 */
+.intro h1{ max-width:13em; margin-bottom:var(--gap-md); }
+@media (max-width:700px){ .brk{ display:none; } }
+.intro .lead{ margin-bottom:var(--gap-lg); }
+.intro-meta{ display:flex; flex-wrap:wrap; gap:10px 26px; padding-top:var(--gap-md); border-top:1px solid var(--rule-faint); }
+
+/* ── 记忆墙 ───────────────────────────────────────────────────────────── */
+.wall-head{ display:flex; align-items:baseline; justify-content:space-between; gap:var(--gap-md); margin-bottom:var(--gap-lg); flex-wrap:wrap; }
+.wall-head h2{ font-size:clamp(24px,2.6vw,32px); }
+
+.wall{
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:clamp(26px,3.4vw,44px) clamp(20px,2.6vw,34px);
+  align-items:start;
+}
+.wall-item{ transform:rotate(var(--rot,0deg)); }
+/* 摊开全部 14 张时末行只剩 2 张，让最后一张跨两列补满，避免右下角留空洞 */
+.wall-item:last-child:not([hidden]){ grid-column:span 2; }
+@media (max-width:600px){ .wall-item:last-child:not([hidden]){ grid-column:span 1; } }
+.wall-item.wide{ grid-column:span 2; }
+
+/* 相纸 */
+.print{
+  display:block; position:relative; margin:0;   /* <figure> 自带 40px 外边距，会挤窄版面 */
+  background:var(--surface);
+  padding:11px 11px 0;
+  border:1px solid var(--border);
+  border-radius:3px;
+  box-shadow:var(--lift-1);
+  transition:transform .42s cubic-bezier(.16,.84,.3,1), box-shadow .42s ease;
+}
+/* 相纸上的照片统一 3:2。源图已按 3:2 生成（原比例 1.42–1.53，裁幅 ≤3.5%），
+   aspect-ratio 只是布局兜底，不裁切内容。原来每张按自身原始比例占位时，
+   同行相纸盒高在 221–236px 之间浮动，题注基线彼此错开 —— 只差几像素时
+   读者读到的不是「手工摆放的错落」，而是「没对齐」。
+   错落感交给旋转（--rot）承担，高度交给网格。 */
+.print-img{
+  width:100%; height:auto; aspect-ratio:3 / 2;
+  background:color-mix(in oklch, var(--fg) 6%, var(--surface));
+  border-radius:1px;
+  filter:brightness(var(--photo-brightness));
+}
+/* 无照片卡的正面比例见下方 .note-face，同样走 3:2 以与邻卡等高 */
+.print-cap{ padding:13px 3px 17px; }
+.print-cap h3{ font-size:18px; line-height:1.42; letter-spacing:0; }
+/* 元信息行里「最新」带边框与内边距，比同行的编号/日期高一截；
+   align-items:center 会把整行撑到它的高度，导致首卡相纸比其他卡高 7px。
+   基线对齐 + 给标签一个不吃行高的盒模型，让首卡与其余卡等高。 */
+.print-meta{ margin:9px 0 0; font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.04em; color:var(--muted); display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.print-meta .tag{ align-self:center; padding:1px 8px; font-size:11px; line-height:1.5; }
+.print-meta .dot{ align-self:center; }
+/* 底片编号：曾用 color-mix(fg 45%, bg) 合成出 oklch(0.627…) → 实测仅 3.37:1，
+   低于 AA 正文阈值。改用 --muted（5.53:1），保留等宽与字距的材质感。 */
+.print-meta .frame{ color:var(--muted); }
+.print-meta .dot{ width:3px; height:3px; border-radius:50%; background:currentColor; opacity:.5; }
+
+/* 没有照片的一张：整块相纸就是文字本身 —— 「文字也是一种影像记录」 */
+.note-face{
+  aspect-ratio:3 / 2; display:flex; align-items:center;
+  padding:26px 22px; border-radius:1px;
+  background:color-mix(in oklch, var(--fg) 4%, var(--surface));
+}
+.note-face p{
+  margin:0; font-family:var(--font-display); font-size:16.5px; line-height:1.78;
+  color:color-mix(in oklch, var(--fg) 76%, var(--bg));
+}
+
+.wall-item:hover .print,
+.print:focus-visible{
+  transform:translateY(-7px) rotate(calc(var(--rot,0deg) * -1));
+  box-shadow:var(--lift-2);
+}
+.wall-item:hover .print-cap h3{ text-decoration:underline; text-decoration-color:var(--rule); text-underline-offset:4px; }
+
+/* 逐张摆开 */
+@keyframes lay-down{
+  from{ opacity:0; transform:translate3d(0,26px,0) rotate(calc(var(--rot,0deg) * 3)) scale(.99); }
+  to  { opacity:1; transform:translate3d(0,0,0) rotate(var(--rot,0deg)) scale(1); }
+}
+.wall-item{ animation:lay-down .6s cubic-bezier(.16,.84,.3,1) both; animation-delay:calc(var(--i,0) * 45ms); }
+
+/* ── 年份轨迹 ─────────────────────────────────────────────────────────── */
+.year-grid{ gap:0; border-top:1px solid var(--rule); }
+.year-cell{
+  display:flex; flex-direction:column; gap:6px; width:100%; text-align:left;
+  font:inherit; color:inherit; cursor:pointer; background:none; border:0;
+  padding:24px 20px 24px 0; border-bottom:1px solid var(--rule-faint);
+  border-right:1px solid var(--rule-faint);
+  transition:background .22s ease;
+}
+.year-cell:last-child{ border-right:0; }
+.year-cell:hover{ background:var(--fg-soft); }
+.year-num{ font-family:var(--font-display); font-size:clamp(28px,3vw,38px); line-height:1; letter-spacing:-0.02em; }
+.year-meta{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); letter-spacing:0.05em; }
+/* 展开状态靠年份数字下标的小点表示，不往元信息行里塞字（否则会折成两行，2026 那格会拖高三行） */
+.year-cell{ position:relative; }
+.year-cell[aria-expanded="true"]{ background:var(--fg-soft); }
+.year-cell[aria-expanded="true"] .year-num::after{
+  content:''; display:inline-block; width:7px; height:7px; margin-left:9px;
+  border-radius:50%; background:var(--accent); vertical-align:0.55em;
+}
+
+/* 原页展开的该年相纸。旋转仍由 --rot 承担，错落节奏与墙上一致。 */
+.wall-item.is-added{ animation:lay-down .6s cubic-bezier(.16,.84,.3,1) both; }
+.wall-item[hidden]{ display:none; }
+
+/* ── CTA ──────────────────────────────────────────────────────────────── */
+.cta{ text-align:center; border-top:1px solid var(--rule); }
+.cta h2{ max-width:22ch; margin-inline:auto; }
+.cta .lead{ margin:16px auto 30px; max-width:46ch; }
+
+/* ── 归档：按年份翻相册 ───────────────────────────────────────────────── */
+.year-jump{ display:flex; flex-wrap:wrap; gap:10px; margin-top:var(--gap-lg); }
+.year-jump a{
+  font-family:var(--font-mono); font-size:12px; letter-spacing:0.06em; color:var(--muted);
+  padding:5px 13px; border:1px solid var(--rule); border-radius:999px;
+  transition:color .18s ease, border-color .18s ease, background .18s ease;
+}
+.year-jump a:hover{ color:var(--fg); border-color:var(--rule); background:var(--surface); }
+.year-block{ padding-block:clamp(44px,6vw,72px); scroll-margin-top:82px; }
+.year-block + .year-block{ border-top:1px solid var(--rule); }
+.year-head{ display:flex; align-items:baseline; gap:var(--gap-md); flex-wrap:wrap; margin-bottom:var(--gap-lg); }
+.year-title{ font-family:var(--font-display); font-size:clamp(40px,6vw,68px); line-height:1; letter-spacing:-0.03em; color:var(--fg); }
+.year-head .year-rule{ flex:1; height:1px; background:var(--rule); min-width:24px; }
+
+.album{ list-style:none; margin:0; padding:0; }
+.album-row + .album-row{ border-top:1px solid var(--rule-faint); }
+.album-row a{
+  display:grid; grid-template-columns:104px minmax(0,1fr) auto 76px;
+  gap:clamp(16px,2.4vw,30px); align-items:center;
+  padding:18px 12px 18px 0; border-radius:4px;
+  transition:background .22s ease, transform .3s cubic-bezier(.16,.84,.3,1);
+}
+.album-row a:hover{ background:var(--fg-soft); transform:translateX(5px); }
+.album-thumb{
+  display:block; background:var(--surface); padding:4px 4px 5px;
+  border:1px solid var(--border); border-radius:2px; box-shadow:var(--lift-1);
+}
+.album-thumb img{ width:100%; height:auto; border-radius:1px; filter:brightness(var(--photo-brightness)); }
+.album-body{ min-width:0; }
+.album-body h3{ font-size:18px; }
+.album-dek{ margin:5px 0 0; color:var(--muted); font-size:14px; line-height:1.62; }
+.album-date{ margin:0 0 4px; font-family:var(--font-mono); font-size:12px; color:var(--muted); letter-spacing:0.04em; }
+.album-frame{ font-family:var(--font-mono); font-size:12px; color:var(--muted); text-align:right; }
+@media (max-width:760px){
+  .album-row a{ grid-template-columns:76px minmax(0,1fr); row-gap:10px; }
+  .album-row .album-tag,.album-row .album-frame{ grid-column:2; }
+  .album-frame{ text-align:left; }
+}
+
+/* ── 文章页 ───────────────────────────────────────────────────────────── */
+.article-head{ padding-block:clamp(48px,7vw,88px) clamp(28px,4vw,44px); }
+/* 文章标题比首页封面小一号：阅读页里标题不该和正文抢注意力。
+   keep-all 让中文词组不被拆开（"树状数组" 不能断成两行），
+   anywhere 只是兜底，防止某个超长词组撑破版心。 */
+.article-head h1{
+  font-size:clamp(30px, 4.4vw, 52px); max-width:15em; margin-bottom:var(--gap-md);
+  word-break:keep-all; overflow-wrap:anywhere;
+}
+.article-head .lead{ max-width:52ch; }
+.article-meta{
+  display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:var(--gap-lg);
+  padding-top:var(--gap-md); border-top:1px solid var(--rule-faint);
+}
+
+/* 印刷边框头图 */
+.plate{ margin:0 0 clamp(36px,5vw,60px); }
+.plate .plate-inner{
+  background:var(--surface); padding:13px 13px 0;
+  border:1px solid var(--border); border-radius:3px; box-shadow:var(--lift-1);
+}
+.plate-img{ width:100%; height:auto; border-radius:1px; filter:brightness(var(--photo-brightness)); }
+.plate figcaption{
+  font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.05em;
+  color:var(--muted); padding:13px 4px 15px; display:flex; gap:10px; align-items:center;
+}
+.plate figcaption::before{ content:'▣'; opacity:.45; }
+
+/* 正文列比图片列略窄，图可以略微出血到文字之外 */
+.article-col{ max-width:680px; margin-inline:auto; }
+.prose{ max-width:36em; margin-inline:auto; font-size:17.5px; line-height:1.92; }
+.prose > * + *{ margin-top:1.35em; }
+.prose h2{ font-size:clamp(23px,2.4vw,29px); margin-top:2.2em; line-height:1.3; }
+.prose h3{ font-size:19px; margin-top:1.9em; }
+.prose p{ margin:0; color:color-mix(in oklch, var(--fg) 92%, var(--bg)); }
+.prose strong{ color:var(--fg); font-weight:600; }
+.prose em{ font-style:italic; }
+.prose a{ color:var(--fg); text-decoration:underline; text-decoration-color:var(--rule); text-underline-offset:4px; transition:text-decoration-color .2s ease; }
+.prose a:hover{ text-decoration-color:var(--accent); }
+.prose ul,.prose ol{ margin:0; padding-left:1.35em; }
+.prose li + li{ margin-top:.55em; }
+.prose li::marker{ color:var(--muted); }
+.prose code{
+  font-family:var(--font-mono); font-size:.86em; padding:2px 6px;
+  background:var(--code-bg); border-radius:4px; white-space:nowrap;
+}
+.prose blockquote{
+  margin:2em 0; padding:2px 0 2px 26px; border-left:2px solid var(--rule);
+  font-family:var(--font-display); font-size:21px; line-height:1.72; color:var(--fg);
+}
+.prose blockquote p{ color:inherit; }
+.prose hr{ border:0; border-top:1px solid var(--rule-faint); margin:2.6em 0; }
+
+/* 代码块 */
+.code{
+  margin:1.9em 0; background:var(--code-bg);
+  border:1px solid var(--border); border-radius:10px; overflow:hidden;
+}
+.code-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:9px 14px; border-bottom:1px solid var(--rule-faint);
+  font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.05em; color:var(--muted);
+}
+.code-head .code-lang{ text-transform:uppercase; letter-spacing:0.12em; font-size:10.5px; }
+.code pre{ margin:0; padding:16px 18px; overflow-x:auto; }
+.code code{ font-family:var(--font-mono); font-size:13.5px; line-height:1.78; white-space:pre; color:var(--fg); }
+.tok-kw{ color:var(--code-kw); }
+.tok-str{ color:var(--code-str); }
+.tok-num{ color:var(--code-num); }
+.tok-cmt{ color:var(--code-cmt); font-style:italic; }
+.tok-fn{ color:color-mix(in oklch, var(--fg) 72%, var(--bg)); }
+
+/* 公式 */
+.formula{
+  display:flex; align-items:center; gap:var(--gap-md); margin:1.9em 0;
+  padding:18px 22px; background:var(--surface);
+  border:1px solid var(--border); border-radius:3px;
+  font-family:var(--font-display); font-size:19px; line-height:1.5; overflow-x:auto;
+}
+.formula-body{ flex:1; white-space:nowrap; }
+.formula-body i{ font-style:italic; }
+.formula-body .op{ font-style:normal; padding-inline:2px; }
+.formula-num{ font-family:var(--font-mono); font-size:13px; color:var(--muted); flex:none; }
+
+/* 翻页 */
+.page-turn{
+  display:grid; grid-template-columns:1fr 1fr; gap:var(--gap-md);
+  margin-top:clamp(48px,7vw,84px); padding-top:var(--gap-lg); border-top:1px solid var(--rule);
+}
+.turn{
+  display:flex; flex-direction:column; gap:7px; padding:18px 20px;
+  border:1px solid var(--rule-faint); border-radius:var(--radius);
+  transition:border-color .22s ease, background .22s ease, transform .3s cubic-bezier(.16,.84,.3,1);
+}
+.turn:hover{ border-color:var(--rule); background:var(--surface); transform:translateY(-3px); }
+.turn-next{ text-align:right; align-items:flex-end; }
+.turn-title{ font-family:var(--font-display); font-size:17px; line-height:1.4; }
+.turn-label{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); letter-spacing:0.05em; }
+@media (max-width:640px){ .page-turn{ grid-template-columns:1fr; } .turn-next{ text-align:left; align-items:flex-start; } }
+
+/* ── 关于页 ───────────────────────────────────────────────────────────── */
+/* 窄栏一律左对齐到版心，不要居中：各节左边缘对不齐会显得散 */
+.measure{ max-width:760px; }
+.measure .prose{ max-width:none; margin-inline:0; }
+.about-hero{ display:grid; grid-template-columns:1.02fr .98fr; gap:clamp(32px,5vw,72px); align-items:center; }
+.about-hero .intro-meta{ margin-top:var(--gap-lg); }
+@media (max-width:920px){ .about-hero{ grid-template-columns:1fr; gap:clamp(28px,5vw,40px); } }
+
+/* 相纸下的手写注脚 */
+.print-note{
+  margin:0; font-family:var(--font-display); font-size:15px; line-height:1.72;
+  color:color-mix(in oklch, var(--fg) 74%, var(--bg));
+}
+
+/* 照片背面：印着参数的那一面 */
+.backface{
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:3px; box-shadow:var(--lift-1);
+  padding:4px clamp(18px,2.6vw,32px);
+}
+.backface-row{
+  display:grid; grid-template-columns:minmax(72px,auto) minmax(0,1fr);
+  gap:6px clamp(18px,3vw,44px); align-items:baseline;
+  padding:15px 0; border-top:1px solid var(--rule-faint);
+}
+.backface-row:first-child{ border-top:0; }
+.backface-key{
+  font-family:var(--font-mono); font-size:11.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--muted); white-space:nowrap;
+}
+.backface-val{ margin:0; font-size:15.5px; line-height:1.74; }
+
+/* 制作说明 */
+.spec-row{
+  display:grid; grid-template-columns:minmax(92px,164px) minmax(0,1fr);
+  gap:6px clamp(20px,3.4vw,48px); align-items:baseline;
+  padding:17px 0; border-top:1px solid var(--rule-faint);
+}
+.spec-key{ font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; color:var(--muted); white-space:nowrap; }
+.spec-val{ margin:0; font-size:15px; line-height:1.76; color:var(--muted); }
+.spec-val strong{ color:var(--fg); font-weight:600; }
+@media (max-width:640px){ .backface-row,.spec-row{ grid-template-columns:1fr; gap:5px; } }
+
+/* 独立引用卡 */
+.pullquote{
+  margin:0; padding:clamp(22px,3vw,34px) clamp(22px,3.2vw,38px);
+  background:var(--surface); border:1px solid var(--border); border-radius:3px;
+  box-shadow:var(--lift-1);
+  font-family:var(--font-display); font-size:clamp(18px,2.1vw,22px);
+  line-height:1.76; color:color-mix(in oklch, var(--fg) 86%, var(--bg));
+}
+.pullquote-author{
+  margin:16px 0 0; font-family:var(--font-mono); font-size:11.5px;
+  letter-spacing:.06em; color:var(--muted);
+}
+.cta-actions{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+/* ── footer ───────────────────────────────────────────────────────────── */
+.pagefoot{ padding-block:var(--gap-xl) var(--gap-lg); margin-top:clamp(40px,6vw,72px); border-top:1px solid var(--rule); color:var(--muted); font-size:13.5px; }
+.foot-grid{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:var(--gap-lg); }
+.foot-name{ font-family:var(--font-display); font-size:19px; color:var(--fg); margin:0 0 8px; }
+.foot-note{ margin:0; max-width:44ch; line-height:1.72; }
+.foot-label{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin:0 0 12px; }
+.foot-col a{ display:block; padding:3px 0; transition:color .18s ease; }
+.foot-col a:hover{ color:var(--fg); }
+.foot-base{ margin-top:var(--gap-xl); padding-top:var(--gap-md); border-top:1px solid var(--rule-faint); }
+@media (max-width:760px){ .foot-grid{ grid-template-columns:1fr 1fr; } .foot-grid > :first-child{ grid-column:1 / -1; } }
+
+/* ── 页面切换（渐进增强，不支持的浏览器直接忽略） ─────────────────────── */
+@view-transition{ navigation:auto; }
+@keyframes vt-out{ to{ opacity:0; } }
+@keyframes vt-in{ from{ opacity:0; } }
+::view-transition-old(root){ animation:vt-out .24s ease both; }
+::view-transition-new(root){ animation:vt-in .32s ease both; }
+
+/* ── 响应式回流 ───────────────────────────────────────────────────────── */
+@media (max-width:920px){
+  :root{ --gutter:22px; }
+  .grid-2,.grid-3,.grid-4{ grid-template-columns:1fr; }
+  .wall{ grid-template-columns:repeat(2,1fr); }
+  .wall-item.wide{ grid-column:span 2; }
+  .year-grid{ grid-template-columns:repeat(2,1fr); }
+  .year-cell:nth-child(2n){ border-right:0; }
+  .prose{ font-size:17px; line-height:1.88; }
+}
+@media (max-width:600px){
+  .wall{ grid-template-columns:1fr; gap:26px; }
+  .wall-item.wide{ grid-column:span 1; }
+  .year-grid{ grid-template-columns:1fr; }
+  .year-cell{ border-right:0; padding-right:0; }
+  .intro h1{ max-width:none; }
+  .prose{ font-size:16.5px; line-height:1.86; }
+  .formula{ font-size:16px; padding:15px 16px; }
+}
+
+/* ── 减少动态效果 ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation-duration:.001ms !important; animation-delay:0ms !important; transition-duration:.001ms !important; }
+  .wall-item{ animation:none; opacity:1; }
+  .wall-item:hover .print{ transform:none; }
+  .album-row a:hover{ transform:none; }
+  ::view-transition-old(root),::view-transition-new(root){ animation:none; }
+}
+
+/* ── 打印 ─────────────────────────────────────────────────────────────── */
+@media print{
+  .topnav,.page-turn,.cta{ display:none; }
+  body{ background:var(--surface); }
+  .print,.plate .plate-inner{ box-shadow:none; }
+}
+</style>
+</head>
+<body>
+
+<header class="topnav" data-od-id="topnav">
+  <div class="container topnav-inner">
+    <a class="logo" href="index.html">拾光集<span class="logo-sub">Shiguang</span></a>
+    <nav>
+      <a href="index.html">记忆墙</a>
+      <a href="archive.html" class="is-current">归档</a>
+      <a href="about.html">关于</a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色">
+      <svg class="ti-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+      <svg class="ti-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4 17 7M7 17l-1.6 1.6"/></svg>
+    </button>
+    <a class="btn btn-secondary" href="index.html#subscribe">订阅</a>
+  </div>
+</header>
+
+<main id="content">
+
+  <!-- ── 相册封面 ───────────────────────────────────────────────────── -->
+  <section class="section intro" data-od-id="archive-intro">
+    <div class="container">
+      <p class="eyebrow">归档 · 2023 — 2026</p>
+      <h1>十四张相纸，按年份摞好。</h1>
+      <p class="lead">相册从上往下翻，最新的在最上面。每一行都是一次记录，点开就是那篇文章。</p>
+      <nav class="year-jump" aria-label="跳转到年份">
+        <a href="#y2026">2026 · 4</a>
+        <a href="#y2025">2025 · 4</a>
+        <a href="#y2024">2024 · 4</a>
+        <a href="#y2023">2023 · 2</a>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ── 2026 ───────────────────────────────────────────────────────── -->
+  <section class="section year-block" id="y2026" data-od-id="y2026">
+    <div class="container">
+      <div class="year-head">
+        <h2 class="year-title">2026</h2>
+        <span class="year-rule" aria-hidden="true"></span>
+        <span class="year-meta">4 张 · 技术 · 生活 · 影像 · 算法</span>
+      </div>
+      <ul class="album">
+
+        <li class="album-row">
+          <a href="post.html">
+            <span class="album-thumb"><img src="data:image/webp;base64,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" width="200" height="133" decoding="async" alt="木桌上摊着笔记本、平板与咖啡。"></span>
+            <div class="album-body">
+              <p class="album-date">03 · 14</p>
+              <h3>把博客搬回静态站之后</h3>
+              <p class="album-dek">从 Astro 的产物结构说起：一个纯静态站点到底还需不需要边缘缓存，以及拆掉它之后我补上了什么。</p>
+            </div>
+            <span class="album-tag tag">技术</span>
+            <span class="album-frame">№ 014</span>
+          </a>
+        </li>
+
+        <li class="album-row">
+          <a href="post.html">
+            <span class="album-thumb"><img src="data:image/webp;base64,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" width="200" height="133" decoding="async" alt="咖啡馆靠窗的长木桌与一杯咖啡。"></span>
+            <div class="album-body">
+              <p class="album-date">02 · 28</p>
+              <h3>凌晨四点的咖啡馆</h3>
+              <p class="album-dek">那家店四点开门，只为了让赶早班飞机的人有地方坐。我去过很多次，这是第一次把它写下来。</p>
+            </div>
+            <span class="album-tag tag">生活</span>
+            <span class="album-frame">№ 013</span>
+          </a>
+        </li>
+
+        <li class="album-row">
+          <a href="post.html">
+            <span class="album-thumb"><img src="data:image/webp;base64,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" width="200" height="133" decoding="async" alt="白底上摊开的胶片相机零件。"></span>
+            <div class="album-body">
+              <p class="album-date">02 · 09</p>
+              <h3>关于胶片的一点私心</h3>
+              <p class="album-dek">为什么在随手就能拍几千张的年代，我还在用一台只有三十六张的机器。</p>
+            </div>
+            <span class="album-tag tag">影像</span>
+            <span class="album-frame">№ 012</span>
+          </a>
+        </li>
+
+        <li class="album-row">
+          <a href="post.html">
+            <span class="album-thumb"><img src="data:image/webp;base64,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" width="200" height="133" decoding="async" alt="笔记本前的一双手正在纸上写字。"></span>
+            <div class="album-body">
+              <p class="album-date">01 · 21</p>
+              <h3>LIS 与树状数组的取舍</h3>
+              <p class="album-dek">同一道最长上升子序列，两种写法之间差的往往不是速度，而是你想在题解里讲清楚什么。</p>
+            </div>
+            <span class="album-tag tag">算法</span>
+            <span class="album-frame">№ 011</span>
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── 2025 ───────────────────────────────────────────────────────── -->
+  <section class="section year-block" id="y2025" data-od-id="y2025">
+    <div class="container">
+      <div class="year-head">
+        <h2 class="year-title">2025</h2>
+        <span class="year-rule" aria-hidden="true"></span>
+        <span class="year-meta">4 张 · 生活 · 随笔</span>
+      </div>
+      <ul class="album">
+
+        <li class="album-row">
+          <a href="post.html">
+            <span class="album-thumb"><img src="data:image/webp;base64,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" width="200" height="133" decoding="async" alt="雾中的海边栈桥。"></span>
+            <div class="album-body">
+              <p class="album-date">11 · 16</p>
+              <h3>雾里的那座栈桥</h3>
+              <p class="album-dek">那天能见度不到两百米，海和天是同一种灰。我站了很久，什么也没想。</p>
+            </div>
+            <span class="album-tag tag">生活</span>
+            <span class="album-frame">№ 010</span>
+          </a>
+        </li>
+
+        <li class="album-row">
+          <a href="post.html">
+            <span class="album-thumb"><img src="data:image/webp;base64,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" width="200" height="133" decoding="async" alt="逆光下透亮的高草穗子。"></span>
+            <div class="album-body">
+              <p class="album-date">08 · 27</p>
+              <h3>夏天结束的方式</h3>
+              <p class="album-dek">没有台风，也没有告别，只是某天傍晚的风忽然凉了下来。</p>
+            </div>
+            <span class="album-tag tag">生活</span>
+            <span class="album-frame">№ 009</span>
+          </a>
+        </li>
+
+        <li class="album-row">
+          <a href="post.html">
+            <span class="album-thumb"><img src="data:image/webp;base64,UklGRkYGAABXRUJQVlA4IDoGAABQLQCdASrIAIUAPqFEn0smI6osqdHLoZAUCWduJl9JAkBKIKbt0u5fHD1R78c7ClwjXiI2kp5pvsFHANQG713UTiJYX83ovMTmvsOp7NZ4jrinXW4roqw2yaMUGQ+PD3ayOOpRNnPmLHrhidXU4aOWe1gG08R0GKTwfY6LjDu+TanUDrbVn7dTnDWGVmD37QiZecM17Zs08znviFOMsssoLHpg+w+FufsuLavum33cBluDFmRSCou421bzXPc6/5Qg85INMLDHQrIL7AUiqa8r/ARhQDuIVzO4hB4hZPULpFV9kDQpO5lDEPxFMe3T3iGcESxCxy+6sL1I9ZXEZ1NR9YJTobJYlYaM6CGdG0DU3kGFQ95+3n3wB7Ap9lqGiBSwvcpJ5z1frU4BIgp08exJG4DWl8gETYJHu4LdJPu6UeFYh2vTCL+7iDYSc+2G4HJV/y63dRqYDJKBwIEJSJJeM2OFuO049iMl7FCrQNQh3sh4AAD+6sPHLxDVRH8+NpabxvTysjeqE/c9uUcwoOrMN0x00Ub6db+mfrHJlPmpi41KsiM4Ix6MESZ2hjz3dWrMJNWKuqCgOvTD5Rk/hLq0lXbZIqDGIEKIqjq5roRMkNqbSKq3zHKbd/JoITD+i2V9S4EjtSHNYueNtZs55LmSErbGX8iUH8shFA1Ihe+j4/Z9211m3MESdFVLJFZfBL6nhKzRwmeNoWFbkQ5P5PqW775Bd50qMooZCf/JPK0/JEklIqJNESI6SiR7ohx6LS3PsYdEnW6DNDsF5/TJGaO5av6tqAVaiSH4OIN4F/hEv1GW6IX8wgauP4t6PBi7W5gwX6unPwRlEalt/jB7SpVOEXCzPeKOTwMz1t+rgBO8GjlybWHfXscpsaj+OwowUKdkr0waetwcTYOZ/EblipMP2cLCGuljKxeJLb/nnTtNWDC9LN8aZ50BeoZDXLV8+r7rcQPnzw5aSHnMWumzCzWdAPWmtuHQFz6f0KKVFCFDxwS2LE/WujwtrOaXLT5tYJjUD/Y19P+LAPm95lqZ3VGcMDQzoEAsXm6s7PGi7KRFJ7Z90xhZrqi1YAfVyueyxCOrefuVoytO/8sI1OxjrLqZ7iIgfHsrEBgxpsLxLFmOcFFThM0/oIc1N4knDwaKF/xCZpw1F2i2MWQzKNT0+N3YRqG2jzOKlll98kI617VJmwa2NQnIScQBGGsh91MyTMbjm4APmV69wcsjUzGxjFXDdbRRkfBCnSJsiDvbUpb95iEMyRPSpMtKVQHN2ME5yQ4thm4gJZXM5MWKerQvy2qLIphF5JZ1iTA2qIvDOMGwuP9yGmHuNBS5zOJuPK/hoJINzjOWzAJKVhoh4FDhMR321AEChBla8omG759ZvVI1meLWoa9ylVlIVfOsSDInCPV/DHTUJR5w/bgYXlbD8EDi9ZSkWh67dumNZONVbptbOU1IebusyAGvp1VEf6tzz0rcngMH6eSHZ7uw8h+Am9mm+yvj8qJ47IspLscCY7C3PggstgZaMbWR3xRtlEsJeyQnMTMrL8FuYzP5Jt71onUPKDgifUFvz9j/cUts2VoEnmBKIGunrh++edh+LShEGZelAIHp12ju/kbka6h0/oUlxJ0oeB8RKBfw5fzv/1+xIKqRj4+uRupY3lLOnflzyKBs4Dnq91uIk55A3Rx+iWaVxqsmxJx9JkEXYjC+UYaBlUlxdySyfCrg+w1rdFUdXncZTsR0VLPx0hYIEAnCv1TMbXcu6+ohzcHpay8I5gAbRQ95jEoHoErDm1jRdvOtgEwUMKjQTJu0jy5aw+nLW0qPtHKHXhJLVlp2iD5yi+bGpKF4ZAlY1dXWmgxBnhsQBlgVjvU/dgzwMQCogMTVPvB+J1QQcmrQTnAx4Cz/tBrqloTdrNelRtM4kfgcOmvuIqQVF+YISo6r9LFTHZajTa1iLsZPWt5dyK5sxB/7SSHkVTi5ifQEmjPvV3ETq7ZQDV6x8l4kc0bJhnYmSkdqKVxrR5QS9165eZftcZldjlpzWzTwI/5JANX0lX1nUeOZBPKereGbDfDnsAnxhHIu7Ft7LUv2a533hcimlJYAT0yCgD9ng4Cn0Ng4wvAhzbt77fJBbBiirljS4AAA" width="200" height="133" decoding="async" alt="唱机上的黑胶唱片。"></span>
+            <div class="album-body">
+              <p class="album-date">06 · 12</p>
+              <h3>重听一张旧唱片</h3>
+              <p class="album-dek">同一张专辑隔了六年再听，记住的居然完全不是当初喜欢的那几首。</p>
+            </div>
+            <span class="album-tag tag">随笔</span>
+            <span class="album-frame">№ 008</span>
+          </a>
+        </li>
+
+        <li class="album-row">
+          <a href="post.html">
+            <span class="album-thumb"><img src="data:image/webp;base64,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" width="200" height="133" decoding="async" alt="粗陶桌上印着邮票图案的马克杯。"></span>
+            <div class="album-body">
+              <p class="album-date">03 · 02</p>
+              <h3>一杯咖啡的十五分钟</h3>
+              <p class="album-dek">手冲最慢的那十五分钟，是我一天里唯一不看屏幕的时间。</p>
+            </div>
+            <span class="album-tag tag">生活</span>
+            <span class="album-frame">№ 007</span>
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── 2024 ───────────────────────────────────────────────────────── -->
+  <section class="section year-block" id="y2024" data-od-id="y2024">
+    <div class="container">
+      <div class="year-head">
+        <h2 class="year-title">2024</h2>
+        <span class="year-rule" aria-hidden="true"></span>
+        <span class="year-meta">4 张 · 随笔 · 技术 · 生活</span>
+      </div>
+      <ul class="album">
+
+        <li class="album-row">
+          <a href="post.html">
+            <span class="album-thumb"><img src="data:image/webp;base64,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" width="200" height="133" decoding="async" alt="摊开在桌面上的旧书。"></span>
+            <div class="album-body">
+              <p class="album-date">10 · 08</p>
+              <h3>读完了，但没记住</h3>
+              <p class="album-dek">合上一本书之后到底能留下什么？我试着给读过的每本书各写一句话。</p>
+            </div>
+            <span class="album-tag tag">随笔</span>
+            <span class="album-frame">№ 006</span>
+          </a>
+        </li>
+
+        <li class="album-row">
+          <a href="post.html">
+            <span class="album-thumb"><img src="data:image/webp;base64,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" width="200" height="133" decoding="async" alt="深色桌面上摊开的手表、眼镜与手机。"></span>
+            <div class="album-body">
+              <p class="album-date">07 · 19</p>
+              <h3>把工具箱减到七个命令</h3>
+              <p class="album-dek">一次刻意的减法：把每天真正在用的命令行工具列出来，然后把其余的删掉。</p>
+            </div>
+            <span class="album-tag tag">技术</span>
+            <span class="album-frame">№ 005</span>
+          </a>
+        </li>
+
+        <li class="album-row">
+          <a href="post.html">
+            <span class="album-thumb"><img src="data:image/webp;base64,UklGRlQFAABXRUJQVlA4IEgFAADQJACdASrIAIUAPqFOoUwmJCMlJLh5wMAUCWkHG2lp/qE/Z+obMW2/2nzSgcpcwzrTyX/6Mu43QhCEIQgwjGMYxNqTwkTUE3aqP6j4qS9c2I7KxUbhSE7NmVs1ojTxtxkxtE4QTuRe3l7YXFPwRSzxGG4cc10r24XGRnzzYCVk8+lCcrDggkdZ1dEJCP2YQpimmOJAWaaHao6kzEZ1D8VAdHy9jDmeqGrZBKlS+6qjzNytEml1UCH6izgkuFAefZ3XcFxbxyXlylnDVxtmDvuumL9AarkaZyCItHuneQQudp63Ec7LAGDpoxQQuZ/yRWM3yEQaBwyVBoPZv6QCKz8kkl8juCJMU+re3JR2zvOxz5gZBdfqRScHepKct/FfwKXoUeUPbPPPUqhhh5h4IMAA/uKXReql8PCVdl0Hyvw3s4PbL4f9xDtYbKeXuut8gJ/SHqvqQS5OZEUchOJAAkkujMrW4o8rmQ8bK+TqKoUDqdiTBc895wDLs6JBSbSO9Hw94ZeYCkplwbKXdg91Ph7CAOTEtzJrIF6hvBZtgtJbiz5UgkRSvRm2EwjEOKSLS8AbxqYT0iieO7+ToiSexagJ74AdO55RFPtS1PmuGMFzdhr11ITPY+gdCGgyM9xJTMqAcDGamH/fhrCCgNX7UDXOxBoBJLGGhF/IKGCqm4u16SskiF1S5fId8oASp58kuMqtjdaWtrIBdEqr0wqtNyquYGnQA5S5kTXtj9aUds17H9G7xD8JqAhtZLRQHtoT6xIz3k3Yefg8qAdcLzkYhGrd1IV5Rxxq6d+bdWT1haLV0QCvPheqp5pjmXPR5hi1YqWiH+3pTrCdGxRdK4+Flbkqcf2/vkBBJCIjGOA+IGiMsdapkCKqW70fCldjpxJPI/d2w/M7IqHW1PErOIajyfIMh7SNtdlvjb67fGoeuylRFoaK4QaABU5oDHjUL9lzSfzYoQE8eDsWZGItEvb/rj+y8B1cZDJfHsgmvVDn2p9wRFZcTcujDMBqgVkYme4H87Vj91YeZwuy6L8WoLjmwZv6VUQ+TLTL6mMY1F148iH8qEjz1t5INBefA6+r9LTg4/OxkC13Ud39IhYw3UL20HLSzlB9xEQfGypYUHZs1SjY5PBI9V4NuRUXAZdSLJ7Rbnq02bddQLo+l/Tw95y6C4s7q00rsbqo9X7OaB7W/19mM+OUw6cFEy0ySBLx+Rxy0JsFIUnfgFgxB/mitOE/7/A0cXqyUEzuCpB9zVLYbhRQq+TbuYExPhcWA/SbrgyEpXr6qilFo+mivpCCkPnRrLjBGfF0xfZGzFz17LklKaaosNlHWI4VRARx8ohOkWwmIApIWk9SXlQ604UlrOFyYZjpl/bPQLRAm2pjJdGz28CAlDYj7Ju9GvakfC1MNWKA0TF4bVusUbyCChzc02TwalJZMF5QCYBi7ft87DCifKCERvkNNIKCDSCj4HBIxeluvZkoiBwuWdvY9bG41hrD4hZH/AVJNBjfDSepbnLTQFVEo4LKce7RW15G/Ytww7DSzjH1odNq+xcy/HBKOrXtcOdWqF/CcI+yldSApps7ZuKguKHNWvbsDrCqSSiTpXn+THSVa6LxMEq9JY9QR2IL5v/E5/f891/aPCFRr3FMbFojw7fNvXZTG7wiP1duf+ko0W8KcSQW68H/s4Cyfjl+6cm/cbc4KraXVZuSmbB012kBPQyVv06b//Via8ZdG9YJTP14Of0+A0xvn9IJ7LXgaOmQomm8IkSeeiVpTUYF1Zsj1kNgaEWvJuKHQTMzcOgXF5FG7eSjAAAAAA==" width="200" height="133" decoding="async" alt="清晨雾中的海岸线。"></span>
+            <div class="album-body">
+              <p class="album-date">05 · 04</p>
+              <h3>雾散之前</h3>
+              <p class="album-dek">清晨六点走到海边等雾散。它没有散，但我把闹钟留在了那里。</p>
+            </div>
+            <span class="album-tag tag">生活</span>
+            <span class="album-frame">№ 004</span>
+          </a>
+        </li>
+
+        <li class="album-row">
+          <a href="post.html">
+            <span class="album-thumb"><img src="data:image/webp;base64,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" width="200" height="133" decoding="async" alt="咖啡馆木桌上的笔记本电脑。"></span>
+            <div class="album-body">
+              <p class="album-date">02 · 11</p>
+              <h3>远程办公的第 N 天</h3>
+              <p class="album-dek">关于在家办公真正难的那部分——不是效率，是边界。</p>
+            </div>
+            <span class="album-tag tag">技术</span>
+            <span class="album-frame">№ 003</span>
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── 2023 ───────────────────────────────────────────────────────── -->
+  <section class="section year-block" id="y2023" data-od-id="y2023">
+    <div class="container">
+      <div class="year-head">
+        <h2 class="year-title">2023</h2>
+        <span class="year-rule" aria-hidden="true"></span>
+        <span class="year-meta">2 张 · 生活</span>
+      </div>
+      <ul class="album">
+
+        <li class="album-row">
+          <a href="post.html">
+            <span class="album-thumb"><img src="data:image/webp;base64,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" width="200" height="133" decoding="async" alt="空旷路口上独自过马路的人影。"></span>
+            <div class="album-body">
+              <p class="album-date">12 · 30</p>
+              <h3>年末的十字路口</h3>
+              <p class="album-dek">一年里最后一次过马路，忽然想给这一年写点什么，于是有了这个博客。</p>
+            </div>
+            <span class="album-tag tag">生活</span>
+            <span class="album-frame">№ 002</span>
+          </a>
+        </li>
+
+        <li class="album-row">
+          <a href="post.html">
+            <span class="album-thumb"><img src="data:image/webp;base64,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" width="200" height="133" decoding="async" alt="蜷在键盘旁睡着的猫。"></span>
+            <div class="album-body">
+              <p class="album-date">09 · 15</p>
+              <h3>猫在键盘上睡着了</h3>
+              <p class="album-dek">这里的第一篇。因为它趴在键盘上睡着了，我才空出手来注册了域名。</p>
+            </div>
+            <span class="album-tag tag">生活</span>
+            <span class="album-frame">№ 001</span>
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── 订阅 ───────────────────────────────────────────────────────── -->
+  <section class="section cta" id="subscribe" data-od-id="cta-strip">
+    <div class="container">
+      <h2>不想错过下一张？</h2>
+      <p class="lead">订阅 RSS，新照片冲出来就会送到你的阅读器。没有推送，没有算法。</p>
+      <a class="btn btn-primary" href="#">订阅 RSS</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="pagefoot" data-od-id="footer">
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <p class="foot-name">拾光集</p>
+        <p class="foot-note">用 Astro 构建的纯静态站点，文章、分类与图片都在构建时生成。这一版是它的视觉原型——页面上的照片来自 Unsplash，用作占位，正式上线时会换成自己的。</p>
+      </div>
+      <div class="foot-col">
+        <p class="foot-label">走一走</p>
+        <a href="index.html">记忆墙</a>
+        <a href="archive.html">归档</a>
+        <a href="post.html">文章样本</a>
+        <a href="about.html">关于</a>
+      </div>
+      <div class="foot-col">
+        <p class="foot-label">订阅</p>
+        <a href="#">RSS Feed</a>
+        <a href="#">邮件通知</a>
+      </div>
+    </div>
+    <p class="foot-base meta">© 2023–2026 拾光集 · 文字与照片均归作者所有</p>
+  </div>
+</footer>
+
+<script>
+/* 深浅色切换：写 localStorage 并落到 <html data-theme>。
+   没有 JS 时按钮不出现（.theme-toggle 靠脚本解锁），页面仍跟随系统偏好。 */
+(function(){
+  var root = document.documentElement;
+  var btn = document.querySelector('.theme-toggle');
+  if (!btn) return;
+  btn.hidden = false;
+  function systemDark(){ return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; }
+  function current(){
+    var t = root.getAttribute('data-theme');
+    if (t === 'dark' || t === 'light') return t;
+    return systemDark() ? 'dark' : 'light';
+  }
+  btn.addEventListener('click', function(){
+    var next = current() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('sg-theme', next); } catch (e) {}
+    btn.setAttribute('aria-pressed', String(next === 'dark'));
+  });
+  btn.setAttribute('aria-pressed', String(current() === 'dark'));
+})();
+</script>
+
+</body>
+</html>

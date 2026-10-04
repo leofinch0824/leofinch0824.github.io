@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>关于 · 拾光集</title>
+<meta name="description" content="关于拾光集：为什么写、拍照片的人是谁，以及这个站是怎么搭起来的。">
+<script>
+/* 主题决定必须在首次绘制前完成，否则会闪一下亮色。
+   优先级：localStorage 记忆 > 系统偏好。 */
+(function(){try{var t=localStorage.getItem('sg-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();
+</script>
+<style>
+%%STYLE%%
+</style>
+</head>
+<body>
+
+<header class="topnav" data-od-id="topnav">
+  <div class="container topnav-inner">
+    <a class="logo" href="index.html">拾光集<span class="logo-sub">Shiguang</span></a>
+    <nav>
+      <a href="index.html">记忆墙</a>
+      <a href="archive.html">归档</a>
+      <a href="about.html" class="is-current">关于</a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色">
+      <svg class="ti-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+      <svg class="ti-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4 17 7M7 17l-1.6 1.6"/></svg>
+    </button>
+    <a class="btn btn-secondary" href="index.html#subscribe">订阅</a>
+  </div>
+</header>
+
+<main id="content">
+
+  <!-- ── 卷首 ───────────────────────────────────────────────────────── -->
+  <section class="section" data-od-id="about-intro">
+    <div class="container about-hero">
+      <div>
+        <p class="eyebrow eyebrow-lead">关于 · 第 01 版</p>
+        <h1>拍照片的人，<br class="brk">也写代码。</h1>
+        <p class="lead">白天写 TypeScript、做算法题；晚上整理照片。这个博客是我给自己开的一间暗房——把想留下来的东西冲出来、晾干，再贴到墙上。</p>
+        <div class="intro-meta">
+          <span class="meta">坐标 <b class="num">杭州</b></span>
+          <span class="meta">现在 <b class="num">写后端</b></span>
+          <span class="meta">随身 <b class="num">X100V</b></span>
+        </div>
+      </div>
+      <div class="wall-item" style="--rot:-0.6deg; --i:0">
+        <figure class="print">
+          <img class="print-img" src="%%IMG:leisure_36%%" width="900" height="600" fetchpriority="high" decoding="async"
+               alt="白色背景上平铺着一台被拆开的胶片相机，机身、镜组、螺丝与弹簧分列排开。">
+          <figcaption class="print-cap">
+            <p class="print-note">把用了一年的机器拆开清灰。快门帘上有一道浅痕，是去年在海边蹭的。</p>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 为什么写 ───────────────────────────────────────────────────── -->
+  <section class="section" data-od-id="about-why">
+    <div class="container">
+      <div class="measure">
+      <p class="eyebrow">为什么写</p>
+      <h2>这里原本只打算放题解。</h2>
+      <div class="prose" style="margin-top:var(--gap-lg)">
+        <p>最开始只是给算法题解找个地方存放。写着写着发现，每写完一道题，我总会顺手记下当时在做什么——在哪个城市、几点、桌上摊着什么。题目慢慢退到次要位置，那些边角料反而成了主干。</p>
+        <p>「文字也是一种影像记录」对我来说不是比喻。一次记录和一张照片做的是同一件事：把某一刻从时间线上剪下来，钉住。区别只是照片用光，文字用词。</p>
+        <p>所以这里既有树状数组，也有凌晨四点的咖啡馆。它们在我这儿本来就是同一类东西。</p>
+      </div>
+      <blockquote class="pullquote" style="margin-top:var(--gap-xl)">
+        写下来的那一刻，它其实已经不是当时了——但至少它还在。
+        <p class="pullquote-author">— 写在第十篇之后</p>
+      </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 照片背面 ───────────────────────────────────────────────────── -->
+  <section class="section" data-od-id="about-facts">
+    <div class="container">
+      <div class="measure">
+      <p class="eyebrow">照片背面</p>
+      <h2 style="margin-bottom:var(--gap-lg)">一些可以写在相纸背面的事实。</h2>
+      <div class="backface">
+        <div class="backface-row">
+          <span class="backface-key">名字</span>
+          <p class="backface-val">拾光集的主人。网上多叫 leofinch，熟人叫别的。</p>
+        </div>
+        <div class="backface-row">
+          <span class="backface-key">坐标</span>
+          <p class="backface-val">杭州。偶尔在别处，通常是因为走错了路。</p>
+        </div>
+        <div class="backface-row">
+          <span class="backface-key">现在</span>
+          <p class="backface-val">写后端代码，做算法题，读一点数学。三件事轮流让我觉得自己很笨。</p>
+        </div>
+        <div class="backface-row">
+          <span class="backface-key">相机</span>
+          <p class="backface-val">一台 X100V 随身，一台 FM2 用来拍慢的——后者一年拍不到十卷。</p>
+        </div>
+        <div class="backface-row">
+          <span class="backface-key">桌上</span>
+          <p class="backface-val">一杯手冲、一本摊开的笔记本，和一只坚持要睡在键盘上的猫。</p>
+        </div>
+        <div class="backface-row">
+          <span class="backface-key">更新</span>
+          <p class="backface-val">不定期。想清楚了才写，写完就发，不攒稿。</p>
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 制作说明 ───────────────────────────────────────────────────── -->
+  <section class="section" data-od-id="about-colophon">
+    <div class="container">
+      <div class="measure">
+      <p class="eyebrow">制作说明</p>
+      <h2 style="margin-bottom:var(--gap-lg)">这个站是怎么搭的。</h2>
+      <div>
+        <div class="spec-row">
+          <span class="spec-key">框架</span>
+          <p class="spec-val"><strong>Astro 静态站点。</strong>文章在构建时就生成好 HTML，页面打开即可读，没有等待中的水合过程。</p>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">样式</span>
+          <p class="spec-val">手写 CSS。一套六个颜色令牌加三条字体栈，没有 UI 框架，也没有运行时样式注入。</p>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">交互</span>
+          <p class="spec-val">只用少量 TypeScript 处理复制按钮这类局部状态，其余交给 CSS。没有引入任何组件库运行时。</p>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">公式与代码</span>
+          <p class="spec-val">remark-math + rehype-katex 渲染公式，Shiki 做语法高亮，全部在构建时完成。</p>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">图片</span>
+          <p class="spec-val">走 Astro 的资源管线压缩、生成响应式尺寸，首屏之外再延迟加载。</p>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">这一版</span>
+          <p class="spec-val">是视觉原型。版式与令牌可以直接搬进 Astro；页面里的照片来自 Unsplash，用作占位。</p>
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 联系 ───────────────────────────────────────────────────────── -->
+  <section class="section cta" id="contact" data-od-id="cta-strip">
+    <div class="container">
+      <h2>想聊点什么？</h2>
+      <p class="lead">关于技术、照片，或者只是路过打个招呼，都可以写信。我更新不勤，但每封都会回。</p>
+      <div class="cta-actions">
+        <a class="btn btn-primary" href="mailto:hi@example.com">写信给我</a>
+        <a class="btn btn-secondary" href="#">RSS Feed</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="pagefoot" data-od-id="footer">
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <p class="foot-name">拾光集</p>
+        <p class="foot-note">用 Astro 构建的纯静态站点，文章、分类与图片都在构建时生成。这一版是它的视觉原型——页面上的照片来自 Unsplash，用作占位，正式上线时会换成自己的。</p>
+      </div>
+      <div class="foot-col">
+        <p class="foot-label">走一走</p>
+        <a href="index.html">记忆墙</a>
+        <a href="archive.html">归档</a>
+        <a href="post.html">文章样本</a>
+        <a href="about.html">关于</a>
+      </div>
+      <div class="foot-col">
+        <p class="foot-label">订阅</p>
+        <a href="#">RSS Feed</a>
+        <a href="#">邮件通知</a>
+      </div>
+    </div>
+    <p class="foot-base meta">© 2023–2026 拾光集 · 文字与照片均归作者所有</p>
+  </div>
+</footer>
+
+<script>
+/* 深浅色切换：写 localStorage 并落到 <html data-theme>。
+   没有 JS 时按钮不出现（.theme-toggle 靠脚本解锁），页面仍跟随系统偏好。 */
+(function(){
+  var root = document.documentElement;
+  var btn = document.querySelector('.theme-toggle');
+  if (!btn) return;
+  btn.hidden = false;
+  function systemDark(){ return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; }
+  function current(){
+    var t = root.getAttribute('data-theme');
+    if (t === 'dark' || t === 'light') return t;
+    return systemDark() ? 'dark' : 'light';
+  }
+  btn.addEventListener('click', function(){
+    var next = current() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('sg-theme', next); } catch (e) {}
+    btn.setAttribute('aria-pressed', String(next === 'dark'));
+  });
+  btn.setAttribute('aria-pressed', String(current() === 'dark'));
+})();
+</script>
+
+</body>
+</html>
