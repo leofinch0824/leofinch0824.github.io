@@ -373,6 +373,24 @@ b.num{ font-weight:600; color:var(--fg); }
 .year-num{ font-family:var(--font-display); font-size:clamp(28px,3vw,38px); line-height:1; letter-spacing:-0.02em; }
 .year-meta{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); letter-spacing:0.05em; }
 
+/* ── 时间线：胶片年份带（首页专用，2026-10 分页改造二步）─────────────────
+   年份跨度大时的形态（docs/pagination-design.md）：横排 mono 刻度、上下发丝线
+   围合，像底片边缘的年份编号；与归档总览的大格墙（.year-grid/.year-cell）
+   拉开层级——首页速览、归档总目录。年份多时自动换行，高度可控。 */
+.year-strip{
+  display:flex; flex-wrap:wrap;
+  border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
+}
+.year-tick{
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:13px 26px; border-right:1px solid var(--rule-faint);
+  text-decoration:none; transition:background .22s ease;
+}
+.year-tick:last-child{ border-right:0; }
+.year-tick:hover{ background:var(--fg-soft); }
+.tick-num{ font-family:var(--font-mono); font-size:15px; font-weight:500; color:var(--fg); letter-spacing:0.04em; font-variant-numeric:tabular-nums; }
+.tick-count{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); letter-spacing:0.05em; }
+
 /* ── CTA ──────────────────────────────────────────────────────────────── */
 .cta{ text-align:center; border-top:1px solid var(--rule); }
 .cta h2{ max-width:22ch; margin-inline:auto; }
@@ -633,6 +651,7 @@ b.num{ font-weight:600; color:var(--fg); }
   .year-grid{ grid-template-columns:1fr; }
   /* 年份格居中后不再需要贴左补偿的 padding-right:0（设计精修 #5），只留单列去边线 */
   .year-cell{ border-right:0; }
+  .year-tick{ padding:12px 16px; }
   .prose{ font-size:16.5px; line-height:1.86; }
   .prose .katex-display{ padding:15px 16px; }
   /* 公式字号要打到 .katex 上（19px 的规则也在那），容器上设了会被绕过 */

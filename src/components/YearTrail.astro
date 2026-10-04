@@ -12,18 +12,18 @@ const { wall } = Astro.props;
 	<div class="container">
 		<p class="eyebrow">时间线</p>
 		<h2 class="years-title">按年份翻阅</h2>
-		<div class="grid-4 year-grid" id="years">
+		{/* 胶片年份带（docs/pagination-design.md 二步）：横排 mono 刻度，
+		    年份跨度大时自动换行、高度可控；与归档总览的大格墙拉开层级。 */}
+		<div class="year-strip" id="years">
 			{
 				wall.years.map((group) => (
-					<a class="year-cell" href={`/blog/${group.year}/`}>
-						<span class="year-num">{group.year}</span>
-						<span class="year-meta">{group.count} 张 · {group.categories.join(' · ')}</span>
+					<a class="year-tick" href={`/blog/${group.year}/`}>
+						<span class="tick-num">{group.year}</span>
+						<span class="tick-count">{group.count} 张</span>
 					</a>
 				))
 			}
 		</div>
-		{/* 年份格自分页改造起是链接（docs/pagination-design.md）：点开一年，
-		    去归档翻那年的相册页。原 aria-live 联动状态行随之退役。 */}
 		<p class="meta years-status">点开一年，翻到那年的相册页。</p>
 	</div>
 </section>
