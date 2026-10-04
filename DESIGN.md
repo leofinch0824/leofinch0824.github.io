@@ -28,31 +28,73 @@ colors:
 typography:
   display:
     fontFamily: "Iowan Old Style, Palatino Linotype, Palatino, Songti SC, Noto Serif SC, Source Han Serif SC, STSong, Georgia, serif"
-    fontSize: "clamp(38px, 5.2vw, 64px)"
+    fontSize: "clamp(30px, 4.4vw, 52px)"
     fontWeight: 600
-    lineHeight: 1.1
+    lineHeight: 1.25
     letterSpacing: "-0.015em"
+  year-mark:
+    fontFamily: "Iowan Old Style, Palatino Linotype, Palatino, Songti SC, Noto Serif SC, Source Han Serif SC, STSong, Georgia, serif"
+    fontSize: "clamp(40px, 6vw, 68px)"
+    fontWeight: 600
+    lineHeight: 1
+    letterSpacing: "-0.03em"
   headline:
     fontFamily: "Iowan Old Style, Palatino Linotype, Palatino, Songti SC, Noto Serif SC, Source Han Serif SC, STSong, Georgia, serif"
     fontSize: "clamp(27px, 3.2vw, 40px)"
     fontWeight: 600
     lineHeight: 1.18
     letterSpacing: "-0.012em"
-  title:
+  wall-heading:
+    fontFamily: "Iowan Old Style, Palatino Linotype, Palatino, Songti SC, Noto Serif SC, Source Han Serif SC, STSong, Georgia, serif"
+    fontSize: "clamp(24px, 2.6vw, 32px)"
+    fontWeight: 600
+    lineHeight: 1.2
+  prose-heading:
+    fontFamily: "Iowan Old Style, Palatino Linotype, Palatino, Songti SC, Noto Serif SC, Source Han Serif SC, STSong, Georgia, serif"
+    fontSize: "clamp(23px, 2.4vw, 29px)"
+    fontWeight: 600
+    lineHeight: 1.3
+  cta-heading:
+    fontFamily: "Iowan Old Style, Palatino Linotype, Palatino, Songti SC, Noto Serif SC, Source Han Serif SC, STSong, Georgia, serif"
+    fontSize: "clamp(18px, 2.1vw, 22px)"
+    fontWeight: 600
+    lineHeight: 1.3
+  motto:
     fontFamily: "Iowan Old Style, Palatino Linotype, Palatino, Songti SC, Noto Serif SC, Source Han Serif SC, STSong, Georgia, serif"
     fontSize: "21px"
+    fontWeight: 500
+    lineHeight: 1.66
+  formula:
+    fontSize: "19px"
+    fontWeight: 400
+  site-name:
+    fontFamily: "Iowan Old Style, Palatino Linotype, Palatino, Songti SC, Noto Serif SC, Source Han Serif SC, STSong, Georgia, serif"
+    fontSize: "20px"
     fontWeight: 600
-    lineHeight: 1.4
   body:
     fontFamily: "-apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Segoe UI, system-ui, sans-serif"
     fontSize: "16px"
     fontWeight: 400
     lineHeight: 1.62
+  lead:
+    fontFamily: "-apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Segoe UI, system-ui, sans-serif"
+    fontSize: "18px"
+    fontWeight: 400
+    lineHeight: 1.78
   label:
     fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
-    fontSize: "12.5px"
+    fontSize: "11.5px"
     fontWeight: 400
     letterSpacing: "0.13em"
+  meta:
+    fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
+    fontSize: "12px"
+    fontWeight: 400
+    letterSpacing: "0.04em"
+  tick:
+    fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
+    fontSize: "15px"
+    fontWeight: 500
   prose:
     fontFamily: "-apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Segoe UI, system-ui, sans-serif"
     fontSize: "17.5px"
@@ -63,6 +105,20 @@ typography:
     fontSize: "18px"
     fontWeight: 600
     lineHeight: 1.42
+  card-body:
+    fontFamily: "-apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Segoe UI, system-ui, sans-serif"
+    fontSize: "15px"
+    fontWeight: 400
+    lineHeight: 1.76
+  dek:
+    fontFamily: "-apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Segoe UI, system-ui, sans-serif"
+    fontSize: "14px"
+    fontWeight: 400
+    lineHeight: 1.62
+  nav-link:
+    fontFamily: "-apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Segoe UI, system-ui, sans-serif"
+    fontSize: "14px"
+    fontWeight: 400
   button:
     fontFamily: "-apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Segoe UI, system-ui, sans-serif"
     fontSize: "14.5px"
@@ -72,6 +128,10 @@ typography:
     fontSize: "13.5px"
     fontWeight: 400
     lineHeight: 1.78
+  code-inline:
+    fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
+    fontSize: "13px"
+    fontWeight: 400
   caption:
     fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
     fontSize: "11.5px"
@@ -79,7 +139,7 @@ typography:
     letterSpacing: "0.04em"
   micro:
     fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
-    fontSize: "11px"
+    fontSize: "10.5px"
     fontWeight: 400
     letterSpacing: "0.05em"
 rounded:
@@ -175,14 +235,54 @@ components:
 **Character:** 衬线只属于标题与「相纸上的手写」——它是相册里的笔迹；正文用无衬线保证长文可读；等宽体专属日期、编号、底片编号、代码与题注，是相机铭牌的字体。中文与西文各自回落到同气质的家族。
 
 ### Hierarchy
-- **Display**（600, clamp(38px, 5.2vw, 64px), 1.1）：首页卷首语，每站一次。
-- **Headline**（600, clamp(27px, 3.2vw, 40px), 1.18）：区块标题。中文按 `em` 限宽（约 13em），交给 `text-wrap: balance` 平分两行。
-- **Title**（600, 21px, 1.4）：文章页小节、卡片标题（卡片实际 18px/1.42）。
-- **Body**（400, 16px, 1.62）：正文基础。长文容器 36em、17.5px/1.92，移动端降到 16.5px。
-- **Label**（400, 12.5px, 0.13em 字距, 全大写眉标）：日期、编号、元信息、题注。数字一律 `tabular-nums`。
+
+角色阶（2026-10-05 typeset 审计收敛，`docs/typography-audit.md`）：同角色同值，
+跨档必须 ≥1.5px 或有明确语境；新增组件只允许引用下表规格。
+
+**衬线（display）族 —— 只属于标题与「相纸上的手写」：**
+
+| 角色 | 规格 | 用在哪 |
+|---|---|---|
+| 文章标题 | 600, clamp(30px, 4.4vw, 52px), 1.25 | 文章页 `article-head h1`，每页一次 |
+| 年份巨字 | clamp(40px, 6vw, 68px) | 年份相册页 `year-title`（装饰位） |
+| 区块标题 | 600, clamp(27px, 3.2vw, 40px), 1.18 | 页面级区块 h2（为什么写/照片背面/制作说明） |
+| 墙区块标题 | 600, clamp(24px, 2.6vw, 32px) | 记忆墙 h2（墙密度高，小一档） |
+| 文内小节 | 600, clamp(23px, 2.4vw, 29px), 1.3 | `prose h2` |
+| 收尾小节 | 600, clamp(18px, 2.1vw, 22px) | CTA 区 h2（找到我） |
+| 卡标题 | 600, 18px, 1.4–1.42 | 相纸卡标题、归档行标题、翻页标题、`prose h3` |
+| 格言 | 500, 21px, 1.66, 字距 0 | 首页/关于的卷首一句话（`.intro h1`，非 h3 角色） |
+| 手写注脚 | 400, 相纸语境 15px / 关于页注脚 21px | `print-note` |
+
+**无衬线（body）族 —— 正文与 UI：**
+
+| 角色 | 规格 | 用在哪 |
+|---|---|---|
+| 长文正文 | 400, 17.5px / 1.92（920px 起 17，600px 起 16.5） | `prose`，版心 36em |
+| 正文基础 | 400, 16px / 1.62 | UI 文字、段落默认 |
+| 导语 | 400, 18px / 1.78, muted | `lead` |
+| 卡正文 | 400, 15px / 1.74–1.78 | backface 值、spec 值、相纸卡注脚 |
+| 摘要 | 400, 14px / 1.62, muted | 归档行摘要 `album-dek` |
+| 控件/导航 | 400–500, 14–14.5px | 按钮 14.5、导航词 14 |
+
+**等宽（mono）族 —— 只属于「机器写的东西」（Signature-Only Rule 不变）：**
+
+| 角色 | 规格 | 用在哪 |
+|---|---|---|
+| label | 400, 11.5px, 0.13em 字距 | 眉标、页脚栏标、标签胶囊、code-head |
+| meta | 400, 12px, 0.02–0.06em | 日期、底片编号、年份胶囊、元信息条、翻页 label、订阅面板小字 |
+| tick | 500, 15px, tabular-nums | 胶片年份带的年份数字 |
+| 代码 | 13.5px（块）/ 13px（行内）/ 0.86em（码内） | 代码与公式编号 |
+
+特例（有空间或角色理由，不再外扩）：顶栏副标 10.5px（空间敏感）、站名 20px、
+页脚基准 13.5px、正文内代码 `--fs-meta` 引用。数字一律 `tabular-nums`。
+
+**加粗规则**：600 只有标题族；500 只有「当前态/强调位」（站名、格言、
+tick 年份、导航当前页、RSS 强调链）；正文与元信息永远 400——要强调时用
+`--fg` 提色或 `<b>`（正文字重 700 由浏览器合成，仅在句内关键词用）。
 
 ### Named Rules
 **The Signature-Only Rule.** 等宽体只用于「机器写的东西」——日期、编号、代码、参数表。它出现在正文段落里就是错了。
+**The One-Size-Per-Role Rule.** 同一角色的文字在全站任何页面、任何状态下字号一致；需要新的字号先问它是不是新角色，是就登记进上表，不是就用现有档。
 
 ## Layout
 

@@ -59,10 +59,10 @@
   /* ── 字号 ── */
   --fs-h1:   clamp(38px, 5.2vw, 64px);
   --fs-h2:   clamp(27px, 3.2vw, 40px);
-  --fs-h3:   21px;
+  --fs-h3:   18px;
   --fs-lead: 18px;
   --fs-body: 16px;
-  --fs-meta: 12.5px;
+  --fs-meta: 12px;
 
   /* ── 间距 ── */
   --gap-xs:8px; --gap-sm:12px; --gap-md:20px; --gap-lg:32px; --gap-xl:56px; --gap-2xl:96px;
@@ -264,7 +264,7 @@ b.num{ font-weight:600; color:var(--fg); }
 .tag{
   display:inline-flex; align-items:center; padding:3px 9px; background:transparent;
   color:var(--muted); border:1px solid var(--rule-faint); border-radius:999px;
-  font-family:var(--font-mono); font-size:11px; letter-spacing:0.05em;
+  font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.05em;
 }
 
 /* ── 卷首语 ───────────────────────────────────────────────────────────── */
@@ -273,7 +273,7 @@ b.num{ font-weight:600; color:var(--fg); }
    覆写收敛在此作用域；全局 h1 与 article-head 大标题规格不受影响。
    :not(.eyebrow) —— 归档页的 h1 是眉标（#8），全套规格走 .eyebrow，
    两者同为单类特异性，不能让后定义的格言档盖掉它。 */
-.intro h1:not(.eyebrow){ font-size:var(--fs-h3); font-weight:500; line-height:1.66; letter-spacing:0; margin-bottom:var(--gap-lg); }
+.intro h1:not(.eyebrow){ font-size:21px; font-weight:500; line-height:1.66; letter-spacing:0; margin-bottom:var(--gap-lg); }
 @media (max-width:700px){ .brk{ display:none; } }
 .intro-meta{ display:flex; flex-wrap:wrap; gap:10px 26px; padding-top:var(--gap-md); border-top:1px solid var(--rule-faint); }
 
@@ -323,8 +323,8 @@ b.num{ font-weight:600; color:var(--fg); }
 /* 元信息行里「最新」带边框与内边距，比同行的编号/日期高一截；
    align-items:center 会把整行撑到它的高度，导致首卡相纸比其他卡高 7px。
    基线对齐 + 给标签一个不吃行高的盒模型，让首卡与其余卡等高。 */
-.print-meta{ margin:9px 0 0; font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.04em; color:var(--muted); display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
-.print-meta .tag{ align-self:center; padding:1px 8px; font-size:11px; line-height:1.5; }
+.print-meta{ margin:9px 0 0; font-family:var(--font-mono); font-size:12px; letter-spacing:0.04em; color:var(--muted); display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.print-meta .tag{ align-self:center; padding:1px 8px; font-size:11.5px; line-height:1.5; }
 .print-meta .dot{ align-self:center; }
 /* 底片编号：曾用 color-mix(fg 45%, bg) 合成出 oklch(0.627…) → 实测仅 3.37:1，
    低于 AA 正文阈值。改用 --muted（5.53:1），保留等宽与字距的材质感。 */
@@ -372,7 +372,7 @@ b.num{ font-weight:600; color:var(--fg); }
 .year-tick:last-child{ border-right:0; }
 .year-tick:hover{ background:var(--fg-soft); }
 .tick-num{ font-family:var(--font-mono); font-size:15px; font-weight:500; color:var(--fg); letter-spacing:0.04em; font-variant-numeric:tabular-nums; }
-.tick-count{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); letter-spacing:0.05em; }
+.tick-count{ font-family:var(--font-mono); font-size:12px; color:var(--muted); letter-spacing:0.05em; }
 
 /* ── CTA ──────────────────────────────────────────────────────────────── */
 .cta{ text-align:center; border-top:1px solid var(--rule); }
@@ -394,7 +394,7 @@ b.num{ font-weight:600; color:var(--fg); }
 .year-head{ display:flex; align-items:baseline; gap:var(--gap-md); flex-wrap:wrap; margin-bottom:var(--gap-lg); }
 .year-title{ font-family:var(--font-display); font-size:clamp(40px,6vw,68px); line-height:1; letter-spacing:-0.03em; color:var(--fg); }
 .year-head .year-rule{ flex:1; height:1px; background:var(--rule); min-width:24px; }
-.year-meta{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); letter-spacing:0.05em; }
+.year-meta{ font-family:var(--font-mono); font-size:12px; color:var(--muted); letter-spacing:0.05em; }
 
 .album{ list-style:none; margin:0; padding:0; }
 .album-row + .album-row{ border-top:1px solid var(--rule-faint); }
@@ -454,7 +454,7 @@ b.num{ font-weight:600; color:var(--fg); }
 .prose{ max-width:36em; margin-inline:auto; font-size:17.5px; line-height:1.92; }
 .prose > * + *{ margin-top:1.35em; }
 .prose h2{ font-size:clamp(23px,2.4vw,29px); margin-top:2.2em; line-height:1.3; }
-.prose h3{ font-size:19px; margin-top:1.9em; }
+.prose h3{ font-size:18px; margin-top:1.9em; }
 .prose p{ margin:0; color:color-mix(in oklch, var(--fg) 92%, var(--bg)); }
 .prose strong{ color:var(--fg); font-weight:600; }
 .prose em{ font-style:italic; }
@@ -541,8 +541,8 @@ b.num{ font-weight:600; color:var(--fg); }
 }
 .turn:hover{ border-color:var(--rule); background:var(--surface); transform:translateY(-3px); }
 .turn-next{ text-align:right; align-items:flex-end; }
-.turn-title{ font-family:var(--font-display); font-size:17px; line-height:1.4; }
-.turn-label{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); letter-spacing:0.05em; }
+.turn-title{ font-family:var(--font-display); font-size:18px; line-height:1.4; }
+.turn-label{ font-family:var(--font-mono); font-size:12px; color:var(--muted); letter-spacing:0.05em; }
 @media (max-width:640px){ .page-turn{ grid-template-columns:1fr; } .turn-next{ text-align:left; align-items:flex-start; } }
 
 /* ── 关于页 ───────────────────────────────────────────────────────────── */
@@ -574,7 +574,7 @@ b.num{ font-weight:600; color:var(--fg); }
   font-family:var(--font-mono); font-size:11.5px; letter-spacing:.1em;
   text-transform:uppercase; color:var(--muted); white-space:nowrap;
 }
-.backface-val{ margin:0; font-size:15.5px; line-height:1.74; }
+.backface-val{ margin:0; font-size:15px; line-height:1.74; }
 
 /* 制作说明 */
 .spec-row{
@@ -606,7 +606,7 @@ b.num{ font-weight:600; color:var(--fg); }
 .foot-grid{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:var(--gap-lg); }
 .foot-name{ font-family:var(--font-display); font-size:19px; color:var(--fg); margin:0 0 8px; }
 .foot-note{ margin:0; max-width:44ch; line-height:1.72; }
-.foot-label{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin:0 0 12px; }
+.foot-label{ font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin:0 0 12px; }
 .foot-col a{ display:block; padding:3px 0; transition:color .18s ease; }
 .foot-col a:hover{ color:var(--fg); }
 .foot-base{ margin-top:var(--gap-xl); padding-top:var(--gap-md); border-top:1px solid var(--rule-faint); }
@@ -616,7 +616,7 @@ b.num{ font-weight:600; color:var(--fg); }
   display:flex; flex-direction:column; gap:7px;
   background:var(--fg-soft); border-radius:var(--radius); padding:14px 16px;
 }
-.sub-note{ margin:0; font-size:12.5px; line-height:1.66; color:var(--muted); }
+.sub-note{ margin:0; font-size:12px; line-height:1.66; color:var(--muted); }
 .sub-rss{ font-weight:500; color:var(--fg); }
 .sub-rss::after{ content:'→'; margin-left:7px; font-weight:400; transition:transform .2s cubic-bezier(.2,.7,.2,1); }
 .sub-rss:hover::after{ transform:translateX(3px); }
