@@ -4,14 +4,20 @@ interface Props {
 }
 
 const { date } = Astro.props;
+// zh-CN 数字日期，输出形态对齐原型「2026 · 03 · 14」（home.tpl.html:46）。
+// 用 formatToParts 取年/月/日数字段手工拼接：不同运行时的 ICU 对
+// toLocaleDateString('zh-CN', …) 给出的分隔符可能是 / 或 -，直接替换分隔符不可靠。
+// tabular-nums 由 global.css 的 .num 提供（等宽 + 等宽数字，DESIGN.md「数字一律 tabular-nums」）。
+const parts = new Intl.DateTimeFormat('zh-CN', {
+	year: 'numeric',
+	month: '2-digit',
+	day: '2-digit',
+})
+	.formatToParts(date)
+	.reduce<Record<string, string>>((acc, part) => {
+		if (part.type !== 'literal') acc[part.type] = part.value;
+		return acc;
+	}, {});
 ---
 
-<time datetime={date.toISOString()}>
-	{
-		date.toLocaleDateString('en-us', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-		})
-	}
-</time>
+<time datetime={date.toISOString()} class="num">{parts.year} · {parts.month} · {parts.day}</time>
