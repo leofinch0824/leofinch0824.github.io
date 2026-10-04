@@ -36,11 +36,15 @@ const shown = wall.cards.filter((card) => wall.openYears.includes(card.year)).le
 				<p class="eyebrow eyebrow-lead">卷首 · 第 01 辑</p>
 				<h1>把日子摊开，<br class="brk" />像一叠刚冲出来的照片。</h1>
 				<p class="lead">这里存着技术笔记、生活片段，和一些还没想清楚的念头。每一篇都做成一张相纸，按时间贴上去——文字也是一种影像记录。</p>
-				<div class="intro-meta">
-					<span class="meta">共 <b class="num" id="tally-shown">{shown}</b> / <b class="num">{wall.cards.length}</b> 张</span>
-					<span class="meta">始于 <b class="num">{earliest.year}</b></span>
-					<span class="meta">最近更新 <b class="num"><FormattedDate date={latestCard.post.data.pubDate} /></b></span>
-				</div>
+					<div class="intro-meta">
+						<span class="meta">共 <b class="num" id="tally-shown">{shown}</b> / <b class="num">{wall.cards.length}</b> 张</span>
+						{earliest && <span class="meta">始于 <b class="num">{earliest.year}</b></span>}
+						{latestCard && (
+							<span class="meta">
+								最近更新 <b class="num"><FormattedDate date={latestCard.post.data.pubDate} /></b>
+							</span>
+						)}
+					</div>
 			</div>
 		</section>
 

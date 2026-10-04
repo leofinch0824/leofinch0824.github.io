@@ -22,7 +22,7 @@ web
 ## Operating Context
 
 - 内容以 Markdown 为主、MDX 按需；Astro Content Collections 组织文章元数据，编号（№ NNN）按日期倒序构建时计算，不进 frontmatter。
-- 数学公式：KaTeX（`remark-math` + `rehype-katex`）已安装并构建时验证（2026-10-04 批5）：行内/独立公式、`aligned` 多行推导、`\tag` 编号、长公式横向滚动渲染正常，验收文为 `src/content/blog/markdown-style-guide.md`；已实证边界——一条公式仅支持一个 `\tag`，逐行编号须拆为多个公式块。
+- 数学公式：KaTeX（`remark-math` + `rehype-katex`）已安装并构建时验证（2026-10-04 批5）：行内/独立公式、`aligned` 多行推导、`\tag` 编号、长公式横向滚动渲染正常，验收文为 `src/content/blog/markdown-style-guide.md`；已实证边界——一条公式仅支持一个 `\tag`，逐行编号须拆为多个公式块。390px 不溢出的实测方法与数据见 `docs/layout-qa-390.md`。
 - 代码高亮：Astro 内置 Shiki 已接入，自定义 CSS 变量主题使 token 色走 `--code-*`（`src/styles/code-theme.mjs`）；Expressive Code 已评估并**不采用**——它构建期强制十六进制主题色、无法消费 `--code-*` 令牌，引入即破坏颜色单一来源；代价是 `.code-head` 文件名条暂无实现。
 - 整体技术边界：Astro + CSS，必要的独立交互用少量 TypeScript；不将 Svelte、Motion、GSAP、D3、ECharts 列为默认依赖；`ClientRouter` 未启用，是否采用单独评估。
 - 真实开发仓库：`/Users/pegasus/workplace/work_repos/astro-blog`（Astro ^7.3.5，带 GitHub Actions CI）；原型四页（index / archive / post / about）是唯一的视觉验收基准；迁移路径见 `astro-blog-design-migration.md`（进仓库后放 `docs/`）。
