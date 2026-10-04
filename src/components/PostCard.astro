@@ -1,0 +1,57 @@
+---
+import { Image } from 'astro:assets';
+import FormattedDate from './FormattedDate.astro';
+import type { WallCard } from '../utils/posts';
+
+interface Props {
+	/** 构建时准备好的相纸数据（posts.ts 的 prepareWall 产物） */
+	post: WallCard;
+	/** 该张相纸的手工旋转值，写入内联 --rot；悬停回正由 global.css 处理 */
+	rot: string;
+	/** 入场错落序号，写入内联 --i */
+	index: number;
+	/** 所属年份未摊开时服务端直接渲染 hidden —— 无 JS 也拿到正确的初始态 */
+	hidden?: boolean;
+}
+
+const { post, rot, index, hidden = false } = Astro.props;
+const { post: entry, no, year } = post;
+
+// 样式全部来自 global.css（.wall-item/.print/.print-img/.note-face/.print-cap），
+// 组件内不写颜色与布局。alt 留空：占位照片不承载文章语义，标题就在下方，
+// 不给屏幕阅读器念一段对不上的替代文本（PRODUCT.md「真实性」）。
+---
+
+<article class="wall-item" data-year={year} style={`--rot:${rot}; --i:${index}`} hidden={hidden}>
+	<a class="print" href={`/blog/${entry.id}/`}>
+		{
+			entry.data.heroImage ? (
+				<Image
+					class="print-img"
+					src={entry.data.heroImage}
+					alt=""
+					width={720}
+					layout="none"
+					loading={index === 0 ? 'eager' : 'lazy'}
+					decoding="async"
+					fetchpriority={index === 0 ? 'high' : undefined}
+				/>
+			) : (
+				<div class="note-face">
+					<p>{entry.data.description}</p>
+				</div>
+			)
+		}
+		<div class="print-cap">
+			<h3>{entry.data.title}</h3>
+			<p class="print-meta">
+				{index === 0 && <span class="tag">最新</span>}
+				<span class="frame">№ {no}</span>
+				<span class="dot" />
+				<FormattedDate date={entry.data.pubDate} />
+				<span class="dot" />
+				{entry.data.category}
+			</p>
+		</div>
+	</a>
+</article>

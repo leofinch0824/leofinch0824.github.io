@@ -298,6 +298,10 @@ b.num{ font-weight:600; color:var(--fg); }
    错落感交给旋转（--rot）承担，高度交给网格。 */
 .print-img{
   width:100%; height:auto; aspect-ratio:3 / 2;
+  /* 非 3:2 源（如过渡期 960×480 占位图）按原比例完整放进 3:2 相框，
+     宁可上下留纸边也不拉伸/裁切 —— 画幅完整是硬约束（AGENTS.md、DESIGN.md）；
+     恰为 3:2 的源不受任何影响。 */
+  object-fit:contain;
   background:color-mix(in oklch, var(--fg) 6%, var(--surface));
   border-radius:1px;
   filter:brightness(var(--photo-brightness));

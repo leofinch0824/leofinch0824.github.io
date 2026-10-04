@@ -1,0 +1,54 @@
+---
+import type { Wall } from '../utils/posts';
+
+interface Props {
+	wall: Wall;
+}
+
+const { wall } = Astro.props;
+const open = new Set(wall.openYears);
+
+// 状态行首屏文案由服务端算好：无 JS 时它也是一句真话
+// （hidden 初始态同样是服务端按默认展开渲染的）。
+const shown = wall.cards.filter((card) => open.has(card.year)).length;
+const folded = wall.cards.length - shown;
+const initialStatus =
+	'已摊开 ' +
+	wall.openYears.join('、') +
+	'；' +
+	(folded ? `还有 ${folded} 张按年份收着。` : `全部 ${shown} 张都在墙上了。`);
+---
+
+<section class="section" data-od-id="years">
+	<div class="container">
+		<p class="eyebrow">生活轨迹</p>
+		<h2 class="years-title">摊开某一年</h2>
+		<div class="grid-4 year-grid" id="years">
+			{
+				wall.years.map((group) => (
+					<button
+						class="year-cell"
+						type="button"
+						data-year={group.year}
+						aria-expanded={open.has(group.year)}
+						aria-controls="wall-items"
+					>
+						<span class="year-num">{group.year}</span>
+						<span class="year-meta">{group.count} 张 · {group.categories.join(' · ')}</span>
+					</button>
+				))
+			}
+		</div>
+		<p class="meta years-status" aria-live="polite" id="years-status">{initialStatus}</p>
+	</div>
+</section>
+
+<style>
+	/* 只写布局：两处间距来自原型 home.tpl.html:228/247 的内联样式 */
+	.years-title {
+		margin-bottom: var(--gap-lg);
+	}
+	.years-status {
+		margin-top: var(--gap-md);
+	}
+</style>

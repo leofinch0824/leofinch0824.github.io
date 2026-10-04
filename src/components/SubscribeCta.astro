@@ -1,0 +1,19 @@
+---
+// 订阅区（批3，对照 reference/prototype/home.tpl.html:252-258 的 .cta）。
+// RSS 是真链接（/rss.xml，与批2页头/页脚一致）；邮件订阅保持占位 ——
+// 真实订阅服务未决（PRODUCT.md「明确未决」，不得虚构），
+// 降级为次级按钮并注明未开通，aria-disabled + sr-only 说明。
+---
+
+<section class="section cta" id="subscribe" data-od-id="cta-strip">
+	<div class="container">
+		<h2>不想错过下一张？</h2>
+		<p class="lead">订阅 RSS，新照片冲出来就会送到你的阅读器。没有推送，没有算法，也没有「猜你喜欢」。</p>
+		<p class="cta-actions">
+			<a class="btn btn-primary" href="/rss.xml">订阅 RSS<span class="sr-only">跳转到 RSS 源</span></a>
+			<a class="btn btn-secondary" href="#" aria-disabled="true"
+				>邮件订阅 · 未开通<span class="sr-only">真实订阅服务未决，暂为占位</span></a
+			>
+		</p>
+	</div>
+</section>
