@@ -274,7 +274,6 @@ b.num{ font-weight:600; color:var(--fg); }
    :not(.eyebrow) —— 归档页的 h1 是眉标（#8），全套规格走 .eyebrow，
    两者同为单类特异性，不能让后定义的格言档盖掉它。 */
 .intro h1:not(.eyebrow){ font-size:21px; font-weight:500; line-height:1.66; letter-spacing:0; margin-bottom:var(--gap-lg); }
-@media (max-width:700px){ .brk{ display:none; } }
 .intro-meta{ display:flex; flex-wrap:wrap; gap:10px 26px; padding-top:var(--gap-md); border-top:1px solid var(--rule-faint); }
 
 /* ── 记忆墙 ───────────────────────────────────────────────────────────── */
@@ -558,34 +557,9 @@ b.num{ font-weight:600; color:var(--fg); }
   color:color-mix(in oklch, var(--fg) 74%, var(--bg));
 }
 
-/* 照片背面：印着参数的那一面 */
-.backface{
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:3px; box-shadow:var(--lift-1);
-  padding:4px clamp(18px,2.6vw,32px);
-}
-.backface-row{
-  display:grid; grid-template-columns:minmax(72px,auto) minmax(0,1fr);
-  gap:6px clamp(18px,3vw,44px); align-items:baseline;
-  padding:15px 0; border-top:1px solid var(--rule-faint);
-}
-.backface-row:first-child{ border-top:0; }
-.backface-key{
-  font-family:var(--font-mono); font-size:11.5px; letter-spacing:.1em;
-  text-transform:uppercase; color:var(--muted); white-space:nowrap;
-}
-.backface-val{ margin:0; font-size:15px; line-height:1.74; }
-
-/* 制作说明 */
-.spec-row{
-  display:grid; grid-template-columns:minmax(92px,164px) minmax(0,1fr);
-  gap:6px clamp(20px,3.4vw,48px); align-items:baseline;
-  padding:17px 0; border-top:1px solid var(--rule-faint);
-}
-.spec-key{ font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; color:var(--muted); white-space:nowrap; }
-.spec-val{ margin:0; font-size:15px; line-height:1.76; color:var(--muted); }
-.spec-val strong{ color:var(--fg); font-weight:600; }
-@media (max-width:640px){ .backface-row,.spec-row{ grid-template-columns:1fr; gap:5px; } }
+/* 「照片背面」backface 与 spec-row 已随关于页 v2 重构删除（2026-10-05，
+   docs/about-v2-integration.md）：结构化信息改朴素列表，制作说明改
+   credits 相纸卡——两组样式均在 about.astro 组件样式块里。 */
 
 /* 独立引用卡 */
 .pullquote{

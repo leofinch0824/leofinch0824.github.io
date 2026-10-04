@@ -1,15 +1,19 @@
 ---
 import { Image } from 'astro:assets';
-import AboutHeroImage from '../assets/test-pool/portrait.jpg';
+import PortraitImage from '../assets/test-pool/portrait.jpg';
+import AvatarImage from '../assets/test-pool/dev-master.png';
 import Base from '../layouts/Base.astro';
 
-// 关于页（2026-10-04 重构为社交属性个人主页，docs/about-page-redesign.md）：
-// 肖像独开场（拍立得居中 + h1 一句身份定位）→ 照片背面（唯一人设卡）→
-// 为什么写 → 制作说明 → 找到我。英雄区文字列（眉标/h1/导语/intro-meta）已删。
-// 人设事实（作者 2026-10-04 提供）：算法工程师，喜欢健身，喜欢看电影；
-// 肖像用 docs/images-test/portrait.jpg（拷入 src/assets/test-pool/）。
-// 仍待作者提供：名字、坐标、邮箱、GitHub 及其他社交账号 —— 对应字段保持「待补」。
-// 「制作说明」只写本仓库当前为真的事实。
+// 关于页 v2（2026-10-05，对照 reference/prototype/about-new-versions.html 整合，
+// docs/about-v2-integration.md + 所有者三项拍板）：
+// 1. 开场 = 双卡叠压纯视觉（无文字栏；前卡肖像 + 后卡数字化身，dev-master）；
+//    语义 h1 用 .sr-only 承担。
+// 2. 技能 · 工具 = 朴素 Markdown 列表观感（所有者：简单易改写）。
+// 3. 一些零碎的 = poster 巨型衬线碎片（零散但连续的自然表达）。
+// 4. 「为什么写」与 backface/id-matrix 全部移除（所有者拍板）。
+// 5. 制作说明 = credits 相纸卡（内容按本仓库现实：KaTeX/Shiki 已接入）。
+// 6. 找到我 + findme 单行链接条（社交位待补，占位不虚构）。
+// 人设事实（作者提供）：算法工程师，喜欢健身，喜欢看电影；网名 leofinch。
 ---
 
 <Base
@@ -25,177 +29,315 @@ import Base from '../layouts/Base.astro';
 			margin: 0;
 			padding: 0;
 		}
-		/* 肖像开场（重构）：拍立得居中放大，h1 身份句走 .intro 格言档后居中。
-		   只写布局，颜色全部来自令牌。 */
-		.about-opening {
-			text-align: center;
-		}
-		.about-opening .wall-item {
-			max-width: 360px;
+
+		/* ── 双卡叠压开场（原型 .card-cluster：前卡左上、后卡右下，沿对角线
+		   叠住一个角。负边距而非绝对定位：窄屏一拆成竖排，自然回到文档流。
+		   62 + 50 − 12 = 100，正好占满栏宽。颜色全走令牌。 ── */
+		.card-cluster {
+			display: flex;
+			align-items: flex-start;
+			max-width: 760px;
 			margin-inline: auto;
 		}
-		.about-opening h1 {
-			max-width: 20em;
-			margin-inline: auto;
+		.cluster-front {
+			flex: 0 0 auto;
+			width: 62%;
+			z-index: 1;
 		}
-		/* 原型 about.tpl.html 的三处内联间距，收进布局样式 */
-		.why-prose {
-			margin-top: var(--gap-lg);
+		.cluster-back {
+			flex: 0 0 auto;
+			width: 50%;
+			margin-left: -12%;
+			/* 叠压量按当前测试图对（前 2.4:1 / 后 1:1）调优；换真人像后复查 */
+			margin-top: clamp(150px, 22%, 200px);
+			z-index: 2;
 		}
-		.why-quote {
-			margin-top: var(--gap-xl);
+		/* 被压住的那张，题注右侧让出叠压区 —— 邻居盖住的是留白，不是字 */
+		.cluster-front .print-cap {
+			padding-right: 22%;
 		}
-		.facts-title {
-			margin-bottom: var(--gap-lg);
+		/* 两卡都按自然比例呈现（内容照片永不裁切/拉伸）：.print-img 的 3:2
+		   只是横图布局兜底，当前测试图对（2.4:1 / 1:1）必须放开。
+		   叠压量按当前图对调优；换真人像（更高）后需复查叠压角。 */
+		.cluster-front .print-img,
+		.cluster-back .print-img {
+			aspect-ratio: auto;
+		}
+		@media (max-width: 920px) {
+			.card-cluster {
+				display: block;
+			}
+			.cluster-front,
+			.cluster-back {
+				width: auto;
+				margin: 0;
+			}
+			.cluster-back {
+				margin-top: clamp(28px, 6vw, 42px);
+			}
+			.cluster-front .print-cap {
+				padding-right: 3px;
+			}
+		}
+
+		/* ── 技能 · 工具：朴素列表（Markdown 观感），能扫、易改写 ── */
+		.skills {
+			margin: 0;
+			padding-left: 1.35em;
+			display: grid;
+			gap: 10px;
+			font-size: 15px;
+			line-height: 1.78;
+			color: color-mix(in oklch, var(--fg) 88%, var(--bg));
+		}
+		.skills li::marker {
+			color: var(--muted);
+		}
+		.skills b {
+			font-weight: 500;
+			color: var(--fg);
+		}
+
+		/* ── 一些零碎的：poster 巨型衬线碎片（原型 .poster-list）。
+		   用墨不用锈红：巨型文字的力量来自字号；li 按 em 限宽，
+		   中文长句不会拖成一条细线。 ── */
+		.poster-list {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+		.poster-list li {
+			font-family: var(--font-display);
+			font-weight: 600;
+			font-size: clamp(26px, 4vw, 45px);
+			line-height: 1.28;
+			letter-spacing: -0.014em;
+			color: color-mix(in oklch, var(--fg) 92%, var(--bg));
+			max-width: 18em;
+			text-wrap: balance;
+			/* 中文词不拆行（「就像」不能断成「就/像」），超长串兜底 */
+			word-break: keep-all;
+			overflow-wrap: anywhere;
+		}
+		.poster-list li + li {
+			margin-top: clamp(9px, 1.3vw, 16px);
+		}
+		@media (max-width: 920px) {
+			.poster-list li {
+				font-size: clamp(23px, 5.8vw, 32px);
+			}
+		}
+
+		/* ── 制作说明：印在相纸上的参数表（原型 .credits），卡内两列微字 ── */
+		.credits {
+			background: var(--surface);
+			border: 1px solid var(--border);
+			border-radius: 3px;
+			box-shadow: var(--lift-1);
+			padding: clamp(20px, 3vw, 30px) clamp(20px, 3vw, 34px) clamp(12px, 2vw, 20px);
+		}
+		.credits-title {
+			margin: 0 0 clamp(6px, 1vw, 12px);
+			font-family: var(--font-display);
+			font-size: 18px;
+			font-weight: 600;
+			line-height: 1.42;
+		}
+		.credits-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 0 clamp(20px, 3.6vw, 48px);
+		}
+		.credit-cell {
+			padding: 13px 0;
+			border-top: 1px solid var(--rule-faint);
+		}
+		.credit-key {
+			display: block;
+			margin-bottom: 5px;
+			font-family: var(--font-mono);
+			font-size: 11.5px;
+			letter-spacing: 0.12em;
+			text-transform: uppercase;
+			color: var(--muted);
+		}
+		.credit-val {
+			margin: 0;
+			font-size: 14.5px;
+			line-height: 1.72;
+			color: var(--muted);
+		}
+		.credit-val strong {
+			color: var(--fg);
+			font-weight: 600;
+		}
+		@media (max-width: 640px) {
+			.credits-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		/* ── 找得到我：单行链接条收束全页（原型 .findme）── */
+		.findme {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
+			justify-content: center;
+			gap: 8px 20px;
+			margin: var(--gap-xl) auto 0;
+			padding-top: var(--gap-md);
+			max-width: 46ch;
+			border-top: 1px solid var(--rule-faint);
+			font-family: var(--font-mono);
+			font-size: 12px;
+			letter-spacing: 0.03em;
+		}
+		.findme-label {
+			color: var(--muted);
+		}
+		.findme a {
+			color: var(--muted);
+			text-decoration: underline;
+			text-decoration-color: var(--rule);
+			text-underline-offset: 4px;
+			transition:
+				color 0.18s ease,
+				text-decoration-color 0.18s ease;
+		}
+		.findme a:hover {
+			color: var(--fg);
+			text-decoration-color: var(--fg);
 		}
 	</style>
 	<main id="content">
-		<section class="section intro about-opening" data-od-id="about-intro">
-			<div class="container">
-				{/* 肖像独开场（重构）：零文字主视觉，身份句在照片下方。
-				    layout="none" 只给 width，不裁切（AGENTS.md 硬约束）。 */}
-				<div class="wall-item" style="--rot:-0.6deg; --i:0">
-					<figure class="print">
-						<Image
-							class="print-img"
-							src={AboutHeroImage}
-							alt="作者的肖像照片"
-							width={900}
-							layout="none"
-							loading="eager"
-							fetchpriority="high"
-							decoding="async"
-						/>
-						<figcaption class="print-cap">
-							<p class="print-note">作者肖像。</p>
-						</figcaption>
-					</figure>
-				</div>
-				{/* 身份定位一句（h1，格言档与首页同语言）；全部为已提供事实，不虚构 */}
-				<h1>算法工程师，业余举铁、看电影、写字。</h1>
-			</div>
-		</section>
+		{/* 页面语义 h1：开场是纯视觉叠卡，文字栏已按拍板移除，h1 转为不可见承担 */}
+		<h1 class="sr-only">关于拾光集，和它背后的人。</h1>
 
-		<section class="section" data-od-id="about-facts">
+		{/* ── 双卡叠压开场：前卡肖像，后卡数字化身（测试图，可随时换） ── */}
+		<section class="section" data-od-id="about-intro">
 			<div class="container">
-				<div class="measure">
-					<p class="eyebrow">照片背面</p>
-					<h2 class="facts-title">一些可以写在相纸背面的事实。</h2>
-						<div class="backface">
-							<div class="backface-row">
-								<span class="backface-key">现在</span>
-								<p class="backface-val">算法工程师。</p>
-							</div>
-							<div class="backface-row">
-								<span class="backface-key">爱好</span>
-								<p class="backface-val">健身，和看电影。举铁与长片轮流占用晚上的时间。</p>
-							</div>
-							<div class="backface-row">
-								<span class="backface-key">名字</span>
-								<p class="backface-val">待补。</p>
-							</div>
-							<div class="backface-row">
-									<span class="backface-key">坐标</span>
-									<p class="backface-val">待补。</p>
-								</div>
-								{/* 社交字段（重构新增）：账号待作者提供，占位不虚构 */}
-								<div class="backface-row">
-									<span class="backface-key">邮箱</span>
-									<p class="backface-val">待补。</p>
-								</div>
-								<div class="backface-row">
-									<span class="backface-key">GitHub</span>
-									<p class="backface-val">待补。</p>
-								</div>
-								<div class="backface-row">
-									<span class="backface-key">更新</span>
-									<p class="backface-val">不定期。</p>
-								</div>
-						</div>
-				</div>
-			</div>
-		</section>
-
-		<section class="section" data-od-id="about-why">
-			<div class="container">
-				<div class="measure">
-					<p class="eyebrow">为什么写</p>
-					<h2>这里原本只打算放些文字。</h2>
-					<div class="prose why-prose">
-						<p>
-							这个站最初只是想给文字找个存放的地方。写着写着发现，每一篇都被保存成了一张可以回看的快照——什么时候写的、当时在想什么，翻回去都还在。
-						</p>
-						<p>
-							「文字也是一种影像记录」在这里不是比喻。一次记录和一张照片做的是同一件事：把某一刻从时间线上剪下来，钉住。区别只是照片用光，文字用词。
-						</p>
-						<p>所以这里既有技术笔记，也有生活片段。它们在本站是同一类东西：被保存下来的记忆快照。</p>
+				<div class="card-cluster">
+					<div class="cluster-front wall-item" style="--rot:-1.6deg; --i:0">
+						<figure class="print">
+							<Image
+								class="print-img"
+								src={PortraitImage}
+								alt="测试图：荒野中的拉力赛车（占位，待替换为作者肖像）"
+								width={900}
+								layout="none"
+								loading="eager"
+								fetchpriority="high"
+								decoding="async"
+							/>
+							<figcaption class="print-cap">
+								<p class="print-note">测试图：荒野拉力。</p>
+							</figcaption>
+						</figure>
 					</div>
-					<blockquote class="pullquote why-quote">
-						写下来的那一刻，它其实已经不是当时了——但至少它还在。
-						<p class="pullquote-author">— 关于本站</p>
-					</blockquote>
+					<div class="cluster-back wall-item" style="--rot:1.4deg; --i:1">
+						<figure class="print">
+							<Image
+								class="print-img"
+								src={AvatarImage}
+								alt="卡通风格的开发者形象插画：戴眼镜的程序员坐在发光的屏幕前"
+								width={720}
+								layout="none"
+								loading="lazy"
+								decoding="async"
+							/>
+							<figcaption class="print-cap">
+								<p class="print-note">屏幕里的另一个我。</p>
+							</figcaption>
+						</figure>
+					</div>
 				</div>
 			</div>
 		</section>
 
+		{/* ── 技能 · 工具：朴素列表，内容结构简单，随时可改写 ── */}
+		<section class="section" data-od-id="about-skills">
+			<div class="container">
+				<div class="measure">
+					<p class="eyebrow">技能 · 工具</p>
+					<ul class="skills">
+						<li><b>白天</b>——算法工程师：后端服务、推荐策略、TypeScript。</li>
+						<li><b>晚上</b>——举铁，和一部完整的电影。</li>
+						<li><b>手边</b>——这个博客：Astro 构建时渲染，手写 CSS。</li>
+						<li><b>网上</b>——叫 leofinch，熟人叫别的。</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		{/* ── 一些零碎的：零散但连续的自然表达（巨型衬线，一条一句） ── */}
+		<section class="section" data-od-id="about-poster">
+			<div class="container">
+				<p class="eyebrow">一些零碎的</p>
+				<ul class="poster-list">
+					<li>举铁不为形，为的是给一天收个尾。</li>
+					<li>好电影舍不得快进，就像好文章舍不得翻完。</li>
+					<li>想清楚了才写，写完就发。</li>
+					<li>走错路，才到过一些好地方。</li>
+				</ul>
+			</div>
+		</section>
+
+		{/* ── 制作说明：印在相纸上的参数表（内容只写本仓库当前为真的事实） ── */}
 		<section class="section" data-od-id="about-colophon">
 			<div class="container">
 				<div class="measure">
 					<p class="eyebrow">制作说明</p>
-					<h2 class="facts-title">这个站是怎么搭的。</h2>
-					<div>
-						<div class="spec-row">
-							<span class="spec-key">框架</span>
-							<p class="spec-val">
-								<strong>Astro 静态站点。</strong>文章在构建时就生成好 HTML，页面打开即可读，没有等待中的水合过程。
-							</p>
-						</div>
-						<div class="spec-row">
-							<span class="spec-key">样式</span>
-							<p class="spec-val">
-								手写 CSS。一套六个颜色令牌加三条字体栈，没有 UI 框架，也没有运行时样式注入。
-							</p>
-						</div>
-						<div class="spec-row">
-							<span class="spec-key">交互</span>
-							<p class="spec-val">
-								只用少量 TypeScript 处理主题切换、记忆墙展开这类局部状态，其余交给 CSS。没有引入任何组件库运行时。
-							</p>
-						</div>
-						<div class="spec-row">
-							<span class="spec-key">公式与代码</span>
-							<p class="spec-val">
-								代码高亮由 Astro 内置的 Shiki 在构建时完成；数学公式的 KaTeX 方案推荐待验证，尚未接入。
-							</p>
-						</div>
-						<div class="spec-row">
-							<span class="spec-key">图片</span>
-							<p class="spec-val">
-								走 Astro 的资源管线压缩、生成响应式尺寸，首屏之外再延迟加载。
-							</p>
-						</div>
-						<div class="spec-row">
-							<span class="spec-key">这一版</span>
-							<p class="spec-val">
-								是迁移中的正式站。版式与令牌来自「拾光集」原型；页面上的文章与人设均为占位，待真实内容替换。
-							</p>
+					<div class="credits">
+						<p class="credits-title">这个站是怎么搭的。</p>
+						<div class="credits-grid">
+							<div class="credit-cell">
+								<span class="credit-key">框架</span>
+								<p class="credit-val"><strong>Astro 静态站点。</strong>文章在构建时就生成好 HTML，页面打开即可读，没有等待中的水合过程。</p>
+							</div>
+							<div class="credit-cell">
+								<span class="credit-key">样式</span>
+								<p class="credit-val">手写 CSS。六个颜色令牌加三条字体栈，没有 UI 框架，也没有运行时样式注入。</p>
+							</div>
+							<div class="credit-cell">
+								<span class="credit-key">交互</span>
+								<p class="credit-val">只用少量 TypeScript 处理主题切换、首页胶片带这类局部状态，其余交给 CSS。</p>
+							</div>
+							<div class="credit-cell">
+								<span class="credit-key">公式与代码</span>
+								<p class="credit-val">Shiki 做语法高亮，KaTeX 渲染数学公式，全部在构建时完成。</p>
+							</div>
+							<div class="credit-cell">
+								<span class="credit-key">图片</span>
+								<p class="credit-val">走 Astro 的资源管线压缩、生成响应式尺寸，首屏之外再延迟加载。</p>
+							</div>
+							<div class="credit-cell">
+								<span class="credit-key">这一版</span>
+								<p class="credit-val">是迁移中的正式站。版式与令牌来自「拾光集」设计系统，内容处在真实文章与照片的接入阶段。</p>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</section>
 
+		{/* ── 找到我：写信按钮 + findme 单行链接条（社交位待补） ── */}
 		<section class="section cta" id="contact" data-od-id="cta-strip">
 			<div class="container">
 				<h2>找到我</h2>
-				<p class="lead">
-					关于技术、照片，或者只是路过打个招呼，都可以写信；也可以用 RSS 订阅更新。
-				</p>
+				<p class="lead">关于技术、电影，或者只是路过打个招呼，都可以写信——我更新不勤，但每封都会回。</p>
 				<div class="cta-actions">
 					<a class="btn btn-primary" href="mailto:hi@example.com"
 						>写信给我<span class="sr-only">跳转邮件客户端（占位邮箱，待作者提供）</span></a
 					>
-					<a class="btn btn-secondary" href="/rss.xml">RSS Feed</a>
+				</div>
+				<div class="findme">
+					<span class="findme-label">找得到我</span>
+					{/* 无 href 锚点：不可聚焦/不可点击/不播报为链接，与「待补」一致 */}
+					<a>GitHub · 待补</a>
+					<a href="/rss.xml">RSS</a>
+					<a class="findme-mail" href="mailto:hi@example.com"
+						>邮箱 · 待补<span class="sr-only">占位邮箱，待作者提供</span></a
+					>
 				</div>
 			</div>
 		</section>
