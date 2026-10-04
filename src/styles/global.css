@@ -71,6 +71,16 @@
 
   --radius: 8px;
   --radius-lg: 14px;
+  --radius-print: 3px;
+
+  /* ── 动效（对齐设计系统包 colors_and_type.css）：一条缓动、三个时长。
+     组件中少量 .2s/.3s/.6s 字面量是原型自带的档外值，触达时再归入此刻度。 */
+  --ease-lift: cubic-bezier(.16,.84,.3,1);
+  --ease-quick: cubic-bezier(.2,.7,.2,1);
+  --dur-fast: .18s;
+  --dur-base: .22s;
+  --dur-lift: .42s;
+  --stagger: 45ms;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
