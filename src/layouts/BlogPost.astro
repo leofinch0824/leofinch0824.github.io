@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import Base from './Base.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import { AUTHOR_EMAIL, POST_LICENSE, SITE_AUTHOR } from '../consts';
 import type { BlogPost as BlogPostEntry } from '../utils/posts';
 
 interface Props {
@@ -23,6 +24,8 @@ const { post, no, minutes, newer, newerNo, older, olderNo } = Astro.props;
 const { title, description, pubDate, updatedDate, heroImage, category, tags } = post.data;
 // 元信息行第三段：分类 / 标签，形态如「算法 / 数据结构」
 const metaTopic = [category, ...(tags ?? [])].join(' / ');
+// 版权声明卡用：与 BaseHead 的 canonical 同源（Astro.site + 当前路径）
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <Base title={title} description={description} lang="zh-CN">
@@ -87,6 +90,21 @@ const metaTopic = [category, ...(tags ?? [])].join(' / ');
 					<div class="prose">
 						<slot />
 					</div>
+
+					{/* 版权声明（2026-10-05 所有者拍板：CC BY-NC-SA 4.0）：
+					    正文读完、翻页之前的收束相纸卡。事实全部来自 consts.ts 单一来源。 */}
+					<aside class="license" aria-label="版权声明">
+						<p class="license-label">版权声明</p>
+						<p class="license-body">
+							本文采用
+							<a rel="license" href={POST_LICENSE.url}>{POST_LICENSE.name}</a>
+							许可协议：署名、非商业性使用、相同方式共享——转载请保留本文链接与作者署名，二次创作须以相同协议共享；商业转载请先
+							<a href={`mailto:${AUTHOR_EMAIL}`}>联系作者</a>。
+						</p>
+						<p class="license-fine meta num">
+							作者 {SITE_AUTHOR} · 本文链接 <a href={canonicalURL.href}>{canonicalURL.href}</a>
+						</p>
+					</aside>
 
 					{
 						(newer || older) && (

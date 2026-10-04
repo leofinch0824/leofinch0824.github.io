@@ -528,6 +528,27 @@ b.num{ font-weight:600; color:var(--fg); }
   font-family:var(--font-mono); font-size:var(--fs-meta); color:var(--muted); letter-spacing:normal;
 }
 
+/* 版权声明卡（2026-10-05，CC BY-NC-SA 4.0）：正文与翻页之间的收束相纸卡，
+   规格与关于页 credits 同语言——surface 底 + 发丝线 + 3px 圆角 + 接触影。 */
+.license{
+  margin-top:clamp(36px,5vw,56px);
+  background:var(--surface); border:1px solid var(--border); border-radius:3px;
+  box-shadow:var(--lift-1);
+  padding:clamp(16px,2.4vw,24px) clamp(18px,2.8vw,28px);
+}
+.license-label{
+  margin:0 0 8px; font-family:var(--font-mono); font-size:var(--fs-meta);
+  font-weight:400; letter-spacing:0.13em; text-transform:uppercase; color:var(--muted);
+}
+.license-body{ margin:0; font-size:15px; line-height:1.74; color:var(--muted); max-width:52ch; }
+.license a{
+  color:var(--fg); text-decoration:underline; text-decoration-color:var(--rule);
+  text-underline-offset:4px; transition:text-decoration-color .2s ease;
+}
+.license a:hover{ text-decoration-color:var(--accent); }
+.license-fine{ margin:10px 0 0; }
+.license-fine a{ overflow-wrap:anywhere; }   /* 长链接不撑破版心（390px） */
+
 /* 翻页 */
 .page-turn{
   display:grid; grid-template-columns:1fr 1fr; gap:var(--gap-md);
@@ -586,6 +607,9 @@ b.num{ font-weight:600; color:var(--fg); }
 .foot-col a{ display:block; padding:3px 0; transition:color .18s ease; }
 .foot-col a:hover{ color:var(--fg); }
 .foot-base{ margin-top:var(--gap-xl); padding-top:var(--gap-md); border-top:1px solid var(--rule-faint); }
+/* 版权行内的协议链接：页脚 a 默认是块级导航链接，这里复位为行内 */
+.foot-base a{ display:inline; color:var(--muted); text-decoration:underline; text-decoration-color:var(--rule); text-underline-offset:3px; }
+.foot-base a:hover{ color:var(--fg); }
 /* 订阅面板（设计精修 #9）：整合原页内订阅大段的内容，浅墨底面板做体现。
    颜色全令牌——亮色为墨叠纸、暗色下同一令牌自动反转为浅叠暗。 */
 .foot-sub{

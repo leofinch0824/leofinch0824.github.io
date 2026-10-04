@@ -1,7 +1,7 @@
 ---
 title: 'Markdown 语法与版式验收'
 description: '本文同时是一篇版式验收文：行内与独立公式、多行推导（带 \\tag 编号）、长代码块（390px 横向滚动）、宽表格，都应在手机上不撑破版面。'
-pubDate: '2024-06-19'
+pubDate: '2026-10-04'
 heroImage: '../../assets/test-pool/snowymontain1.png'
 category: '技术'
 tags: ['markdown']

@@ -1,5 +1,8 @@
 ---
-import { SITE_TITLE } from '../consts';
+import { SITE_TITLE, POST_LICENSE } from '../consts';
+
+// 版权年份取构建时的当前年：跨年后第一次重新部署自动更新，无需手工维护。
+const year = new Date().getFullYear();
 
 // 页脚（2026-10 迁移批2）：站点名 + 说明 / 「走一走」/「订阅」两列。
 // 「文章样本」已删（2026-10-05：开发期遗留入口，正式语义与归档重复）；
@@ -29,6 +32,10 @@ import { SITE_TITLE } from '../consts';
 				</div>
 			</div>
 		</div>
-		<p class="foot-base meta">© 2023–2026 {SITE_TITLE} · 文字与照片均归作者所有</p>
+		<p class="foot-base meta">
+			© {year} {SITE_TITLE} · 除非另有声明，文章采用
+			<a rel="license" href={POST_LICENSE.url}>{POST_LICENSE.name}</a>
+			许可协议
+		</p>
 	</div>
 </footer>

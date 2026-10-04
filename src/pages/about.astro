@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import PortraitImage from '../assets/test-pool/portrait.jpg';
 import AvatarImage from '../assets/test-pool/dev-master.png';
 import Base from '../layouts/Base.astro';
+import { AUTHOR_EMAIL } from '../consts';
 
 // 关于页 v2（2026-10-05，所有者三项拍板定稿）：
 // 1. 开场 = 双卡叠压纯视觉（无文字栏；前卡肖像 + 后卡数字化身，dev-master）；
@@ -317,14 +318,14 @@ import Base from '../layouts/Base.astro';
 				<h2>如何找到我</h2>
 				<p class="lead">关于技术、电影，或者只是路过打个招呼，都可以写信——我更新不勤，但每封都会回。</p>
 				<div class="cta-actions">
-					<a class="btn btn-primary" href="mailto:yolo2408seu@163.com"
+					<a class="btn btn-primary" href={`mailto:${AUTHOR_EMAIL}`}
 						>写信给我<span class="sr-only">跳转邮件客户端</span></a
 					>
 				</div>
 				<div class="findme">
 					<a href="https://github.com/leofinch0824">GitHub</a>
 					<a href="/rss.xml">RSS</a>
-					<a class="findme-mail" href="mailto:yolo2408seu@163.com">网易邮箱</a>
+					<a class="findme-mail" href={`mailto:${AUTHOR_EMAIL}`}>网易邮箱</a>
 				</div>
 			</div>
 		</section>
