@@ -1,7 +1,7 @@
 ---
 title: 'First post'
 description: 'Lorem ipsum dolor sit amet'
-pubDate: 'Jul 08 2022'
+pubDate: '2022-07-08'
 # 无 heroImage：占位样文刻意留空，让 .note-face 无照片卡（DESIGN.md 签名组件）
 # 与文章页无头图路径获得真实实例；真实文章到来后按实际内容决定配图。
 category: '生活'

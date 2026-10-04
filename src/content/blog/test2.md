@@ -1,7 +1,7 @@
 ---
 title: '逆向深扒 Claude Code 源码，我发现了什么！？'
 description: 'Claude Code v2.1.88 源码逆向分析：12 层渐进式工程包装、极简 Agent Loop、Skills 按需注入、上下文三重压缩与权限纵深防御。'
-pubDate: 'Oct 04 2026'
+pubDate: '2026-10-04'
 heroImage: '../../assets/test-pool/wallhaven-exyw3o.jpg'
 category: '技术'
 tags: ['Claude Code', 'Agent', '逆向工程']

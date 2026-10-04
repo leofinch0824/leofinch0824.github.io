@@ -12,6 +12,9 @@ const parts = new Intl.DateTimeFormat('zh-CN', {
 	year: 'numeric',
 	month: '2-digit',
 	day: '2-digit',
+	timeZone: 'UTC', // datetime 属性走 toISOString（UTC）：显示与机器值必须在同一时区取日，
+	// 否则不同时区的构建机会给出不同日期（终审遗留 #6）；frontmatter 日期用 ISO YYYY-MM-DD
+	// 保证解析即 UTC 午夜，两边在任意构建机上都稳定。
 })
 	.formatToParts(date)
 	.reduce<Record<string, string>>((acc, part) => {

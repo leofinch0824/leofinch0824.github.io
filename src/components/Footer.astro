@@ -36,7 +36,8 @@ const latest = [...posts].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDa
 			<div class="foot-col">
 				<p class="foot-label">订阅</p>
 				<a href="/rss.xml">RSS Feed<span class="sr-only">订阅本站更新</span></a>
-				<a href="#">邮件通知<span class="sr-only">尚未开通，暂为占位</span></a>
+				{/* 无 href 锚点：不可聚焦/不可点击/不播报为链接，与「未开通」一致（终审遗留 #5）。 */}
+				<a>邮件订阅 · 未开通</a>
 			</div>
 		</div>
 		<p class="foot-base meta">© 2023–2026 {SITE_TITLE} · 文字与照片均归作者所有</p>
