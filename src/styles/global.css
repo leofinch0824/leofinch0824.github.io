@@ -217,14 +217,11 @@ b.num{ font-weight:600; color:var(--fg); }
   .topnav .logo .logo-sub{ display:none; }
 }
 /* 站名与导航词都不许在词中间断行 —— 手机上「拾光集」会断成「拾光/集」、
-   「记忆墙」断成「记忆/墙」，顶栏被撑成两行高，随滚动一直占着。
-   到 560px 以下再撤掉页头的订阅按钮：页面末尾本来就有订阅区，
-   留着它只会把剩下三个导航词挤到没地方。 */
+   「记忆墙」断成「记忆/墙」，顶栏被撑成两行高，随滚动一直占着。 */
 .topnav .logo,
 .topnav nav a{ white-space:nowrap; }
 @media (max-width:560px){
   .topnav nav{ gap:var(--gap-sm); }
-  .topnav .btn-secondary{ display:none; }
 }
 
 /* ── buttons ──────────────────────────────────────────────────────────── */
@@ -237,8 +234,7 @@ b.num{ font-weight:600; color:var(--fg); }
 .btn:active{ transform:translateY(1px); }
 .btn-primary{ background:var(--accent); color:var(--surface); border-color:var(--accent); }
 .btn-primary:hover{ background:var(--accent-hover); border-color:var(--accent-hover); }
-.btn-secondary{ background:transparent; color:var(--fg); border-color:var(--rule); }
-.btn-secondary:hover{ border-color:var(--fg); }
+/* .btn-secondary 已随页头订阅按钮移除而删除（design-polish #11）：订阅入口在页脚 */
 .btn-ghost{ background:transparent; color:var(--muted); border-color:transparent; padding-inline:6px; }
 .btn-ghost:hover{ color:var(--fg); }
 .btn-arrow::after{ content:'→'; transition:transform .2s cubic-bezier(.2,.7,.2,1); }

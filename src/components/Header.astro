@@ -4,9 +4,10 @@ import HeaderLink from './HeaderLink.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
 // 顶栏（批2，对照 reference/prototype/home.tpl.html:19-33 与 base.css .topnav 段）。
-// sticky + 毛玻璃、站名/导航词 white-space:nowrap、760px 收副标与导航间距、
-// 560px 撤订阅按钮 —— 全部来自 global.css 的 .topnav 规则，组件内不写颜色。
-// 订阅按钮指向 /rss.xml：真实订阅服务未决（PRODUCT.md「明确未决」），RSS 是真链接。
+// sticky + 毛玻璃、站名/导航词 white-space:nowrap、760px 收副标与导航间距
+// —— 全部来自 global.css 的 .topnav 规则，组件内不写颜色。
+// 页头订阅按钮已按所有者要求移除（2026-10，design-polish #11）：
+// 订阅入口收口于页脚面板（RSS 真链接），页头只留导航职责。
 ---
 
 <header class="topnav" data-od-id="topnav">
@@ -21,6 +22,5 @@ import ThemeToggle from './ThemeToggle.astro';
 			<HeaderLink href="/about">关于</HeaderLink>
 		</nav>
 		<ThemeToggle />
-		<a class="btn btn-secondary" href="/rss.xml">订阅<span class="sr-only">RSS 源</span></a>
 	</div>
 </header>

@@ -114,3 +114,14 @@
 - `npm run build` + `npm run check` 全绿；
 - DOM 断言：全站无「不想错过下一张」；页脚订阅面板（文案 + RSS 强调 + 邮件占位）存在；走一走无「文章样本」；About「找到我」区不受影响；
 - 截图目验：页脚亮/暗两档，面板观感与整体协调。
+
+### 11. 页头订阅按钮移除（第 4 轮，所有者指令）
+
+- **位置**：`src/components/Header.astro`、`src/styles/global.css`（.btn-secondary 全套 + 560px 隐藏规则）。
+- **分析**：订阅入口已在 #9 收口到页脚浅墨面板（RSS 强调链 + 邮件占位），页头按钮成了第二入口，且 560px 以下本来就隐藏——所有者判定不需要，移除。顶栏回到 站名 / 导航三词 / 主题切换 的纯导航职责。
+- **方案**：删按钮与 sr-only 文案；删 `.btn-secondary`/`:hover`/`.topnav .btn-secondary` 三条死规则；560px 断点只留导航间距收窄；DESIGN.md 与迁移文档的顶栏约束条目同步。
+
+## 验收（第 4 轮）
+
+- `npm run build` + `npm run check` 全绿；dist 无 `btn-secondary` 残留；
+- 截图目验：1440 与 390 顶栏布局正常（站名/导航/主题钮），页脚订阅面板不受影响。
