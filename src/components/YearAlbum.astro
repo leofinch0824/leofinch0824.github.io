@@ -1,6 +1,5 @@
 ---
 import { Image } from 'astro:assets';
-import SubscribeCta from './SubscribeCta.astro';
 import { yearPath, type WallCard, type YearGroup } from '../utils/posts';
 
 // 年份相册页主体（分页三步抽出的共用组件，docs/pagination-design.md）：
@@ -100,8 +99,6 @@ const monthDay = (date: Date) =>
 			</nav>
 		</div>
 	</section>
-
-	<SubscribeCta />
 </main>
 
 <style>

@@ -610,6 +610,17 @@ b.num{ font-weight:600; color:var(--fg); }
 .foot-col a{ display:block; padding:3px 0; transition:color .18s ease; }
 .foot-col a:hover{ color:var(--fg); }
 .foot-base{ margin-top:var(--gap-xl); padding-top:var(--gap-md); border-top:1px solid var(--rule-faint); }
+/* 订阅面板（设计精修 #9）：整合原页内订阅大段的内容，浅墨底面板做体现。
+   颜色全令牌——亮色为墨叠纸、暗色下同一令牌自动反转为浅叠暗。 */
+.foot-sub{
+  display:flex; flex-direction:column; gap:7px;
+  background:var(--fg-soft); border-radius:var(--radius); padding:14px 16px;
+}
+.sub-note{ margin:0; font-size:12.5px; line-height:1.66; color:var(--muted); }
+.sub-rss{ font-weight:500; color:var(--fg); }
+.sub-rss::after{ content:'→'; margin-left:7px; font-weight:400; transition:transform .2s cubic-bezier(.2,.7,.2,1); }
+.sub-rss:hover::after{ transform:translateX(3px); }
+.sub-mail{ color:var(--muted); }
 @media (max-width:760px){ .foot-grid{ grid-template-columns:1fr 1fr; } .foot-grid > :first-child{ grid-column:1 / -1; } }
 
 /* ── 页面切换（渐进增强，不支持的浏览器直接忽略） ─────────────────────── */
