@@ -1,20 +1,45 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
+import { readingMinutes, sortByPubDateDesc, type BlogPost as BlogPostEntry } from '../../utils/posts';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts.map((post) => ({
+	// № 编号与上下篇翻页都按「pubDate 新→旧的整个集合」推导（迁移方案 §5：
+	// 编号是构建时算出的底片序号，不进 frontmatter）。排序序列上
+	// i-1 是更新的一篇、i+1 是更早的一篇；首/末篇自然为 undefined，
+	// BlogPost 据此省略对应的翻页卡。
+	const sorted = sortByPubDateDesc(await getCollection('blog'));
+	const total = sorted.length;
+	const noFor = (index: number) => String(total - index).padStart(3, '0');
+
+	return sorted.map((post, i) => ({
 		params: { slug: post.id },
-		props: post,
+		props: {
+			post,
+			no: noFor(i),
+			minutes: readingMinutes(post.body ?? ''),
+			newer: i > 0 ? sorted[i - 1] : undefined,
+			newerNo: i > 0 ? noFor(i - 1) : undefined,
+			older: i < total - 1 ? sorted[i + 1] : undefined,
+			olderNo: i < total - 1 ? noFor(i + 1) : undefined,
+		},
 	}));
 }
-type Props = CollectionEntry<'blog'>;
 
-const post = Astro.props;
+interface Props {
+	post: BlogPostEntry;
+	no: string;
+	minutes: number;
+	newer?: BlogPostEntry;
+	newerNo?: string;
+	older?: BlogPostEntry;
+	olderNo?: string;
+}
+
+const { post, no, minutes, newer, newerNo, older, olderNo } = Astro.props;
 const { Content } = await render(post);
 ---
 
-<BlogPost {...post.data}>
+<BlogPost post={post} no={no} minutes={minutes} newer={newer} newerNo={newerNo} older={older} olderNo={olderNo}>
 	<Content />
 </BlogPost>

@@ -2,103 +2,110 @@
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import SubscribeCta from '../../components/SubscribeCta.astro';
+import { prepareWall, type WallCard } from '../../utils/posts';
+import { SITE_TITLE } from '../../consts';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+// 归档页（批4，对照 reference/prototype/archive.tpl.html）：
+// 封面引言 + .year-jump 年份锚点胶囊 + 每年 .year-block（.year-head/.year-title）
+// + .album 相册行（缩略图、月·日、标题、摘要、分类标签、№ 底片编号）+ 订阅区。
+// 数据复用批3 的 prepareWall（src/utils/posts.ts）：新→旧排序、№ 编号、
+// 年份分组与「分类首现序」都是构建时算好的，不进 frontmatter。
+const wall = prepareWall(await getCollection('blog'));
+const { cards, years } = wall;
+const total = cards.length;
+const latestYear = years[0]?.year;
+const earliestYear = years[years.length - 1]?.year;
+
+// 按年分组相册行：cards 已按 pubDate 新→旧排好，顺序即行序（最新在最上）
+const albumByYear = new Map<number, WallCard[]>();
+for (const card of cards) {
+	const bucket = albumByYear.get(card.year);
+	if (bucket) bucket.push(card);
+	else albumByYear.set(card.year, [card]);
+}
+
+// 相册行日期只到「月 · 日」——年份已在 .year-head 里（原型 archive.tpl.html:66 的形态）
+const monthDay = (date: Date) =>
+	`${String(date.getMonth() + 1).padStart(2, '0')} · ${String(date.getDate()).padStart(2, '0')}`;
 ---
 
-<Base title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<Base
+	title={`归档 · ${SITE_TITLE}`}
+	description={`按年份翻阅的相册：${earliestYear} 至 ${latestYear} 年的全部文章。`}
+	lang="zh-CN"
+>
 	<style>
+		/* 过渡兜底解除（同首页，批3 的做法）：global.css 末尾暂留的 main{width:720px}
+		   是给旧版 /blog 列表页的居中列用的；归档是通栏容器布局。只写布局。 */
 		main {
-			width: 960px;
-		}
-		ul {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 2rem;
-			list-style-type: none;
+			width: auto;
+			max-width: none;
 			margin: 0;
 			padding: 0;
 		}
-		ul li {
-			width: calc(50% - 1rem);
-		}
-		ul li * {
-			text-decoration: none;
-			transition: 0.2s ease;
-		}
-		ul li:first-child {
-			width: 100%;
-			margin-bottom: 1rem;
-			text-align: center;
-		}
-		ul li:first-child img {
-			width: 100%;
-		}
-		ul li:first-child .title {
-			font-size: 2.369rem;
-		}
-		ul li img {
-			margin-bottom: 0.5rem;
-			border-radius: 12px;
-		}
-		ul li a {
-			display: block;
-		}
-		.title {
-			margin: 0;
-			color: rgb(var(--black));
-			line-height: 1;
-		}
-		.date {
-			margin: 0;
-			color: rgb(var(--gray));
-		}
-		ul li a:hover h4,
-		ul li a:hover .date {
-			color: rgb(var(--accent));
-		}
-		ul a:hover img {
-			box-shadow: var(--box-shadow);
-		}
-		@media (max-width: 720px) {
-			ul {
-				gap: 0.5em;
-			}
-			ul li {
-				width: 100%;
-				text-align: center;
-			}
-			ul li:first-child {
-				margin-bottom: 0;
-			}
-			ul li:first-child .title {
-				font-size: 1.563em;
-			}
-		}
 	</style>
-	<main>
-		<section>
-			<ul>
-				{
-					posts.map((post) => (
-						<li>
-							<a href={`/blog/${post.id}/`}>
-								{post.data.heroImage && (
-									<Image width={720} height={360} src={post.data.heroImage} alt="" />
-								)}
-								<h4 class="title">{post.data.title}</h4>
-								<p class="date">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
+	<main id="content">
+		<section class="section intro" data-od-id="archive-intro">
+			<div class="container">
+				<p class="eyebrow">归档 · {earliestYear} — {latestYear}</p>
+				<h1>{total} 张相纸，按年份摞好。</h1>
+				<p class="lead">相册从上往下翻，最新的在最上面。每一行都是一次记录，点开就是那篇文章。</p>
+				<nav class="year-jump" aria-label="跳转到年份">
+					{
+						years.map((group) => (
+							<a href={`#y${group.year}`}>
+								{group.year} · {group.count}
 							</a>
-						</li>
-					))
-				}
-			</ul>
+						))
+					}
+				</nav>
+			</div>
 		</section>
+
+		{
+			years.map((group) => (
+				<section class="section year-block" id={`y${group.year}`} data-od-id={`y${group.year}`}>
+					<div class="container">
+						<div class="year-head">
+							<h2 class="year-title">{group.year}</h2>
+							<span class="year-rule" aria-hidden="true" />
+							<span class="year-meta">
+								{group.count} 张 · {group.categories.join(' · ')}
+							</span>
+						</div>
+						<ul class="album">
+							{(albumByYear.get(group.year) ?? []).map((card) => (
+								<li class="album-row">
+									<a href={`/blog/${card.post.id}/`}>
+										<span class="album-thumb">
+											{card.post.data.heroImage && (
+												<Image
+													src={card.post.data.heroImage}
+													alt=""
+													width={200}
+													layout="none"
+													loading="lazy"
+													decoding="async"
+												/>
+											)}
+										</span>
+										<div class="album-body">
+											<p class="album-date">{monthDay(card.post.data.pubDate)}</p>
+											<h3>{card.post.data.title}</h3>
+											<p class="album-dek">{card.post.data.description}</p>
+										</div>
+										<span class="album-tag tag">{card.post.data.category}</span>
+										<span class="album-frame">№ {card.no}</span>
+									</a>
+								</li>
+							))}
+						</ul>
+					</div>
+				</section>
+			))
+		}
+
+		<SubscribeCta />
 	</main>
 </Base>

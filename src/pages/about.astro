@@ -1,63 +1,190 @@
 ---
+import { Image } from 'astro:assets';
 import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
-import Layout from '../layouts/BlogPost.astro';
+import Base from '../layouts/Base.astro';
+
+// 关于页（批4，对照 reference/prototype/about.tpl.html）：
+// 脱离 BlogPost 版面、用 Base 独立成页 —— 关于页是双栏 hero + backface + spec，
+// 不是文章（迁移方案 §2.1「必须脱离 BlogPost layout」）。
+// 人设一律中性占位：PRODUCT.md「明确未决」明确杭州 / 写后端 / X100V / FM2 / 一只猫
+// 是原型的占位虚构，真实身份信息待作者提供 —— 一律不搬，逐行写成「待作者提供」式表述；
+// 原型的虚构引言署名（「写在第十篇之后」）同样不搬。
+// 「制作说明」只写本仓库当前为真的事实：KaTeX 尚未接入（PRODUCT.md Operating Context）。
 ---
 
-<Layout
-	title="About Me"
-	description="Lorem ipsum dolor sit amet"
-	pubDate={new Date('August 08 2021')}
-	heroImage={AboutHeroImage}
+<Base
+	title="关于 · 拾光集"
+	description="关于拾光集：为什么写、这个站是怎么搭起来的，以及站在它后面的人（简介待补）。"
+	lang="zh-CN"
 >
-	<p>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-		labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo
-		viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam
-		adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus
-		et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus
-		vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque
-		sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
-	</p>
+	<style>
+		/* 过渡兜底解除（同首页/归档/文章页）：关于页是通栏容器布局。只写布局。 */
+		main {
+			width: auto;
+			max-width: none;
+			margin: 0;
+			padding: 0;
+		}
+		/* 原型 about.tpl.html 的三处内联间距，收进布局样式 */
+		.why-prose {
+			margin-top: var(--gap-lg);
+		}
+		.why-quote {
+			margin-top: var(--gap-xl);
+		}
+		.facts-title {
+			margin-bottom: var(--gap-lg);
+		}
+	</style>
+	<main id="content">
+		<section class="section" data-od-id="about-intro">
+			<div class="container about-hero">
+				<div>
+					<p class="eyebrow eyebrow-lead">关于 · 第 01 版</p>
+					<h1>关于拾光集，<br class="brk" />和它背后的人。</h1>
+					<p class="lead">
+						这里把想留下来的东西冲出来、晾干，再贴到墙上——文字也是一种影像记录。作者简介与肖像均待作者提供，本页暂以占位呈现。
+					</p>
+				</div>
+				<div class="wall-item" style="--rot:-0.6deg; --i:0">
+					<figure class="print">
+						{/* 占位肖像：layout="none" 只给 width，不裁切（AGENTS.md 硬约束）；
+						    alt 留空：占位照片不承载语义，页面文字自足（与批3 PostCard 同一决策）。 */}
+						<Image
+							class="print-img"
+							src={AboutHeroImage}
+							alt=""
+							width={900}
+							layout="none"
+							loading="eager"
+							fetchpriority="high"
+							decoding="async"
+						/>
+						<figcaption class="print-cap">
+							<p class="print-note">占位照片 · 待作者提供肖像。</p>
+						</figcaption>
+					</figure>
+				</div>
+			</div>
+		</section>
 
-	<p>
-		Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non
-		tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non
-		blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna
-		porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis
-		massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc.
-		Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis
-		bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra
-		massa massa ultricies mi.
-	</p>
+		<section class="section" data-od-id="about-why">
+			<div class="container">
+				<div class="measure">
+					<p class="eyebrow">为什么写</p>
+					<h2>这里原本只打算放些文字。</h2>
+					<div class="prose why-prose">
+						<p>
+							这个站最初只是想给文字找个存放的地方。写着写着发现，每一篇都被保存成了一张可以回看的快照——什么时候写的、当时在想什么，翻回去都还在。
+						</p>
+						<p>
+							「文字也是一种影像记录」在这里不是比喻。一次记录和一张照片做的是同一件事：把某一刻从时间线上剪下来，钉住。区别只是照片用光，文字用词。
+						</p>
+						<p>所以这里既有技术笔记，也有生活片段。它们在本站是同一类东西：被保存下来的记忆快照。</p>
+					</div>
+					<blockquote class="pullquote why-quote">
+						写下来的那一刻，它其实已经不是当时了——但至少它还在。
+						<p class="pullquote-author">— 关于本站</p>
+					</blockquote>
+				</div>
+			</div>
+		</section>
 
-	<p>
-		Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl
-		suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet
-		nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae
-		turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem
-		dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat
-		semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus
-		vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum
-		facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam
-		vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla
-		urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
-	</p>
+		<section class="section" data-od-id="about-facts">
+			<div class="container">
+				<div class="measure">
+					<p class="eyebrow">照片背面</p>
+					<h2 class="facts-title">一些可以写在相纸背面的事实。</h2>
+					<div class="backface">
+						<div class="backface-row">
+							<span class="backface-key">名字</span>
+							<p class="backface-val">这里将写作者的名字，待作者提供。</p>
+						</div>
+						<div class="backface-row">
+							<span class="backface-key">坐标</span>
+							<p class="backface-val">这里将写所在的城市，待作者提供。</p>
+						</div>
+						<div class="backface-row">
+							<span class="backface-key">现在</span>
+							<p class="backface-val">这里将写作者眼下在做的事，待作者提供。</p>
+						</div>
+						<div class="backface-row">
+							<span class="backface-key">相机</span>
+							<p class="backface-val">这里将写常用的相机，待作者提供。</p>
+						</div>
+						<div class="backface-row">
+							<span class="backface-key">桌上</span>
+							<p class="backface-val">这里将写桌上摊着什么，待作者提供。</p>
+						</div>
+						<div class="backface-row">
+							<span class="backface-key">更新</span>
+							<p class="backface-val">这里将写更新节奏，待作者确认。</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
 
-	<p>
-		Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper
-		viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc
-		scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur
-		gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus
-		pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim
-		blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id
-		cursus metus aliquam eleifend mi.
-	</p>
+		<section class="section" data-od-id="about-colophon">
+			<div class="container">
+				<div class="measure">
+					<p class="eyebrow">制作说明</p>
+					<h2 class="facts-title">这个站是怎么搭的。</h2>
+					<div>
+						<div class="spec-row">
+							<span class="spec-key">框架</span>
+							<p class="spec-val">
+								<strong>Astro 静态站点。</strong>文章在构建时就生成好 HTML，页面打开即可读，没有等待中的水合过程。
+							</p>
+						</div>
+						<div class="spec-row">
+							<span class="spec-key">样式</span>
+							<p class="spec-val">
+								手写 CSS。一套六个颜色令牌加三条字体栈，没有 UI 框架，也没有运行时样式注入。
+							</p>
+						</div>
+						<div class="spec-row">
+							<span class="spec-key">交互</span>
+							<p class="spec-val">
+								只用少量 TypeScript 处理主题切换、记忆墙展开这类局部状态，其余交给 CSS。没有引入任何组件库运行时。
+							</p>
+						</div>
+						<div class="spec-row">
+							<span class="spec-key">公式与代码</span>
+							<p class="spec-val">
+								代码高亮由 Astro 内置的 Shiki 在构建时完成；数学公式的 KaTeX 方案推荐待验证，尚未接入。
+							</p>
+						</div>
+						<div class="spec-row">
+							<span class="spec-key">图片</span>
+							<p class="spec-val">
+								走 Astro 的资源管线压缩、生成响应式尺寸，首屏之外再延迟加载。
+							</p>
+						</div>
+						<div class="spec-row">
+							<span class="spec-key">这一版</span>
+							<p class="spec-val">
+								是迁移中的正式站。版式与令牌来自「拾光集」原型；页面上的文章与人设均为占位，待真实内容替换。
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
 
-	<p>
-		Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta
-		nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam
-		tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci
-		ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar
-		proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
-	</p>
-</Layout>
+		<section class="section cta" id="contact" data-od-id="cta-strip">
+			<div class="container">
+				<h2>想聊点什么？</h2>
+				<p class="lead">
+					关于技术、照片，或者只是路过打个招呼，都可以写信。联系邮箱目前是占位，待作者提供。
+				</p>
+				<div class="cta-actions">
+					<a class="btn btn-primary" href="mailto:hi@example.com"
+						>写信给我<span class="sr-only">跳转邮件客户端（占位邮箱，待作者提供）</span></a
+					>
+					<a class="btn btn-secondary" href="/rss.xml">RSS Feed</a>
+				</div>
+			</div>
+		</section>
+	</main>
+</Base>

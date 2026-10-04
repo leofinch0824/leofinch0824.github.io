@@ -1,76 +1,113 @@
 ---
 import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
 import Base from './Base.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import type { BlogPost as BlogPostEntry } from '../utils/posts';
 
-type Props = CollectionEntry<'blog'>['data'];
+interface Props {
+	/** 内容条目本体：头图、分类、标签等版面数据都从它来 */
+	post: BlogPostEntry;
+	/** 底片编号 № NNN —— [...slug].astro 按集合排序算出，不进 frontmatter */
+	no: string;
+	/** 阅读时长（分钟），构建时由 readingMinutes 估出 */
+	minutes: number;
+	/** 排序序列上更新的一篇；首篇为 undefined → 对应翻页卡省略 */
+	newer?: BlogPostEntry;
+	newerNo?: string;
+	/** 排序序列上更早的一篇；末篇为 undefined → 对应翻页卡省略 */
+	older?: BlogPostEntry;
+	olderNo?: string;
+}
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { post, no, minutes, newer, newerNo, older, olderNo } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, category, tags } = post.data;
+// 元信息行第三段：分类 / 标签（原型 post.tpl.html:47「算法 / 数据结构」的形态）
+const metaTopic = [category, ...(tags ?? [])].join(' / ');
 ---
 
-<Base title={title} description={description}>
+<Base title={title} description={description} lang="zh-CN">
 	<style>
+		/* 过渡兜底解除（同首页/归档，批3 的做法）：global.css 末尾暂留的 main{width:720px}
+		   是给旧版文章页的居中列用的；新版面交给 .article-col / .prose。只写布局。 */
 		main {
-			width: calc(100% - 2em);
-			max-width: 100%;
+			width: auto;
+			max-width: none;
 			margin: 0;
-		}
-		.hero-image {
-			width: 100%;
-		}
-		.hero-image img {
-			display: block;
-			margin: 0 auto;
-			border-radius: 12px;
-			box-shadow: var(--box-shadow);
-		}
-		.prose {
-			width: 720px;
-			max-width: calc(100% - 2em);
-			margin: auto;
-			padding: 1em;
-			color: rgb(var(--gray-dark));
-		}
-		.title {
-			margin-bottom: 1em;
-			padding: 1em 0;
-			text-align: center;
-			line-height: 1;
-		}
-		.title h1 {
-			margin: 0 0 0.5em 0;
-		}
-		.date {
-			margin-bottom: 0.5em;
-			color: rgb(var(--gray));
-		}
-		.last-updated-on {
-			font-style: italic;
+			padding: 0;
 		}
 	</style>
-	<main>
-		<article>
-			<div class="hero-image">
-				{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-			</div>
-			<div class="prose">
-				<div class="title">
-					<div class="date">
-						<FormattedDate date={pubDate} />
+	<main id="content">
+		<article class="article">
+			<section class="article-head" data-od-id="article-head">
+				<div class="container article-col">
+					<p class="eyebrow eyebrow-lead">{category} · № {no}</p>
+					<h1>{title}</h1>
+					<p class="lead">{description}</p>
+					<div class="article-meta">
+						<span class="meta num"><FormattedDate date={pubDate} /></span>
+						<span class="meta">约 {minutes} 分钟</span>
+						<span class="meta">{metaTopic}</span>
 						{
 							updatedDate && (
-								<div class="last-updated-on">
-									Last updated on <FormattedDate date={updatedDate} />
-								</div>
+								<span class="meta">
+									更新于 <FormattedDate date={updatedDate} />
+								</span>
 							)
 						}
 					</div>
-					<h1>{title}</h1>
-					<hr />
 				</div>
-				<slot />
-			</div>
+			</section>
+
+			<section class="section" style="padding-top:0" data-od-id="article-body">
+				<div class="container article-col">
+					{
+						heroImage && (
+							<figure class="plate">
+								<div class="plate-inner">
+									{/* 印刷边框头图：layout="none" 只给 width（高度自动）——
+									    内容图永不裁切（AGENTS.md / DESIGN.md 硬约束）。
+									    alt 留空：占位照片不承载文章语义，标题就在上方
+									    （与批3 PostCard 的同一决策）。 */}
+									<Image
+										class="plate-img"
+										src={heroImage}
+										alt=""
+										width={1100}
+										layout="none"
+										loading="eager"
+										fetchpriority="high"
+										decoding="async"
+									/>
+								</div>
+								<figcaption>占位配图 · 待作者提供正式照片</figcaption>
+							</figure>
+						)
+					}
+
+					<div class="prose">
+						<slot />
+					</div>
+
+					{
+						(newer || older) && (
+							<nav class="page-turn" aria-label="相邻文章">
+								{newer && (
+									<a class="turn" href={`/blog/${newer.id}/`}>
+										<span class="turn-label">← 更新的一张 · № {newerNo}</span>
+										<span class="turn-title">{newer.data.title}</span>
+									</a>
+								)}
+								{older && (
+									<a class="turn turn-next" href={`/blog/${older.id}/`}>
+										<span class="turn-label">更早的一张 · № {olderNo} →</span>
+										<span class="turn-title">{older.data.title}</span>
+									</a>
+								)}
+							</nav>
+						)
+					}
+				</div>
+			</section>
 		</article>
 	</main>
 </Base>
