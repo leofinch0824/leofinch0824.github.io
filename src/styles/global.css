@@ -269,11 +269,10 @@ b.num{ font-weight:600; color:var(--fg); }
 
 /* ── 卷首语 ───────────────────────────────────────────────────────────── */
 .intro{ padding-block:clamp(56px,8vw,104px) clamp(40px,5vw,64px); }
-/* 中文标题按 em 限宽，ch 是西文 "0" 的宽度，用在中文上会误断词。
-   窄屏不强制换行，交给 text-wrap:balance 平分成两行，避免末行只剩一两个字。 */
-.intro h1{ max-width:13em; margin-bottom:var(--gap-md); }
+/* 卷首是格言不是大标题（精修第 2 轮 #6）：格言档字号 + 正文字距行高，
+   覆写收敛在此作用域；全局 h1 与 article-head 大标题规格不受影响。 */
+.intro h1{ font-size:var(--fs-h3); font-weight:500; line-height:1.66; letter-spacing:0; margin-bottom:var(--gap-lg); }
 @media (max-width:700px){ .brk{ display:none; } }
-.intro .lead{ margin-bottom:var(--gap-lg); }
 .intro-meta{ display:flex; flex-wrap:wrap; gap:10px 26px; padding-top:var(--gap-md); border-top:1px solid var(--rule-faint); }
 
 /* ── 记忆墙 ───────────────────────────────────────────────────────────── */
@@ -639,7 +638,6 @@ b.num{ font-weight:600; color:var(--fg); }
   .year-grid{ grid-template-columns:1fr; }
   /* 年份格居中后不再需要贴左补偿的 padding-right:0（设计精修 #5），只留单列去边线 */
   .year-cell{ border-right:0; }
-  .intro h1{ max-width:none; }
   .prose{ font-size:16.5px; line-height:1.86; }
   .prose .katex-display{ padding:15px 16px; }
   /* 公式字号要打到 .katex 上（19px 的规则也在那），容器上设了会被绕过 */
