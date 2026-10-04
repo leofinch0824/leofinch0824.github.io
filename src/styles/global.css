@@ -358,9 +358,12 @@ b.num{ font-weight:600; color:var(--fg); }
 
 /* ── 年份轨迹 ─────────────────────────────────────────────────────────── */
 .year-grid{ gap:0; border-top:1px solid var(--rule); }
+/* 年份格自 2026-10 分页改造起是链接（首页时间线/归档总览 → /blog/[year]/），
+   原 button 的展开态标记（aria-expanded 底色 + 年份数字下标圆点）随之移除。 */
 .year-cell{
   display:flex; flex-direction:column; gap:6px; width:100%; text-align:center;
   font:inherit; color:inherit; cursor:pointer; background:none; border:0;
+  text-decoration:none;
   padding:24px 20px; border-bottom:1px solid var(--rule-faint);
   border-right:1px solid var(--rule-faint);
   transition:background .22s ease;
@@ -369,17 +372,6 @@ b.num{ font-weight:600; color:var(--fg); }
 .year-cell:hover{ background:var(--fg-soft); }
 .year-num{ font-family:var(--font-display); font-size:clamp(28px,3vw,38px); line-height:1; letter-spacing:-0.02em; }
 .year-meta{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); letter-spacing:0.05em; }
-/* 展开状态靠年份数字下标的小点表示，不往元信息行里塞字（否则会折成两行，2026 那格会拖高三行） */
-.year-cell{ position:relative; }
-.year-cell[aria-expanded="true"]{ background:var(--fg-soft); }
-.year-cell[aria-expanded="true"] .year-num::after{
-  content:''; display:inline-block; width:7px; height:7px; margin-left:9px;
-  border-radius:50%; background:var(--accent); vertical-align:0.55em;
-}
-
-/* 原页展开的该年相纸。旋转仍由 --rot 承担，错落节奏与墙上一致。 */
-.wall-item.is-added{ animation:lay-down .6s cubic-bezier(.16,.84,.3,1) both; }
-.wall-item[hidden]{ display:none; }
 
 /* ── CTA ──────────────────────────────────────────────────────────────── */
 .cta{ text-align:center; border-top:1px solid var(--rule); }
@@ -394,6 +386,8 @@ b.num{ font-weight:600; color:var(--fg); }
   transition:color .18s ease, border-color .18s ease, background .18s ease;
 }
 .year-jump a:hover{ color:var(--fg); border-color:var(--rule); background:var(--surface); }
+/* 年份页的当年胶囊（分页改造）：与顶栏 aria-current 同语言的当前位置态 */
+.year-jump a[aria-current="page"]{ color:var(--fg); border-color:var(--fg-soft); background:var(--fg-soft); }
 .year-block{ padding-block:clamp(44px,6vw,72px); scroll-margin-top:82px; }
 .year-block + .year-block{ border-top:1px solid var(--rule); }
 .year-head{ display:flex; align-items:baseline; gap:var(--gap-md); flex-wrap:wrap; margin-bottom:var(--gap-lg); }

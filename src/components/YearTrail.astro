@@ -6,40 +6,25 @@ interface Props {
 }
 
 const { wall } = Astro.props;
-const open = new Set(wall.openYears);
-
-// 状态行首屏文案由服务端算好：无 JS 时它也是一句真话
-// （hidden 初始态同样是服务端按默认展开渲染的）。
-const shown = wall.cards.filter((card) => open.has(card.year)).length;
-const folded = wall.cards.length - shown;
-const initialStatus =
-	'已翻开 ' +
-	wall.openYears.join('、') +
-	'；' +
-	(folded ? `还有 ${folded} 张沉在相册深处，点一下年份就能取回。` : `整本相册都翻开了，${shown} 张回忆都在墙上。`);
 ---
 
 <section class="section" data-od-id="years">
 	<div class="container">
 		<p class="eyebrow">时间线</p>
-		<h2 class="years-title">按年份展开</h2>
+		<h2 class="years-title">按年份翻阅</h2>
 		<div class="grid-4 year-grid" id="years">
 			{
 				wall.years.map((group) => (
-					<button
-						class="year-cell"
-						type="button"
-						data-year={group.year}
-						aria-expanded={open.has(group.year)}
-						aria-controls="wall-items"
-					>
+					<a class="year-cell" href={`/blog/${group.year}/`}>
 						<span class="year-num">{group.year}</span>
 						<span class="year-meta">{group.count} 张 · {group.categories.join(' · ')}</span>
-					</button>
+					</a>
 				))
 			}
 		</div>
-		<p class="meta years-status" aria-live="polite" id="years-status">{initialStatus}</p>
+		{/* 年份格自分页改造起是链接（docs/pagination-design.md）：点开一年，
+		    去归档翻那年的相册页。原 aria-live 联动状态行随之退役。 */}
+		<p class="meta years-status">点开一年，翻到那年的相册页。</p>
 	</div>
 </section>
 

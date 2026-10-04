@@ -6,6 +6,10 @@ import type { CollectionEntry } from 'astro:content';
 
 export type BlogPost = CollectionEntry<'blog'>;
 
+/** 首页记忆墙的橱窗上限（docs/pagination-design.md）：只渲染最近这些张，
+ *  超出部分不进 DOM；全量翻阅走归档按年路由。单一来源，首页与断言共用。 */
+export const WALL_LIMIT = 12;
+
 /** 墙上一张相纸：内容条目 + 构建时算出的展示数据。 */
 export interface WallCard {
 	post: BlogPost;

@@ -1,89 +1,31 @@
 ---
 import PostCard from './PostCard.astro';
-import type { Wall } from '../utils/posts';
+import type { WallCard } from '../utils/posts';
 
 interface Props {
-	wall: Wall;
+	/** 橱窗卡片（index.astro 已按 WALL_LIMIT 截取最近这些张，docs/pagination-design.md） */
+	cards: WallCard[];
 }
 
-const { wall } = Astro.props;
-const open = new Set(wall.openYears);
+const { cards } = Astro.props;
 ---
 
 <section class="section" data-od-id="wall">
-		<div class="container">
-			<div class="wall-head">
-				<h2>最近回忆录</h2>
-				<a class="btn btn-ghost btn-arrow" href="/blog">打开整本相册</a>
-			</div>
-			<div class="wall" id="wall-items">
-			{wall.cards.map((card) => (
-				<PostCard post={card} rot={card.rot} index={card.i} hidden={!open.has(card.year)} />
+	<div class="container">
+		<div class="wall-head">
+			<h2>最近回忆录</h2>
+			<a class="btn btn-ghost btn-arrow" href="/blog">打开整本相册</a>
+		</div>
+		<div class="wall" id="wall-items">
+			{cards.map((card) => (
+				<PostCard post={card} rot={card.rot} index={card.i} />
 			))}
 		</div>
 	</div>
 </section>
 
 <style>
-	/* 只写布局（原 .wall-hint 规则随提示行一并移除，设计精修 #4）。 */
+	/* 只写布局（原 .wall-hint 规则随提示行一并移除，设计精修 #4；
+	   年份过滤脚本随分页改造移除，docs/pagination-design.md——墙是橱窗，
+	   全量翻阅走归档按年路由）。 */
 </style>
-
-<script>
-	// 移植 reference/prototype/home.tpl.html:286-330 的年份过滤脚本。
-	// 年份格 = 可折叠的年份分组开关：aria-expanded 驱动每张相纸的 hidden、
-	// #tally-shown 计数与 #years-status 状态行（aria-live）。
-	// 墙上的相纸带显式 data-year，不从 textContent 猜。
-	(function () {
-		const wallEl = document.querySelector('.wall')!;
-		const tallyEl = document.getElementById('tally-shown')!;
-		const statusEl = document.getElementById('years-status')!;
-		const cells = Array.from(document.querySelectorAll<HTMLButtonElement>('.year-cell'));
-		// 脚本随组件打包；非首页没有墙，直接空转（与 ThemeToggle 的守卫同一姿势）。
-		if (!wallEl || !tallyEl || !statusEl || cells.length === 0) return;
-
-		function refresh() {
-			const open: Record<string, boolean> = {};
-			let shown = 0;
-			let folded = 0;
-			cells.forEach((cell) => {
-				if (cell.getAttribute('aria-expanded') === 'true') open[cell.dataset.year as string] = true;
-			});
-			Array.from(wallEl.querySelectorAll<HTMLElement>('.wall-item')).forEach((item) => {
-				const isOpen = item.dataset.year != null && open[item.dataset.year] === true;
-				item.hidden = !isOpen;
-				if (isOpen) shown++;
-				else folded++;
-			});
-			tallyEl.textContent = String(shown);
-			const list = cells
-				.filter((cell) => cell.getAttribute('aria-expanded') === 'true')
-				.map((cell) => cell.dataset.year)
-				.join('、');
-			statusEl.textContent =
-				'已翻开 ' + list + '；' + (folded ? '还有 ' + folded + ' 张沉在相册深处，点一下年份就能取回。' : '整本相册都翻开了，' + shown + ' 张回忆都在墙上。');
-		}
-
-		cells.forEach((cell) => {
-			cell.addEventListener('click', () => {
-				const next = String(cell.getAttribute('aria-expanded') !== 'true');
-				cell.setAttribute('aria-expanded', next);
-				refresh();
-				// 展开后把焦点带去刚摊开的那年第一张（原型 home.tpl.html:320-324 的意图；
-				// 原型只重放了动画没落焦点，这里补全 —— a.print 是墙内第一个可聚焦元素）
-				if (next === 'true' && cell.dataset.year) {
-					const firstItem = wallEl.querySelector('.wall-item[data-year="' + cell.dataset.year + '"]');
-					const firstLink = firstItem?.querySelector('a.print');
-					if (firstItem && firstLink) {
-						// is-added 动画重放：先摘掉旧标记、强制回流，再落回该年首张
-						document.querySelectorAll('.wall-item.is-added').forEach((el) => el.classList.remove('is-added'));
-						void (firstItem as HTMLElement).offsetWidth;
-						firstItem.classList.add('is-added');
-						(firstLink as HTMLElement).focus();
-					}
-				}
-			});
-		});
-
-		refresh();
-	})();
-</script>

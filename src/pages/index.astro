@@ -5,18 +5,19 @@ import FormattedDate from '../components/FormattedDate.astro';
 import MemoryWall from '../components/MemoryWall.astro';
 import YearTrail from '../components/YearTrail.astro';
 import SubscribeCta from '../components/SubscribeCta.astro';
-import { prepareWall } from '../utils/posts';
+import { prepareWall, WALL_LIMIT } from '../utils/posts';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
 // 首页（批3，对照 reference/prototype/home.tpl.html）：
 // 卷首（格言式站标 + 元信息条，见 docs/design-polish-2026-10.md 第 2 轮）
-// + 记忆墙 + 年份轨迹 + 订阅区。
-// 编号与阅读时长全部构建时算（posts.ts），不进 frontmatter。
+// + 记忆墙（橱窗：只渲染最近 WALL_LIMIT 张，docs/pagination-design.md）
+// + 年份轨迹（年份链接 → /blog/[year]/）+ 订阅区。
 const wall = prepareWall(await getCollection('blog'));
-// cards 是 WallCard 包装（post/no/minutes/…），条目本体在 .post 里
+// 墙上只放最近这些张；总量与最早/最新仍按全量算（元信息是全站事实）。
+const wallCards = wall.cards.slice(0, WALL_LIMIT);
+const total = wall.cards.length;
 const latestCard = wall.cards[0];
 const earliest = wall.cards[wall.cards.length - 1];
-const shown = wall.cards.filter((card) => wall.openYears.includes(card.year)).length;
 ---
 
 <Base title={SITE_TITLE} description={SITE_DESCRIPTION} lang="zh-CN">
@@ -38,7 +39,14 @@ const shown = wall.cards.filter((card) => wall.openYears.includes(card.year)).le
 				    字号降为格言档（--fs-h3），引文行已删。 */}
 				<h1>用影像记录生活，用文字表达生活。</h1>
 				<div class="intro-meta">
-					<span class="meta">共 <b class="num" id="tally-shown">{shown}</b> / <b class="num">{wall.cards.length}</b> 张</span>
+					<span class="meta">
+						共 <b class="num">{total}</b> 张
+						{total > WALL_LIMIT && (
+							<>
+								· 墙上留最近 <b class="num">{WALL_LIMIT}</b> 张
+							</>
+						)}
+					</span>
 					{earliest && <span class="meta">始于 <b class="num">{earliest.year}</b></span>}
 					{latestCard && (
 						<span class="meta">
@@ -49,7 +57,7 @@ const shown = wall.cards.filter((card) => wall.openYears.includes(card.year)).le
 			</div>
 		</section>
 
-		<MemoryWall wall={wall} />
+		<MemoryWall cards={wallCards} />
 		<YearTrail wall={wall} />
 		<SubscribeCta />
 	</main>
