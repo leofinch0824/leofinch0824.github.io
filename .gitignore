@@ -48,3 +48,9 @@ Desktop.ini
 .vscode/*
 !.vscode/extensions.json
 !.vscode/launch.json
+
+# ai agent workspaces (local only, not for push; includes .zcode/config.json MCP config)
+.zcode/
+.claude/
+.codex/
+.agents/
