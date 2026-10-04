@@ -83,18 +83,34 @@ typography:
     lineHeight: 1.78
   label:
     fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
-    fontSize: "11.5px"
+    fontSize: "13px"
     fontWeight: 400
     letterSpacing: "0.13em"
   meta:
     fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
-    fontSize: "12px"
+    fontSize: "13px"
     fontWeight: 400
     letterSpacing: "0.04em"
+  page-mark:
+    fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
+    fontSize: "15px"
+    fontWeight: 400
+    letterSpacing: "0.13em"
+  tag:
+    fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
+    fontSize: "12.5px"
+    fontWeight: 400
+    letterSpacing: "0.05em"
   tick:
     fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
     fontSize: "15px"
     fontWeight: 500
+  poster:
+    fontFamily: "Iowan Old Style, Palatino Linotype, Palatino, Songti SC, Noto Serif SC, Source Han Serif SC, STSong, Georgia, serif"
+    fontSize: "clamp(26px, 4vw, 45px)"
+    fontWeight: 600
+    lineHeight: 1.28
+    letterSpacing: "-0.014em"
   prose:
     fontFamily: "-apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Segoe UI, system-ui, sans-serif"
     fontSize: "17.5px"
@@ -134,7 +150,7 @@ typography:
     fontWeight: 400
   caption:
     fontFamily: "ui-monospace, SF Mono, JetBrains Mono, Menlo, Consolas, monospace"
-    fontSize: "11.5px"
+    fontSize: "13px"
     fontWeight: 400
     letterSpacing: "0.04em"
   micro:
@@ -268,10 +284,15 @@ components:
 
 | 角色 | 规格 | 用在哪 |
 |---|---|---|
-| label | 400, 11.5px, 0.13em 字距 | 眉标、页脚栏标、标签胶囊、code-head |
-| meta | 400, 12px, 0.02–0.06em | 日期、底片编号、年份胶囊、元信息条、翻页 label、订阅面板小字 |
+| 页面级眉标 h1 | 400, 15px, 0.13em 字距 | 归档/年份页「归档 · YYYY」（2026-10-05 所有者覆写：小字档整体放大，页面标记须读得出是标题） |
+| label | 400, 13px, 0.13em 字距 | 眉标、页脚栏标、题注、引言署名、credit-key |
+| meta | 400, 13px, 0.02–0.06em | 日期、底片编号、年份胶囊、元信息条、翻页 label、订阅面板小字、findme |
+| tag | 400, 12.5px | 标签胶囊（略小于 meta 的徽章角色） |
 | tick | 500, 15px, tabular-nums | 胶片年份带的年份数字 |
 | 代码 | 13.5px（块）/ 13px（行内）/ 0.86em（码内） | 代码与公式编号 |
+
+> 2026-10-05 所有者覆写：label/meta 原为原型继承的 11.5/12px，判定过小影响阅读，
+> 全档放大至 13px（docs/typography-audit.md 第 2 步）；tag 随调 12.5。
 
 特例（有空间或角色理由，不再外扩）：顶栏副标 10.5px（空间敏感）、站名 20px、
 页脚基准 13.5px、正文内代码 `--fs-meta` 引用。数字一律 `tabular-nums`。
