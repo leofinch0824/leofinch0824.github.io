@@ -456,7 +456,20 @@ b.num{ font-weight:600; color:var(--fg); }
 .prose ul,.prose ol{ margin:0; padding-left:1.35em; }
 .prose li + li{ margin-top:.55em; }
 .prose li::marker{ color:var(--muted); }
-.prose code{
+/* 宽表格（批5 验收项）：display:block + overflow-x:auto 让整表横向滚动，
+   不把 390px 版面撑破。单元格 nowrap 防止中文被压成一列竖排字——
+   表格自身的宽度交给滚动条，不是压缩单元格。 */
+.prose table{
+  display:block; overflow-x:auto; width:fit-content; max-width:100%;
+  margin:1.9em 0; border-collapse:collapse; font-size:.92em;
+}
+.prose th,.prose td{
+  padding:9px 14px; text-align:left; white-space:nowrap;
+  border-bottom:1px solid var(--rule-faint);
+  font-variant-numeric:tabular-nums;
+}
+.prose th{ color:var(--muted); font-weight:500; border-bottom:1px solid var(--rule); }
+.prose :not(pre) > code{
   font-family:var(--font-mono); font-size:.86em; padding:2px 6px;
   background:var(--code-bg); border-radius:4px; white-space:nowrap;
 }
@@ -467,36 +480,47 @@ b.num{ font-weight:600; color:var(--fg); }
 .prose blockquote p{ color:inherit; }
 .prose hr{ border:0; border-top:1px solid var(--rule-faint); margin:2.6em 0; }
 
-/* 代码块 */
-.code{
-  margin:1.9em 0; background:var(--code-bg);
-  border:1px solid var(--border); border-radius:10px; overflow:hidden;
+/* ── 代码块（批5）：.code 规格落在 Shiki 产物 pre.astro-code 上 ─────────────
+   Astro 的 Shiki 输出 <pre class="astro-code …">，token 色来自
+   src/styles/code-theme.mjs 喂给主题槽位的 var(--code-*) 内联样式，
+   底色/前景色同样是内联的 var(--code-bg)/var(--fg)（构建产物可证）。
+   这里只补齐 .code 规格的盒型部分：1px 发丝线、1px 圆角（DESIGN.md
+   「代码块」组件规格；原型 base.css 写的 10px 与 DESIGN.md 不一致，
+   按「文档优先」取 1px）、等宽 13.5px/1.78，长代码横向滚动不出容器。
+   .code-head 文件名条未实现（批5 取舍：expressive-code 不能消费 CSS
+   变量主题色，见 astro.config.mjs 注释与批5 回报），规格留在 DESIGN.md，
+   样式不再保留死规则。 */
+.prose .astro-code{
+  margin:1.9em 0; padding:16px 18px;
+  border:1px solid var(--border); border-radius:1px;
+  font-family:var(--font-mono); font-size:13.5px; line-height:1.78;
 }
-.code-head{
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
-  padding:9px 14px; border-bottom:1px solid var(--rule-faint);
-  font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.05em; color:var(--muted);
+.prose .astro-code code{
+  font-family:inherit; font-size:inherit; line-height:inherit;
+  white-space:pre; color:var(--fg);
 }
-.code-head .code-lang{ text-transform:uppercase; letter-spacing:0.12em; font-size:10.5px; }
-.code pre{ margin:0; padding:16px 18px; overflow-x:auto; }
-.code code{ font-family:var(--font-mono); font-size:13.5px; line-height:1.78; white-space:pre; color:var(--fg); }
-.tok-kw{ color:var(--code-kw); }
-.tok-str{ color:var(--code-str); }
-.tok-num{ color:var(--code-num); }
-.tok-cmt{ color:var(--code-cmt); font-style:italic; }
-.tok-fn{ color:color-mix(in oklch, var(--fg) 72%, var(--bg)); }
 
-/* 公式 */
-.formula{
-  display:flex; align-items:center; gap:var(--gap-md); margin:1.9em 0;
-  padding:18px 22px; background:var(--surface);
-  border:1px solid var(--border); border-radius:3px;
-  font-family:var(--font-display); font-size:19px; line-height:1.5; overflow-x:auto;
+/* ── 公式（批5）：.formula 规格落在 KaTeX 产物 .katex-display 上 ────────────
+   原型的 .formula 卡（surface 底、1px 发丝线、3px 圆角、18px/22px 内边距、
+   左对齐）→ 独立公式容器；.formula-body 的横向滚动 → overflow-x:auto，
+   长公式在手机上滚动而不撑破 36em 版心。左对齐同时绕开 KaTeX
+   「text-align:center + overflow 滚不到开头」的裁切问题。
+   .formula-num → KaTeX \tag 生成的 .tag：等宽 13px、褪色的墨。 */
+.prose .katex-display{
+  margin:1.9em 0; padding:18px 22px;
+  background:var(--surface); border:1px solid var(--border); border-radius:3px;
+  text-align:left; overflow-x:auto; overflow-y:hidden;
 }
-.formula-body{ flex:1; white-space:nowrap; }
-.formula-body i{ font-style:italic; }
-.formula-body .op{ font-style:normal; padding-inline:2px; }
-.formula-num{ font-family:var(--font-mono); font-size:13px; color:var(--muted); flex:none; }
+.prose .katex-display .katex{ font-size:19px; }
+/* 全局 img,svg 重置会压扁 KaTeX 的拉伸分隔符（根号横线、大算符），豁免之 */
+.katex svg{ max-width:none; max-height:none; }
+.prose .katex .tag{
+  /* KaTeX 的公式编号类名 .tag 与站点标签胶囊（本文件上方 .tag）撞名：
+     胶囊的边框/内边距/圆角会套到公式编号上，这里复位，
+     只保留 .formula-num 规格（等宽 13px、褪色的墨）。 */
+  display:inline; padding:0; border:0; border-radius:0; background:none;
+  font-family:var(--font-mono); font-size:13px; color:var(--muted); letter-spacing:normal;
+}
 
 /* 翻页 */
 .page-turn{
@@ -606,7 +630,9 @@ b.num{ font-weight:600; color:var(--fg); }
   .year-cell{ border-right:0; padding-right:0; }
   .intro h1{ max-width:none; }
   .prose{ font-size:16.5px; line-height:1.86; }
-  .formula{ font-size:16px; padding:15px 16px; }
+  .prose .katex-display{ padding:15px 16px; }
+  /* 公式字号要打到 .katex 上（19px 的规则也在那），容器上设了会被绕过 */
+  .prose .katex-display .katex{ font-size:16px; }
 }
 
 /* ── 减少动态效果 ─────────────────────────────────────────────────────── */
