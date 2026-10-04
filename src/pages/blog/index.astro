@@ -13,7 +13,6 @@ import { SITE_TITLE } from '../../consts';
 // 年份分组与「分类首现序」都是构建时算好的，不进 frontmatter。
 const wall = prepareWall(await getCollection('blog'));
 const { cards, years } = wall;
-const total = cards.length;
 const latestYear = years[0]?.year;
 const earliestYear = years[years.length - 1]?.year;
 
@@ -55,9 +54,9 @@ const monthDay = (date: Date) =>
 	<main id="content">
 		<section class="section intro" data-od-id="archive-intro">
 			<div class="container">
-				<p class="eyebrow">归档 · {earliestYear} — {latestYear}</p>
-				<h1>{total} 张相纸，按年份摞好。</h1>
-				<p class="lead">相册从上往下翻，最新的在最上面。每一行都是一次记录，点开就是那篇文章。</p>
+				{/* 眉标即页面 h1（精修第 2 轮 #8）：说明性 h1/lead 两行已删，
+				    .eyebrow 类规格盖过全局 h1，视觉与改前眉标一致。 */}
+				<h1 class="eyebrow">归档 · {earliestYear} — {latestYear}</h1>
 				<nav class="year-jump" aria-label="跳转到年份">
 					{
 						years.map((group) => (

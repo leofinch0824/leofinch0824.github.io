@@ -74,9 +74,17 @@
 - **分析**：第 1 轮 #3 引入的引文，本轮所有者决定整行去掉——卷首只留格言站标 + intro-meta 元信息条，更干净。`.lead` 类在 SubscribeCta / BlogPost / about / blog 归档四处仍在用，只删首页实例；global.css 的 `.intro .lead` 作用域规则随之删除，`.lead` 全局规则保留。
 - **方案**：删段落 + 注释；删 `.intro .lead` 一条 CSS。
 
+### 8. 归档页卷首：删两行自述式说明文案
+
+- **位置**：`src/pages/blog/index.astro:59-60`（`.intro h1` + `.lead`）。
+- **要求**：「{total} 张相纸，按年份摞好。」与「相册从上往下翻，最新的在最上面。每一行都是一次记录，点开就是那篇文章。」是页面在解释自己（所有者判定为开发期备注性质），直接删掉。
+- **分析**：删后卷首 = 眉标「归档 · YYYY — YYYY」+ 年份胶囊直接进相册，`.year-jump` 自带 `margin-top:var(--gap-lg)` 间距自足。但页面不能没有 `h1`（语义/无障碍）：眉标行升为 `<h1 class="eyebrow">`。**级联陷阱**：`.eyebrow` 能盖过全局 `h1`（元素选择器），但盖不过本轮 #6 新加的 `.intro h1` 格言覆写——同为单类特异性、后者定义在后，实测把眉标打成 21px/500/字距 0。修复：格言覆写改 `.intro h1:not(.eyebrow)`，归档页 h1 全套规格走 `.eyebrow`（mono 11.5px/400/0.13em），视觉与改前 `<p class="eyebrow">` 完全一致；`.eyebrow` 补 `font-weight:400` 防住 h1 默认粗体（其余 6 处 `.eyebrow` 均为 `p`，默认即 400，无副作用）。
+- **方案**：删两行；`<p class="eyebrow">` → `<h1 class="eyebrow">`（仅归档页；About 页眉标维持 p，其上有自己的 h1）；`global.css` `.intro h1` → `.intro h1:not(.eyebrow)`、`.eyebrow` 补 `font-weight:400`。
+
 ## 验收（第 2 轮）
 
 - `npm run build` + `npm run check` 全绿；
-- DOM 断言：h1 文案 =「用影像记录生活，用文字表达生活。」、computed `font-size`=21px、`.intro .lead` 不存在、intro-meta 三条（共 N / M 张 · 始于 · 最近更新）仍在；
+- 首页 DOM 断言：h1 文案 =「用影像记录生活，用文字表达生活。」、computed `font-size`=21px、`.intro .lead` 不存在、intro-meta 三条（共 N / M 张 · 始于 · 最近更新）仍在；
+- 归档页 DOM 断言：无「相纸」「相册从上往下翻」文案、卷首 h1 = 眉标文案「归档 · YYYY — YYYY」、computed `font-size`=11.5px 与改前眉标一致、year-jump 仍在；
 - 首页 1440 与 390 截图目验：标语一行、无引文行、卷首块高度收敛、meta 条贴分隔线无拥簇；
 - 其余页面不受影响（`.lead` 四处使用方、About 大标题均不动）。
