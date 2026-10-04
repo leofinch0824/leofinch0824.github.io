@@ -7,10 +7,8 @@ import YearTrail from '../components/YearTrail.astro';
 import { prepareWall, WALL_LIMIT } from '../utils/posts';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
-// 首页（批3，对照 reference/prototype/home.tpl.html）：
-// 卷首（格言式站标 + 元信息条，见 docs/design-polish-2026-10.md 第 2 轮）
-// + 记忆墙（橱窗：只渲染最近 WALL_LIMIT 张，docs/pagination-design.md）
-// + 年份轨迹（年份链接 → /blog/[year]/）+ 订阅区。
+// 首页：卷首（格言式站标 + 元信息条）+ 记忆墙（橱窗：只渲染最近 WALL_LIMIT 张）
+// + 年份轨迹（年份链接 → /blog/[year]/）。订阅引导收口于页脚。
 const wall = prepareWall(await getCollection('blog'));
 // 墙上只放最近这些张；总量与最早/最新仍按全量算（元信息是全站事实）。
 const wallCards = wall.cards.slice(0, WALL_LIMIT);

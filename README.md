@@ -1,63 +1,30 @@
-# Astro Starter Kit: Blog
+# 拾光集 · Time Travel
 
-```sh
-npm create astro@latest -- --template blog
-```
+个人博客：把每篇文章当成一张被保存的记忆快照。Astro ^7 静态站点——文章、公式（KaTeX）、代码高亮（Shiki）全部构建时渲染，无客户端框架；GitHub Actions 构建并发布到 GitHub Pages。
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 两份准则（改任何前端之前的唯一依据）
 
-Features:
+- **[DESIGN.md](./DESIGN.md)** —— 视觉系统唯一权威：六令牌调色、字号角色阶、相纸隐喻、暗色成对规则、组件规格与 Do/Don't。
+- **[PRODUCT.md](./PRODUCT.md)** —— 产品定义：定位、分页与归档定案、内容事实与未决项（所有者未提供的事实不得虚构）。
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and Open Graph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+日常协作约定见 [AGENTS.md](./AGENTS.md)（`CLAUDE.md` 为其符号链接）。
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+## 结构
 
 ```text
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+src/pages/         路由：/ 记忆墙橱窗（最近 12 张）、/blog/ 最新年相册、
+                   /blog/[year]/ 年份相册、/about/、文章页
+src/components/    Header / Footer / MemoryWall / YearTrail / YearAlbum 等
+src/content/blog/  文章（Content Collections；现处占位样文阶段，test2.md 为真实文）
+src/styles/        global.css —— 颜色只在 :root 令牌定义，组件样式只引用令牌
+scripts/           check-tokens / check-contrast 门禁脚本
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 命令
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+| 命令 | 作用 |
+| :--- | :--- |
+| `npm run dev` | 开发服务器（agent 用后台模式：`npx astro dev --background`，以 `astro dev stop / status / logs` 管理） |
+| `npm run build` | 产出 `dist/`（含 sitemap 与 RSS） |
+| `npm run preview` | 本地预览构建产物 |
+| `npm run check` | `astro check` + 令牌唯一源 + 对比度门禁 |

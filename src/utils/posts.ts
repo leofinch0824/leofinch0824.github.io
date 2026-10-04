@@ -1,16 +1,16 @@
 import type { CollectionEntry } from 'astro:content';
 
-// 批3 内容工具（docs/astro-blog-design-migration.md §5「内容模型要扩」）。
+// 内容工具（2026-10 迁移批3）。
 // 编号与阅读时长都是构建时算出的展示数据，绝不写回 frontmatter ——
 // 编号本质是按 pubDate 排出的「底片序号」，手工维护迟早对不上。
 
 export type BlogPost = CollectionEntry<'blog'>;
 
-/** 首页记忆墙的橱窗上限（docs/pagination-design.md）：只渲染最近这些张，
+/** 首页记忆墙的橱窗上限：只渲染最近这些张，
  *  超出部分不进 DOM；全量翻阅走归档按年路由。单一来源，首页与断言共用。 */
 export const WALL_LIMIT = 12;
 
-/** 年份的归档路径（docs/pagination-design.md 三步）：最新一年的相册由
+/** 年份的归档路径：最新一年的相册由
  *  /blog/ 直接承载（归档直达，不再先选年份），其余年份走 /blog/[year]/。
  *  homeYear 传 wall.years[0].year。 */
 export function yearPath(year: number, homeYear: number): string {
@@ -20,8 +20,7 @@ export function yearPath(year: number, homeYear: number): string {
 /** 墙上一张相纸：内容条目 + 构建时算出的展示数据。 */
 export interface WallCard {
 	post: BlogPost;
-	/** 底片编号，三位零填充；最早一篇 = № 001，最新一篇 = № NNN
-	 *  （对照原型 reference/prototype/home.tpl.html:215 与 :68） */
+	/** 底片编号，三位零填充；最早一篇 = № 001，最新一篇 = № NNN */
 	no: string;
 	/** 阅读时长（分钟，向上取整）：中文字数/300 + 西文词数/200 */
 	minutes: number;
@@ -48,12 +47,12 @@ export interface Wall {
 	cards: WallCard[];
 	/** 年份分组，新→旧 */
 	years: YearGroup[];
-	/** 默认摊开：最近两年（原型 home.tpl.html:58「墙上默认摊开最近的两年」） */
+	/** 默认摊开：最近两年 */
 	openYears: number[];
 }
 
-/* 原型 14 张相纸的旋转序列（home.tpl.html:62-217），全部落在 ±1.8° 内；
-   卡片更多时从头循环取值 —— 保留「手工摆放」的数据感，不引入随机。 */
+/* 14 张相纸的手工旋转序列，全部落在 ±1.8° 内；卡片更多时从头循环取值
+   —— 保留「手工摆放」的数据感，不引入随机。 */
 const ROTATIONS = [
 	'-1.1deg', '1.5deg', '-0.7deg', '1.8deg',
 	'-1.0deg', '0.8deg', '-1.7deg', '1.3deg',
@@ -88,7 +87,7 @@ export function prepareWall(posts: readonly BlogPost[]): Wall {
 	const total = sorted.length;
 	const cards: WallCard[] = sorted.map((post, i) => ({
 		post,
-		// 最新 = № total，最早 = № 001（原型里 2023·09·15 那张是 № 001）
+		// 最新 = № total，最早 = № 001
 		no: String(total - i).padStart(3, '0'),
 		minutes: readingMinutes(post.body ?? ''),
 		year: post.data.pubDate.getFullYear(),

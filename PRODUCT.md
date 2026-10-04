@@ -22,11 +22,11 @@ web
 ## Operating Context
 
 - 内容以 Markdown 为主、MDX 按需；Astro Content Collections 组织文章元数据，编号（№ NNN）按日期倒序构建时计算，不进 frontmatter。
-- 数学公式：KaTeX（`remark-math` + `rehype-katex`）已安装并构建时验证（2026-10-04 批5）：行内/独立公式、`aligned` 多行推导、`\tag` 编号、长公式横向滚动渲染正常，验收文为 `src/content/blog/markdown-style-guide.md`；已实证边界——一条公式仅支持一个 `\tag`，逐行编号须拆为多个公式块。390px 不溢出的实测方法与数据见 `docs/layout-qa-390.md`。
+- 数学公式：KaTeX（`remark-math` + `rehype-katex`）已安装并构建时验证（2026-10-04 批5）：行内/独立公式、`aligned` 多行推导、`\tag` 编号、长公式横向滚动渲染正常，验收文为 `src/content/blog/markdown-style-guide.md`；已实证边界——一条公式仅支持一个 `\tag`，逐行编号须拆为多个公式块。390px 不溢出已实测（2026-10-04，390×844 验收文页 `scrollingElement.scrollWidth` 375 ≤ 视口 390；元素级 353 处右缘越界全部收敛于自带 `overflow-x:auto` 的代码块/公式/表格容器，页面级无横向滚动条）。复验法：build + preview 后在 390 视口比对 scrollWidth 与 innerWidth 并对越界元素逐个归因；样式或内容大改后复跑。
 - 代码高亮：Astro 内置 Shiki 已接入，自定义 CSS 变量主题使 token 色走 `--code-*`（`src/styles/code-theme.mjs`）；Expressive Code 已评估并**不采用**——它构建期强制十六进制主题色、无法消费 `--code-*` 令牌，引入即破坏颜色单一来源；代价是 `.code-head` 文件名条暂无实现。
 - 整体技术边界：Astro + CSS，必要的独立交互用少量 TypeScript；不将 Svelte、Motion、GSAP、D3、ECharts 列为默认依赖；`ClientRouter` 未启用，是否采用单独评估。
-- 分页（2026-10-04 定案，`docs/pagination-design.md`）：首页记忆墙是限量橱窗（`WALL_LIMIT = 12`，超出不进 DOM）；全量翻阅走归档按年路由——`/blog/` 年份总览 + `/blog/[year]/` 每年一页（上/下一年翻页复用 `.page-turn`）；首页年份过滤交互已退役，时间线年份格是链接。
-- 真实开发仓库：`/Users/pegasus/workplace/work_repos/astro-blog`（Astro ^7.3.5，带 GitHub Actions CI）；原型四页（index / archive / post / about）是唯一的视觉验收基准；迁移路径见 `astro-blog-design-migration.md`（进仓库后放 `docs/`）。
+- 分页（2026-10-04 定案）：首页记忆墙是限量橱窗（`WALL_LIMIT = 12`，超出不进 DOM）；全量翻阅走归档按年路由——`/blog/` 最新年相册 + `/blog/[year]/` 每年一页（上/下一年翻页复用 `.page-turn`）；首页年份过滤交互已退役，时间线年份格是链接。
+- 真实开发仓库：`/Users/pegasus/workplace/work_repos/astro-blog`（Astro ^7.3.5，带 GitHub Actions CI）。视觉验收基准 = `DESIGN.md`（唯一权威）；原型四页与迁移/精修过程文档已于 2026-10-05 清退出仓库，git 历史永久可查。
 
 ## Capabilities and Constraints
 
@@ -41,8 +41,8 @@ web
 明确未决（不得当作事实，也不得虚构）：
 
 - About 人设事实已由作者提供并更新（2026-10-05：大模型算法工程师；健身、经典电影、摄影入门）。关于页 v2：双卡叠压开场 + 技能列表 + 自述碎句 + credits 卡 + findme 链接条；backface/id-matrix 已移除。联系方式已接入真链（2026-10-05：GitHub `leofinch0824`、网易邮箱 `yolo2408seu@163.com`）。仍待作者提供：**真人肖像照片**（当前前卡用 `portrait.jpg` 测试图占位——实为赛车荒野照，注脚已诚实标注）。
-- 站内文章：`test2.md`（Claude Code 源码分析）为作者提供的真实文章；其余 5 篇为 lorem 占位样文。全部配图来自 `docs/images-test/` 测试图池循环选取（拷贝于 `src/assets/test-pool/`），非正式照片。
-- KaTeX 基础兼容性（行内/独立公式、多行推导、`\tag` 编号、横向滚动）已按验收文验证；公式交叉引用、算法伪代码环境仍待真实文章验证（验收条件见 astro-blog 仓库 `docs/project-direction.md` §6）。
+- 站内文章：`test2.md`（Claude Code 源码分析）为作者提供的真实文章；其余 5 篇为 lorem 占位样文。全部配图来自 `src/assets/test-pool/` 测试图池循环选取，非正式照片。
+- KaTeX 基础兼容性（行内/独立公式、多行推导、`\tag` 编号、横向滚动）已按验收文验证；公式交叉引用、算法伪代码环境仍待真实文章验证。验收条件（承接 project-direction §6，原文档已随过程文档清退）：① 行内/独立/多行推导/矩阵显示正确，行距与段落间距自然；② 实际用到的数学命令与宏兼容，公式编号、引用或伪代码环境是否引入得出明确结论；③ 长公式、长代码、宽表格在手机上不撑破整页且内容完整可读；④ 若加入代码复制，复制结果保留原始代码、不混入行号与展示标记；⑤ 标题、列表、脚注、引用的中英文层级清晰。
 - 订阅（subscribe）区块仅为版面占位，作者已确认暂不接入真实订阅服务。
 
 ## Brand Commitments
@@ -53,9 +53,8 @@ web
 
 ## Evidence on Hand
 
-- astro-blog 仓库 `docs/project-direction.md`：使用背景、体验需求、正文技术栈推荐与 §6 验收条件。
-- 原型四页 + `DESIGN.md` + `.impeccable/design.json`（七个可渲染组件片段；进仓库后分别位于 `reference/prototype/output/`、根目录、`.impeccable/`）——当前视觉与组件基准。
-- `astro-blog-design-migration.md`：迁移批次顺序、默认决策与 AGENTS.md 条款文字。
+- `DESIGN.md` + `.impeccable/design.json`（七个可渲染组件片段）——当前视觉与组件基准。
+- 历史过程文档（迁移方案、精修/审计日志、分页与关于页设计过程、原型四页）已按 2026-10-05 清理决策移出仓库；关键结论已分别沉淀进 DESIGN.md 与 PRODUCT.md，原文可从 git 历史找回。
 - 缺失且后续工作不得虚构：真实文章（现仅 `test2.md` 为真）、真人肖像照片、订阅服务（人设与联系方式已由作者提供）。
 
 ## Product Principles

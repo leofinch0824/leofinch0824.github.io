@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 拾光集 · 关键前景/背景对比度断言（docs/astro-blog-design-migration.md §4.3.2）
+ * 拾光集 · 关键前景/背景对比度断言（AA 门禁，AGENTS.md 可执行版）
  *
  * 从 src/styles/global.css 解析亮、暗两套令牌（暗色有 @media(prefers-color-scheme)
  * 与 :root[data-theme="dark"] 两份重复定义，先校验两份一致，再任取合并结果计算），

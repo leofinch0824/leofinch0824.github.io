@@ -1,10 +1,10 @@
 ---
-// 深浅色切换按钮（批1，docs/astro-blog-design-migration.md §2.2）。
+// 深浅色切换按钮（2026-10 迁移批1）。
 // 按钮外观样式全部来自 global.css 的 .theme-toggle 规则（34px 圆形 ghost 钮，
 // 亮色显月亮 / 暗色显太阳），组件内不写颜色。
 // markup 自带 hidden：Astro 组件脚本是打包后的 deferred module，
 // 无 JS（或脚本未跑）时按钮保持隐藏，页面跟随系统偏好；
-// 下方脚本解锁显示 —— 即原型「.theme-toggle[hidden] 靠脚本解锁」的机制。
+// 下方脚本解锁显示 —— 即「.theme-toggle[hidden] 靠脚本解锁」的机制。
 ---
 
 <button class="theme-toggle" type="button" aria-label="切换深浅色" title="切换深浅色" hidden>
@@ -29,7 +29,6 @@
 </button>
 
 <script>
-	// 移植 reference/prototype/home.tpl.html 第 332-354 行：
 	// 点击切换 <html data-theme> 并持久化到 localStorage['sg-theme']。
 	(function () {
 		var root = document.documentElement;

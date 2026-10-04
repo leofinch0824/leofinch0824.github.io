@@ -21,7 +21,7 @@ interface Props {
 
 const { post, no, minutes, newer, newerNo, older, olderNo } = Astro.props;
 const { title, description, pubDate, updatedDate, heroImage, category, tags } = post.data;
-// 元信息行第三段：分类 / 标签（原型 post.tpl.html:47「算法 / 数据结构」的形态）
+// 元信息行第三段：分类 / 标签，形态如「算法 / 数据结构」
 const metaTopic = [category, ...(tags ?? [])].join(' / ');
 ---
 

@@ -14,8 +14,7 @@ const blog = defineCollection({
 				pubDate: z.coerce.date(),
 				updatedDate: z.coerce.date().optional(),
 				heroImage: z.optional(image()),
-				// 批3（docs/astro-blog-design-migration.md §5「内容模型要扩」）：
-				// 分类用于卡片元信息与归档分组，必填；tags 可选。
+				// 批3（2026-10 迁移）：分类用于卡片元信息与归档分组，必填；tags 可选。
 				category: z.enum(['技术', '生活', '影像', '算法']),
 				tags: z.array(z.string()).optional(),
 				// 注意：编号（№ NNN）与阅读时长不进 frontmatter ——

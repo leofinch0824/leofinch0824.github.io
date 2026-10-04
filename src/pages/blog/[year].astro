@@ -5,8 +5,8 @@ import YearAlbum from '../../components/YearAlbum.astro';
 import { prepareWall, type WallCard, type YearGroup } from '../../utils/posts';
 import { SITE_TITLE } from '../../consts';
 
-// 归档 · 年份相册页（2026-10 分页改造；三步起最新一年由 /blog/ 承载，
-// 此路由只为更早的年份生成，docs/pagination-design.md）。
+// 归档 · 年份相册页（2026-10 分页改造：最新一年由 /blog/ 承载，
+// 此路由只为更早的年份生成）。
 export async function getStaticPaths() {
 	const wall = prepareWall(await getCollection('blog'));
 	const byYear = new Map<number, WallCard[]>();

@@ -23,7 +23,7 @@ const { title, description, image = FallbackImage } = Astro.props;
 
 <!-- 无闪主题初始化（批1）：必须先于任何样式表执行。
      localStorage['sg-theme'] 为 'dark' / 'light' 时覆写 <html data-theme>，
-     否则不动 —— 跟随系统偏好（docs/astro-blog-design-migration.md §2.1）。 -->
+     否则不动 —— 跟随系统偏好。 -->
 <script is:inline>
 	(() => {
 		var t;

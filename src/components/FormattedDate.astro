@@ -4,7 +4,7 @@ interface Props {
 }
 
 const { date } = Astro.props;
-// zh-CN 数字日期，输出形态对齐原型「2026 · 03 · 14」（home.tpl.html:46）。
+// zh-CN 数字日期，输出形态「2026 · 03 · 14」。
 // 用 formatToParts 取年/月/日数字段手工拼接：不同运行时的 ICU 对
 // toLocaleDateString('zh-CN', …) 给出的分隔符可能是 / 或 -，直接替换分隔符不可靠。
 // tabular-nums 由 global.css 的 .num 提供（等宽 + 等宽数字，DESIGN.md「数字一律 tabular-nums」）。

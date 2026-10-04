@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import { yearPath, type WallCard, type YearGroup } from '../utils/posts';
 
-// 年份相册页主体（分页三步抽出的共用组件，docs/pagination-design.md）：
+// 年份相册页主体（分页改造抽出的共用组件）：
 // /blog/（承载最新一年）与 /blog/[year]/（其余年份）共用同一形态——
 // 眉标 h1 + year-jump 年际胶囊（当年 aria-current）+ 大年份 + 相册行
 // + 上/下一年翻页。年份胶囊与翻页的 href 走 yearPath：最新一年 → /blog/。

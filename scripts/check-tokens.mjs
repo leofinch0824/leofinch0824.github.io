@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 拾光集 · 令牌外十六进制扫描（docs/astro-blog-design-migration.md §4.3.1）
+ * 拾光集 · 令牌外十六进制扫描（颜色唯一来源守卫，AGENTS.md 可执行版）
  *
  * 规则（AGENTS.md「设计与样式约束」的可执行版）：
  *   1. src/styles/global.css：十六进制色值只允许出现在 :root 系选择器块内

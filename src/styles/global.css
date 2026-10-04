@@ -234,7 +234,7 @@ b.num{ font-weight:600; color:var(--fg); }
 .btn:active{ transform:translateY(1px); }
 .btn-primary{ background:var(--accent); color:var(--surface); border-color:var(--accent); }
 .btn-primary:hover{ background:var(--accent-hover); border-color:var(--accent-hover); }
-/* .btn-secondary 已随页头订阅按钮移除而删除（design-polish #11）：订阅入口在页脚 */
+/* .btn-secondary 已随页头订阅按钮移除而删除（2026-10-05）：订阅入口在页脚 */
 .btn-ghost{ background:transparent; color:var(--muted); border-color:transparent; padding-inline:6px; }
 .btn-ghost:hover{ color:var(--fg); }
 .btn-arrow::after{ content:'→'; transition:transform .2s cubic-bezier(.2,.7,.2,1); }
@@ -356,7 +356,7 @@ b.num{ font-weight:600; color:var(--fg); }
 .wall-item{ animation:lay-down .6s cubic-bezier(.16,.84,.3,1) both; animation-delay:calc(var(--i,0) * 45ms); }
 
 /* ── 时间线：胶片年份带（首页专用，2026-10 分页改造二步）─────────────────
-   年份跨度大时的形态（docs/pagination-design.md）：横排 mono 刻度、上下发丝线
+   年份跨度大时的形态：横排 mono 刻度、上下发丝线
    围合，像底片边缘的年份编号。年份多时自动换行，高度可控。三步起归档直达
    最新年（/blog/ 即年份相册），大格墙（.year-grid/.year-cell）随之退役删除。 */
 .year-strip{
@@ -491,7 +491,7 @@ b.num{ font-weight:600; color:var(--fg); }
    src/styles/code-theme.mjs 喂给主题槽位的 var(--code-*) 内联样式，
    底色/前景色同样是内联的 var(--code-bg)/var(--fg)（构建产物可证）。
    这里只补齐 .code 规格的盒型部分：1px 发丝线、1px 圆角（DESIGN.md
-   「代码块」组件规格；原型 base.css 写的 10px 与 DESIGN.md 不一致，
+   「代码块」组件规格；历史参考实现曾写 10px 与 DESIGN.md 不一致，
    按「文档优先」取 1px）、等宽 13.5px/1.78，长代码横向滚动不出容器。
    .code-head 文件名条未实现（批5 取舍：expressive-code 不能消费 CSS
    变量主题色，见 astro.config.mjs 注释与批5 回报），规格留在 DESIGN.md，
@@ -548,7 +548,7 @@ b.num{ font-weight:600; color:var(--fg); }
 /* 窄栏一律左对齐到版心，不要居中：各节左边缘对不齐会显得散 */
 .measure{ max-width:760px; }
 .measure .prose{ max-width:none; margin-inline:0; }
-/* .about-hero 双栏已随关于页重构删除（2026-10-04，docs/about-page-redesign.md）；
+/* .about-hero 双栏已随关于页重构删除（2026-10-04）；
    肖像开场布局在 about.astro 的组件样式块里，页面私有。 */
 
 /* 相纸下的手写注脚 */
@@ -557,9 +557,9 @@ b.num{ font-weight:600; color:var(--fg); }
   color:color-mix(in oklch, var(--fg) 74%, var(--bg));
 }
 
-/* 「照片背面」backface 与 spec-row 已随关于页 v2 重构删除（2026-10-05，
-   docs/about-v2-integration.md）：结构化信息改朴素列表，制作说明改
-   credits 相纸卡——两组样式均在 about.astro 组件样式块里。 */
+/* 「照片背面」backface 与 spec-row 已随关于页 v2 重构删除（2026-10-05）：
+   结构化信息改朴素列表，制作说明改 credits 相纸卡——
+   两组样式均在 about.astro 组件样式块里。 */
 
 /* 独立引用卡 */
 .pullquote{
@@ -642,8 +642,7 @@ b.num{ font-weight:600; color:var(--fg); }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   站点基础规则（批1 换肤时自旧 global.css 摘出保留，不得随整份替换丢失，
-   见 docs/astro-blog-design-migration.md §8.2）
+   站点基础规则（批1 换肤时摘出保留，不得随整份替换丢失）
    ══════════════════════════════════════════════════════════════════════════ */
 
 /* 屏幕阅读器专用标签：Header / Footer 共 6 处在用 */

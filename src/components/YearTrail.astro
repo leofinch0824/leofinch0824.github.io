@@ -6,7 +6,7 @@ interface Props {
 }
 
 const { wall } = Astro.props;
-// 最新一年的相册由 /blog/ 承载（分页三步），胶片带链接随之特判。
+// 最新一年的相册由 /blog/ 承载，胶片带链接随之特判。
 const homeYear = wall.years[0]?.year ?? -1;
 ---
 
@@ -14,8 +14,7 @@ const homeYear = wall.years[0]?.year ?? -1;
 	<div class="container">
 		<p class="eyebrow">时间线</p>
 		<h2 class="years-title">按年份翻阅</h2>
-		{/* 胶片年份带（docs/pagination-design.md 二步）：横排 mono 刻度，
-		    年份跨度大时自动换行、高度可控；与归档总览的大格墙拉开层级。 */}
+		{/* 胶片年份带：横排 mono 刻度，年份跨度大时自动换行、高度可控。 */}
 		<div class="year-strip" id="years">
 			{
 				wall.years.map((group) => (
@@ -31,7 +30,7 @@ const homeYear = wall.years[0]?.year ?? -1;
 </section>
 
 <style>
-	/* 只写布局：两处间距来自原型 home.tpl.html:228/247 的内联样式 */
+	/* 只写布局：两处间距为定稿值 */
 	.years-title {
 		margin-bottom: var(--gap-lg);
 	}

@@ -3,7 +3,7 @@ import PostCard from './PostCard.astro';
 import type { WallCard } from '../utils/posts';
 
 interface Props {
-	/** 橱窗卡片（index.astro 已按 WALL_LIMIT 截取最近这些张，docs/pagination-design.md） */
+	/** 橱窗卡片（index.astro 已按 WALL_LIMIT 截取最近这些张） */
 	cards: WallCard[];
 }
 
@@ -25,7 +25,6 @@ const { cards } = Astro.props;
 </section>
 
 <style>
-	/* 只写布局（原 .wall-hint 规则随提示行一并移除，设计精修 #4；
-	   年份过滤脚本随分页改造移除，docs/pagination-design.md——墙是橱窗，
+	/* 只写布局（年份过滤脚本已随分页改造移除——墙是橱窗，
 	   全量翻阅走归档按年路由）。 */
 </style>

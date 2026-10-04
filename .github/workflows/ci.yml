@@ -1,4 +1,4 @@
-# CI（docs/astro-blog-design-migration.md §4.3）：可验证性进流水线。
+# CI：可验证性进流水线（AGENTS.md「设计与样式约束」的可执行版）。
 # 每次推送 / PR：npm ci → astro check + 令牌纪律 + 对比度断言 → 构建自证。
 # 部署另见 deploy.yml（main 推送触发 GitHub Pages 发布），本文件不承担部署。
 name: CI
