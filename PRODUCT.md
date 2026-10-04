@@ -40,7 +40,7 @@ web
 
 明确未决（不得当作事实，也不得虚构）：
 
-- About 人设事实已由作者提供（2026-10-04：算法工程师，喜欢健身，喜欢看电影；网名 leofinch）。关于页 v2（2026-10-05，`docs/about-v2-integration.md`）：双卡叠压开场 + 技能列表 + 自述海报 + credits 卡 + findme 链接条；backface/id-matrix 已移除。仍待作者提供：**真人肖像照片**（当前前卡用 `portrait.jpg` 测试图占位——实为赛车荒野照，注脚已诚实标注）、联系方式邮箱、GitHub 等社交账号（findme 占位）。
+- About 人设事实已由作者提供并更新（2026-10-05：大模型算法工程师；健身、经典电影、摄影入门）。关于页 v2：双卡叠压开场 + 技能列表 + 自述碎句 + credits 卡 + findme 链接条；backface/id-matrix 已移除。联系方式已接入真链（2026-10-05：GitHub `leofinch0824`、网易邮箱 `yolo2408seu@163.com`）。仍待作者提供：**真人肖像照片**（当前前卡用 `portrait.jpg` 测试图占位——实为赛车荒野照，注脚已诚实标注）。
 - 站内文章：`test2.md`（Claude Code 源码分析）为作者提供的真实文章；其余 5 篇为 lorem 占位样文。全部配图来自 `docs/images-test/` 测试图池循环选取（拷贝于 `src/assets/test-pool/`），非正式照片。
 - KaTeX 基础兼容性（行内/独立公式、多行推导、`\tag` 编号、横向滚动）已按验收文验证；公式交叉引用、算法伪代码环境仍待真实文章验证（验收条件见 astro-blog 仓库 `docs/project-direction.md` §6）。
 - 订阅（subscribe）区块仅为版面占位，作者已确认暂不接入真实订阅服务。
@@ -56,7 +56,7 @@ web
 - astro-blog 仓库 `docs/project-direction.md`：使用背景、体验需求、正文技术栈推荐与 §6 验收条件。
 - 原型四页 + `DESIGN.md` + `.impeccable/design.json`（七个可渲染组件片段；进仓库后分别位于 `reference/prototype/output/`、根目录、`.impeccable/`）——当前视觉与组件基准。
 - `astro-blog-design-migration.md`：迁移批次顺序、默认决策与 AGENTS.md 条款文字。
-- 缺失且后续工作不得虚构：真实文章、真实个人照片、真实人设信息、订阅服务。
+- 缺失且后续工作不得虚构：真实文章（现仅 `test2.md` 为真）、真人肖像照片、订阅服务（人设与联系方式已由作者提供）。
 
 ## Product Principles
 

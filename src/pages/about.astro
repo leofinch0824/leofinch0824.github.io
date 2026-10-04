@@ -12,8 +12,8 @@ import Base from '../layouts/Base.astro';
 // 3. 一些零碎的 = 正文规格衬线短句（所有者拍板：属正文内容，不做标题化字号）。
 // 4. 「为什么写」与 backface/id-matrix 全部移除（所有者拍板）。
 // 5. 制作说明 = credits 相纸卡（内容按本仓库现实：KaTeX/Shiki 已接入）。
-// 6. 找到我 + findme 单行链接条（社交位待补，占位不虚构）。
-// 人设事实（作者提供）：算法工程师，喜欢健身，喜欢看电影；网名 leofinch。
+// 6. 找到我 + findme 链接条（联系方式已接入真链：GitHub leofinch0824、网易邮箱）。
+// 人设事实（作者提供，2026-10-05 更新）：大模型算法工程师；健身、经典电影、摄影（入门）。
 ---
 
 <Base
@@ -252,10 +252,8 @@ import Base from '../layouts/Base.astro';
 				<div class="measure">
 					<p class="eyebrow">技能 · 工具</p>
 					<ul class="skills">
-						<li><b>白天</b>——算法工程师：后端服务、推荐策略、TypeScript。</li>
-						<li><b>晚上</b>——举铁，和一部完整的电影。</li>
-						<li><b>手边</b>——这个博客：Astro 构建时渲染，手写 CSS。</li>
-						<li><b>网上</b>——叫 leofinch，熟人叫别的。</li>
+						<li>大模型算法工程师</li>
+						<li>经常健身、看经典电影、也喜欢摄影（但是小白）</li>
 					</ul>
 				</div>
 			</div>
@@ -314,24 +312,20 @@ import Base from '../layouts/Base.astro';
 			</div>
 		</section>
 
-		{/* ── 找到我：写信按钮 + findme 单行链接条（社交位待补） ── */}
+		{/* ── 找到我：写信按钮 + findme 链接条（GitHub/邮箱已接入真链，2026-10-05） ── */}
 		<section class="section cta" id="contact" data-od-id="cta-strip">
 			<div class="container">
-				<h2>找到我</h2>
+				<h2>如何找到我</h2>
 				<p class="lead">关于技术、电影，或者只是路过打个招呼，都可以写信——我更新不勤，但每封都会回。</p>
 				<div class="cta-actions">
-					<a class="btn btn-primary" href="mailto:hi@example.com"
-						>写信给我<span class="sr-only">跳转邮件客户端（占位邮箱，待作者提供）</span></a
+					<a class="btn btn-primary" href="mailto:yolo2408seu@163.com"
+						>写信给我<span class="sr-only">跳转邮件客户端</span></a
 					>
 				</div>
 				<div class="findme">
-					<span class="findme-label">找得到我</span>
-					{/* 无 href 锚点：不可聚焦/不可点击/不播报为链接，与「待补」一致 */}
-					<a>GitHub · 待补</a>
+					<a href="https://github.com/leofinch0824">GitHub</a>
 					<a href="/rss.xml">RSS</a>
-					<a class="findme-mail" href="mailto:hi@example.com"
-						>邮箱 · 待补<span class="sr-only">占位邮箱，待作者提供</span></a
-					>
+					<a class="findme-mail" href="mailto:yolo2408seu@163.com">网易邮箱</a>
 				</div>
 			</div>
 		</section>
