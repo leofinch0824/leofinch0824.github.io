@@ -4,16 +4,15 @@
  *
  * 从 src/styles/global.css 解析亮、暗两套令牌（暗色有 @media(prefers-color-scheme)
  * 与 :root[data-theme="dark"] 两份重复定义，先校验两份一致，再任取合并结果计算），
- * 自实现 WCAG 相对亮度与对比度，对七对关键前景/背景断言 ≥ AA（4.5:1）：
+ * 自实现 WCAG 相对亮度与对比度，对四对关键前景/背景断言 ≥ AA（4.5:1）：
  *
  *   正文 --fg/--bg · 次要 --muted/--bg · 强调 --accent/--bg ·
- *   主按钮文字 --surface/--accent · 代码三档 --code-kw / --code-str / --code-num
+ *   主按钮文字 --surface/--accent
  *
- * 代码三档的底色有两层口径，都做门禁、取更严者：
- *   a. 真实渲染底 --code-bg（global.css:--code-bg = --fg 5% 混 --surface，
- *      构建期 color-mix，本脚本用 OKLab 自行解析）；
- *   b. 任务书字面底 --surface。
- * 另输出参考值（不门禁）：--code-cmt（muted 92% 透明度）合成到 --code-bg 后的对比度。
+ * 代码块 token 色不在门禁内（2026-10-05 起由 Expressive Code 双主题
+ * one-light/one-dark-pro 提供，构建期 hex，属令牌纪律唯一例外）；
+ * 代码对比度由 EC 的 minSyntaxHighlightingColorContrast 自动校正（≥5.5:1）
+ * 负责，行内代码 pill 底色 --code-bg 仍由令牌提供。
  *
  * 零依赖，Node >= 22。任一门禁对低于 4.5:1 以退出码 1 结束。
  */
@@ -252,12 +251,6 @@ function contrast(c1, c2) {
   const [hi, lo] = [luminance(c1), luminance(c2)].sort((x, y) => y - x);
   return (hi + 0.05) / (lo + 0.05);
 }
-/** 前景带透明度时先合成到背景（浏览器 alpha 合成发生在 gamma sRGB 空间） */
-function compositeOver(fg, bg) {
-  const mix = (f, b) => f * fg.a + b * (1 - fg.a);
-  const r = mix(fg.r, bg.r), g = mix(fg.g, bg.g), b = mix(fg.b, bg.b);
-  return { r, g, b, lr: srgbToLinear(r), lg: srgbToLinear(g), lb: srgbToLinear(b), a: 1 };
-}
 const hexOf = (c) => {
   const to = (x) => Math.round(Math.min(1, Math.max(0, x)) * 255).toString(16).padStart(2, '0');
   return `#${to(c.r)}${to(c.g)}${to(c.b)}` + (c.a < 1 ? ` (${Math.round(c.a * 100)}%)` : '');
@@ -301,7 +294,7 @@ for (const key of new Set([...Object.keys(darkMedia), ...Object.keys(darkManual)
     driftErrors.push(`暗色两份定义不一致：${key}\n    @media 内：${normValue(a)}\n    [data-theme=dark]：${normValue(b)}`);
   }
 }
-const requiredDarkOverrides = ['--bg', '--surface', '--fg', '--muted', '--accent', '--code-kw', '--code-str', '--code-num'];
+const requiredDarkOverrides = ['--bg', '--surface', '--fg', '--muted', '--accent'];
 for (const key of requiredDarkOverrides) {
   if (darkMedia[key] === undefined) driftErrors.push(`@media(prefers-color-scheme: dark) 内未显式覆写 ${key}（将从亮色继承，暗色两段须成对维护）`);
   if (darkManual[key] === undefined) driftErrors.push(`:root[data-theme="dark"] 内未显式覆写 ${key}（将从亮色继承，暗色两段须成对维护）`);
@@ -312,43 +305,36 @@ if (driftErrors.length) process.exit(1);
 // 暗色合并结果 = 亮色为基础、暗色覆写（与浏览器级联一致）
 const dark = { ...light, ...darkMedia };
 
-/* ── 6. 七对关键前景/背景 × 亮暗 ─────────────────────────────────────────── */
+/* ── 6. 四对关键前景/背景 × 亮暗 ─────────────────────────────────────────── */
 
 const PAIRS = [
   { name: '正文', fg: '--fg', bg: '--bg' },
   { name: '次要文字', fg: '--muted', bg: '--bg' },
   { name: '强调色', fg: '--accent', bg: '--bg' },
   { name: '主按钮文字', fg: '--surface', bg: '--accent' },
-  { name: '代码·关键字', fg: '--code-kw', bg: '--code-bg', also: '--surface' },
-  { name: '代码·字符串', fg: '--code-str', bg: '--code-bg', also: '--surface' },
-  { name: '代码·数字', fg: '--code-num', bg: '--code-bg', also: '--surface' },
 ];
 
 function evaluate(map, label) {
   const rows = [];
   for (const pair of PAIRS) {
-    let fg, bg, alsoBg;
+    let fg, bg;
     try {
       fg = resolveToken(pair.fg, map);
       bg = resolveToken(pair.bg, map);
-      alsoBg = pair.also ? resolveToken(pair.also, map) : null;
     } catch (err) {
       fatal(`${label} · ${pair.name}：${err.message}`);
     }
     const r = contrast(fg, bg);
-    const r2 = alsoBg ? contrast(fg, alsoBg) : null;
-    const worst = r2 === null ? r : Math.min(r, r2);
-    rows.push({ pair, fg, bg, alsoBg, r, r2, worst, ok: worst >= AA });
+    rows.push({ pair, fg, bg, r, worst: r, ok: r >= AA });
   }
   return rows;
 }
 
 const printRows = (rows) => {
-  for (const { pair, fg, bg, alsoBg, r, r2, ok } of rows) {
+  for (const { pair, fg, bg, r, ok } of rows) {
     const main = `${pair.name.padEnd(6, '　')} ${pair.fg.padEnd(11)} ${hexOf(fg)} on ${pair.bg.padEnd(10)} ${hexOf(bg)}`;
-    const extra = alsoBg ? `（对 ${pair.also} ${hexOf(alsoBg)}：${r2.toFixed(2)}:1）` : '';
     const ratio = `${r.toFixed(2)}:1`;
-    console.log(`  ${ok ? '✓' : '✗'} ${main}  ${ratio.padStart(7)} ${extra}`);
+    console.log(`  ${ok ? '✓' : '✗'} ${main}  ${ratio.padStart(7)}`);
   }
 };
 
@@ -367,16 +353,6 @@ console.log('\n亮色');
 printRows(lightRows);
 console.log('\n暗色');
 printRows(darkRows);
-
-// 参考值（不门禁）：--code-cmt 合成后的对比度
-try {
-  for (const [label, map] of [['亮色', light], ['暗色', dark]]) {
-    const cmt = resolveToken('--code-cmt', map);
-    const codeBg = resolveToken('--code-bg', map);
-    const r = contrast(compositeOver(cmt, codeBg), codeBg);
-    console.log(`  ℹ 参考（不门禁）：${label} --code-cmt 合成到 --code-bg = ${r.toFixed(2)}:1`);
-  }
-} catch { /* --code-cmt 不存在时静默跳过 */ }
 
 for (const rows of [lightRows, darkRows]) for (const row of rows) if (!row.ok) failed = true;
 

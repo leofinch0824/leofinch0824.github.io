@@ -18,13 +18,9 @@ colors:
   rust-lifted: "#d0785c"      # --accent 锈红 · 提亮版
   # 语义
   print-shade: "#0b0a09"      # --shade 投影墨（暗色；亮色下等于 ink）
-  # 代码语法（作用域令牌，低饱和，不参与强调色预算；暗色各提亮一档）
-  syntax-keyword: "#7c4a39"   # --code-kw
-  syntax-string: "#59684f"    # --code-str
-  syntax-number: "#8a6335"    # --code-num
-  syntax-keyword-dark: "#d08a72"
-  syntax-string-dark: "#9db08a"
-  syntax-number-dark: "#d0a86a"
+  # 代码块 token 色：2026-10-05 起由 Expressive Code 双主题提供
+  # （one-light / one-dark-pro，构建期 hex），不再是本系统的作用域令牌 ——
+  # 令牌纪律的唯一明文例外，详见「代码块（.code）」组件规格。
 typography:
   display:
     fontFamily: "Iowan Old Style, Palatino Linotype, Palatino, Songti SC, Noto Serif SC, Source Han Serif SC, STSong, Georgia, serif"
@@ -354,7 +350,9 @@ tick 年份、导航当前页、RSS 强调链）；正文与元信息永远 400�
 - **顶栏：** sticky + 毛玻璃。站名衬线 20px + 等宽小字副标；导航词 14px、褪色的墨，当前页用墨色 + 500 字重 + 1px 下划线。词内禁止断行。
 
 ### 代码块（.code）
-- 相纸上的印刷品：code-bg（墨 5% 混相纸白）底、code-head 文件名条（等宽，左文件名右语言标签）、1px 圆角。token 色：关键字 #7c4a39 / 字符串 #59684f / 数字 #8a6335 / 注释为褪色的墨 92% 混合（全部低于饱和阈值，不参与强调色预算；暗色各提亮一档）。这是 Shiki 主题对接的设计规格。
+- 相纸上的印刷品。2026-10-05 起由 Expressive Code（Shiki 引擎）落地：token 色走成熟双主题 **one-light（亮）/ one-dark-pro（暗）**（所有者拍板；构建期 hex，随 `[data-theme]` 与 `prefers-color-scheme` 切换，语义与全站双暗块对齐）——这是「颜色单一来源 = global.css 令牌」的**唯一明文例外**，代码对比度由 EC 自动校正（≥5.5:1）负责。
+- 站点仍自持的部分：1px 发丝线（--border）、1px 圆角、等宽 13.5px/1.78、内边距 16px 18px、帧阴影关闭（相纸平放不发光）、行内代码 pill（--code-bg 底、4px 圆角）。
+- code-head 文件名条经 EC 帧实现：等宽小字，左文件名（围栏 `title=` 时出现）、右复制按钮（悬停/聚焦显现）。不展示语言标签。复制内容为原始代码，不混入行号与展示标记。
 
 ## Do's and Don'ts
 

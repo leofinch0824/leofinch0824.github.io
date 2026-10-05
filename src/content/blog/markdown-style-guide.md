@@ -131,9 +131,9 @@ we can use 3 backticks ``` in new line and write snippet and close with 3 backti
 </html>
 ```
 
-### 验收：长代码块（横向滚动）
+### 验收：长代码块（文件名条 + 横向滚动）
 
-下面的围栏块带有 `title="src/algorithms/lis-fast.ts"` 文件名元信息。**如实说明**：当前 Shiki 管线不渲染文件名条（`.code-head` 规格未实现——PRODUCT.md 已记录该偏差），`title=` 在产物中被静默丢弃；保留它是为了将来接入 Expressive Code 时无需改文直接生效。本节真正要验收的是：代码体刻意包含一行超过 80 列的长注释，在 390px 视口里它应当**横向滚动**，而不是撑破版心或被折行截断。
+下面的围栏块带有 `title="src/algorithms/lis-fast.ts"` 文件名元信息。Expressive Code（2026-10-05 接入）会把 `title=` 渲染成代码块顶部的文件名条（`.code-head` 规格），右上角悬停出现复制按钮——复制结果应为原始代码，不混入任何展示标记。本节真正要验收的是：代码体刻意包含一行超过 80 列的长注释，在 390px 视口里它应当**横向滚动**，而不是撑破版心或被折行截断。
 
 ```ts title="src/algorithms/lis-fast.ts"
 // 最长递增子序列 O(n log n)：树状数组维护「值域前缀上的最大 dp 值」，
