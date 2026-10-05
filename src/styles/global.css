@@ -39,12 +39,10 @@
      暗色下收一点亮度，别让照片成为唯一光源。1 = 原样不处理。 ── */
   --photo-brightness: 1;
 
-  /* ── 代码语法：作用域令牌，全部低饱和，不参与强调色预算 ── */
+  /* ── 代码：行内代码 pill 的底色（代码块 token 色已改由 Expressive Code
+     双主题 one-light/one-dark-pro 提供，是令牌纪律的唯一明文例外，
+     见 astro.config.mjs 与 DESIGN.md「代码块」） ── */
   --code-bg:  color-mix(in oklch, var(--fg) 5%, var(--surface));
-  --code-kw:  #7c4a39;
-  --code-str: #59684f;
-  --code-num: #8a6335;
-  --code-cmt: color-mix(in oklch, var(--muted) 92%, transparent);   /* 72% 仅 3.1:1，低于 AA；提到 92% 过 4.5:1 */
 
   /* ── 字体：显示用衬线（含中文宋体），正文用无衬线，数值用等宽 ──
      正文无衬线按迁移方案 §2.3② 适配：西文开头接自托管 Atkinson
@@ -63,6 +61,9 @@
   --fs-lead: 18px;
   --fs-body: 16px;
   --fs-meta: 14px;
+  /* 长文正文流式字号：600px 视口以下 16.5、920px 约 17.2、1700px 起 19。
+     量度恒为 36em（每行字数不随字号变），版心列宽随之流动。 */
+  --fs-article: clamp(16.5px, 15.1px + 0.23vw, 19px);
 
   /* ── 间距 ── */
   --gap-xs:8px; --gap-sm:12px; --gap-md:20px; --gap-lg:32px; --gap-xl:56px; --gap-2xl:96px;
@@ -101,7 +102,6 @@
     --border:  #3a3430;   /* 发丝线 */
     --accent:  #d0785c;   /* 暗房锈红 · 提亮版 */
     --accent-hover: color-mix(in oklch, var(--accent) 88%, white);   /* 暗色 hover 反向提亮，印相纸深字仍 5.7:1 */
-    --code-kw: #d08a72;  --code-str: #9db08a;  --code-num: #d0a86a;
 
     /* 投影：暗底上影子要更实、更贴，才镇得住纸边 */
     --shade:   #0b0a09;   /* 比暗房底再暗一档 —— 相纸是压在桌上，不是浮在光里 */
@@ -121,7 +121,6 @@
   --border:  #3a3430;
   --accent:  #d0785c;
   --accent-hover: color-mix(in oklch, var(--accent) 88%, white);
-  --code-kw: #d08a72;  --code-str: #9db08a;  --code-num: #d0a86a;
 
   --shade:   #0b0a09;
   --lift-1: 0 1px 1px color-mix(in oklch, var(--shade) 50%, transparent),
@@ -449,8 +448,11 @@ b.num{ font-weight:600; color:var(--fg); }
 .plate figcaption::before{ content:'▣'; opacity:.45; }
 
 /* 正文列比图片列略窄，图可以略微出血到文字之外 */
-.article-col{ max-width:680px; margin-inline:auto; }
-.prose{ max-width:36em; margin-inline:auto; font-size:17.5px; line-height:1.92; }
+/* 版心列 = 36em 正文量度 + 双侧 gutter。历史上写死 680px 且 gutter 计入
+   （border-box），36em 版心实际从未达成（616px）；改为随 --fs-article 流动后，
+   头图 / 版权卡 / 翻页等版心元素与正文左右缘恒对齐，量度恒为 36em。 */
+.article-col{ max-width:calc(36 * var(--fs-article) + 2 * var(--gutter)); margin-inline:auto; }
+.prose{ max-width:36em; margin-inline:auto; font-size:var(--fs-article); line-height:1.92; }
 .prose > * + *{ margin-top:1.35em; }
 .prose h2{ font-size:clamp(23px,2.4vw,29px); margin-top:2.2em; line-height:1.3; }
 .prose h3{ font-size:18px; margin-top:1.9em; }
@@ -486,24 +488,15 @@ b.num{ font-weight:600; color:var(--fg); }
 .prose blockquote p{ color:inherit; }
 .prose hr{ border:0; border-top:1px solid var(--rule-faint); margin:2.6em 0; }
 
-/* ── 代码块（批5）：.code 规格落在 Shiki 产物 pre.astro-code 上 ─────────────
-   Astro 的 Shiki 输出 <pre class="astro-code …">，token 色来自
-   src/styles/code-theme.mjs 喂给主题槽位的 var(--code-*) 内联样式，
-   底色/前景色同样是内联的 var(--code-bg)/var(--fg)（构建产物可证）。
-   这里只补齐 .code 规格的盒型部分：1px 发丝线、1px 圆角（DESIGN.md
-   「代码块」组件规格；历史参考实现曾写 10px 与 DESIGN.md 不一致，
-   按「文档优先」取 1px）、等宽 13.5px/1.78，长代码横向滚动不出容器。
-   .code-head 文件名条未实现（批5 取舍：expressive-code 不能消费 CSS
-   变量主题色，见 astro.config.mjs 注释与批5 回报），规格留在 DESIGN.md，
-   样式不再保留死规则。 */
-.prose .astro-code{
-  margin:1.9em 0; padding:16px 18px;
-  border:1px solid var(--border); border-radius:1px;
-  font-family:var(--font-mono); font-size:13.5px; line-height:1.78;
-}
-.prose .astro-code code{
-  font-family:inherit; font-size:inherit; line-height:inherit;
-  white-space:pre; color:var(--fg);
+/* ── 代码块：Expressive Code 接管（2026-10-05）─────────────────────────────
+   EC 产物为 div.expressive-code 包裹的 pre；盒型（1px 发丝线、1px 圆角、
+   等宽 13.5px/1.78、内边距 16px 18px）与颜色全部由 astro.config.mjs 的
+   styleOverrides + 双主题 one-light/one-dark-pro 在构建期生成到共享样式表
+   /_astro/ec.*.css，亮暗切换走 EC 自己的 [data-theme] / prefers-color-scheme
+   规则（与上方双暗块语义对齐）。这里只保留正文级块间距——.prose 双类
+   选择器足以压过 EC 自己的 .expressive-code 单类规则。 */
+.prose .expressive-code{
+  margin:1.9em 0;
 }
 
 /* ── 公式（批5）：.formula 规格落在 KaTeX 产物 .katex-display 上 ────────────

@@ -1,6 +1,6 @@
 # 拾光集 · Time Travel
 
-个人博客：把每篇文章当成一张被保存的记忆快照。Astro ^7 静态站点——文章、公式（KaTeX）、代码高亮（Shiki）全部构建时渲染，无客户端框架；GitHub Actions 构建并发布到 GitHub Pages。
+个人博客：把每篇文章当成一张被保存的记忆快照。Astro ^7 静态站点——文章、公式（KaTeX）、代码高亮（Expressive Code，one-light / one-dark-pro 双主题）全部构建时渲染，无客户端框架；GitHub Actions 构建并发布到 GitHub Pages。
 
 ## 两份准则（改任何前端之前的唯一依据）
 
