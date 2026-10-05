@@ -54,3 +54,5 @@ Desktop.ini
 .claude/
 .codex/
 .agents/
+# impeccable 本地评审产物（critique 内含本机绝对路径，仅本地留存）
+.impeccable/

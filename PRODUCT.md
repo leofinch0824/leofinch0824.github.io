@@ -26,7 +26,7 @@ web
 - 代码高亮（2026-10-05 改案）：**Expressive Code**（astro-expressive-code ≥0.44，Astro 7 官方支持，自动追加 rehype 插件、与 KaTeX 管线共存）接管代码块，双主题用成熟现成主题 **one-light / one-dark-pro**（所有者拍板，推翻 2026-10-04 批5「不采用 EC」的记录——其「构建期强制十六进制色、无法消费令牌」的理由基于早期认知，当前版本 styleOverrides 官方支持 `var()`，本站盒型/字体仍走令牌与站点规格）。收益：复制按钮（核心自带）、`.code-head` 文件名条（`title=` 元数据直接生效）、文字标记能力。代价与例外：token 色为构建期 hex，是「颜色单一来源」唯一明文例外（已写入 AGENTS/DESIGN）；新增一个共享 JS 模块（复制 + 滚动 tabindex）；复制提示文案为固定英文 "Copied!"；代码对比度改由 EC 自动校正（≥5.5:1）负责，check-contrast 门禁相应收敛为四对。
 - 整体技术边界：Astro + CSS，必要的独立交互用少量 TypeScript；不将 Svelte、Motion、GSAP、D3、ECharts 列为默认依赖；`ClientRouter` 未启用，是否采用单独评估。
 - 分页（2026-10-04 定案）：首页记忆墙是限量橱窗（`WALL_LIMIT = 12`，超出不进 DOM）；全量翻阅走归档按年路由——`/blog/` 最新年相册 + `/blog/[year]/` 每年一页（上/下一年翻页复用 `.page-turn`）；首页年份过滤交互已退役，时间线年份格是链接。
-- 真实开发仓库：`/Users/pegasus/workplace/work_repos/astro-blog`（Astro ^7.3.5，带 GitHub Actions CI）。视觉验收基准 = `DESIGN.md`（唯一权威）；原型四页与迁移/精修过程文档已于 2026-10-05 清退出仓库，git 历史永久可查。
+- 真实开发仓库：即本仓库（相对项目根目录组织，Astro ^7.3.5，带 GitHub Actions CI）。视觉验收基准 = `DESIGN.md`（唯一权威）；原型四页与迁移/精修过程文档已于 2026-10-05 清退出仓库，git 历史永久可查。
 
 ## Capabilities and Constraints
 
