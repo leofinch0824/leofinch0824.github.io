@@ -26,7 +26,7 @@ web
 - 代码高亮（2026-10-05 改案）：**Expressive Code**（astro-expressive-code ≥0.44，Astro 7 官方支持，自动追加 rehype 插件、与 KaTeX 管线共存）接管代码块，双主题用成熟现成主题 **one-light / one-dark-pro**（所有者拍板，推翻 2026-10-04 批5「不采用 EC」的记录——其「构建期强制十六进制色、无法消费令牌」的理由基于早期认知，当前版本 styleOverrides 官方支持 `var()`，本站盒型/字体仍走令牌与站点规格）。收益：复制按钮（核心自带）、`.code-head` 文件名条（`title=` 元数据直接生效）、文字标记能力。代价与例外：token 色为构建期 hex，是「颜色单一来源」唯一明文例外（已写入 AGENTS/DESIGN）；新增一个共享 JS 模块（复制 + 滚动 tabindex）；复制提示文案为固定英文 "Copied!"；代码对比度改由 EC 自动校正（≥5.5:1）负责，check-contrast 门禁相应收敛为四对。
 - 整体技术边界：Astro + CSS，必要的独立交互用少量 TypeScript；不将 Svelte、Motion、GSAP、D3、ECharts 列为默认依赖；`ClientRouter` 未启用，是否采用单独评估。
 - 分页（2026-10-04 定案）：首页记忆墙是限量橱窗（`WALL_LIMIT = 12`，超出不进 DOM）；全量翻阅走归档按年路由——`/blog/` 最新年相册 + `/blog/[year]/` 每年一页（上/下一年翻页复用 `.page-turn`）；首页年份过滤交互已退役，时间线年份格是链接。
-- 真实开发仓库：`/Users/pegasus/workplace/work_repos/astro-blog`（Astro ^7.3.5，带 GitHub Actions CI）。视觉验收基准 = `DESIGN.md`（唯一权威）；原型四页与迁移/精修过程文档已于 2026-10-05 清退出仓库，git 历史永久可查。
+- 真实开发仓库：即本仓库（相对项目根目录组织，Astro ^7.3.5，带 GitHub Actions CI）。视觉验收基准 = `DESIGN.md`（唯一权威）；原型四页与迁移/精修过程文档已于 2026-10-05 清退出仓库，git 历史永久可查。
 
 ## Capabilities and Constraints
 
@@ -40,7 +40,7 @@ web
 
 明确未决（不得当作事实，也不得虚构）：
 
-- About 人设事实已由作者提供并更新（2026-10-05：大模型算法工程师；健身、经典电影、摄影入门）。关于页 v2：双卡叠压开场 + 技能列表 + 自述碎句 + credits 卡 + findme 链接条；backface/id-matrix 已移除。联系方式已接入真链（2026-10-05：GitHub `leofinch0824`、网易邮箱 `yolo2408seu@163.com`）。仍待作者提供：**真人肖像照片**（当前前卡用 `portrait.jpg` 测试图占位——实为赛车荒野照，注脚已诚实标注）。
+- About 人设事实已由作者提供并更新（2026-10-05：大模型算法工程师；健身、经典电影、摄影入门）。关于页 v2：双卡叠压开场 + 技能列表 + 自述碎句 + credits 卡 + findme 链接条；backface/id-matrix 已移除。联系方式已接入真链（2026-10-05：GitHub `leofinch0824`、网易邮箱 `yolo2408seu@163.com`）。仍待作者提供：**真人肖像照片**（前卡槽位现为 `pegasus.jpg` 测试图——荒野拉力赛车照，注脚「Pegasus」；后卡 `avengersendgames.png` 复联4 钢铁侠剧照，注脚「iron man in Avengers Endgame」；2026-10-05 所有者换图）。
 - 站内文章：仅剩 `markdown-style-guide.md`（版式验收文，占位性质）。starter 占位样文与 `test2.md`（原唯一真实文）已按所有者指令删除（2026-10-05，git 历史可查）；随删的孤儿配图 `wallhaven-exyw3o.jpg`/`travel.jpg`/`sunset.png` 同批移除，现用配图仅 `snowymontain1.png`。
 - KaTeX 基础兼容性（行内/独立公式、多行推导、`\tag` 编号、横向滚动）已按验收文验证；公式交叉引用、算法伪代码环境仍待真实文章验证。验收条件（承接 project-direction §6，原文档已随过程文档清退）：① 行内/独立/多行推导/矩阵显示正确，行距与段落间距自然；② 实际用到的数学命令与宏兼容，公式编号、引用或伪代码环境是否引入得出明确结论；③ 长公式、长代码、宽表格在手机上不撑破整页且内容完整可读；④ 代码复制已接入（EC 复制按钮，2026-10-05）：复制结果保留原始代码、不混入行号与展示标记，浏览器验收待复跑；⑤ 标题、列表、脚注、引用的中英文层级清晰。
 - 订阅（subscribe）区块仅为版面占位，作者已确认暂不接入真实订阅服务。

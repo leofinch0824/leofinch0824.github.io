@@ -1,17 +1,18 @@
 ---
 import { Image } from 'astro:assets';
-import PortraitImage from '../assets/test-pool/portrait.jpg';
-import AvatarImage from '../assets/test-pool/dev-master.png';
+import PegasusImage from '../assets/test-pool/pegasus.jpg';
+import AvengersImage from '../assets/test-pool/avengersendgames.png';
 import Base from '../layouts/Base.astro';
 import { AUTHOR_EMAIL } from '../consts';
 
 // 关于页 v2（2026-10-05，所有者三项拍板定稿）：
-// 1. 开场 = 双卡叠压纯视觉（无文字栏；前卡肖像 + 后卡数字化身，dev-master）；
+// 1. 开场 = 双卡叠压纯视觉（无文字栏；前卡 Pegasus 拉力赛车 + 后卡复联4
+//    钢铁侠剧照，均为测试图可随时换；前卡槽位仍待真人肖像）；
 //    语义 h1 用 .sr-only 承担。
 // 2. 技能 · 工具 = 朴素 Markdown 列表观感（所有者：简单易改写）。
 // 3. 一些零碎的 = 正文规格衬线短句（所有者拍板：属正文内容，不做标题化字号）。
 // 4. 「为什么写」与 backface/id-matrix 全部移除（所有者拍板）。
-// 5. 制作说明 = credits 相纸卡（内容按本仓库现实：KaTeX/Shiki 已接入）。
+// 5. 制作说明 = credits 相纸卡（内容按本仓库现实：KaTeX/Expressive Code 已接入）。
 // 6. 找到我 + findme 链接条（联系方式已接入真链：GitHub leofinch0824、网易邮箱）。
 // 人设事实（作者提供，2026-10-05 更新）：大模型算法工程师；健身、经典电影、摄影（入门）。
 ---
@@ -44,14 +45,14 @@ import { AUTHOR_EMAIL } from '../consts';
 			width: 62%;
 			z-index: 1;
 		}
-		.cluster-back {
-			flex: 0 0 auto;
-			width: 50%;
-			margin-left: -12%;
-			/* 叠压量按当前测试图对（前 2.4:1 / 后 1:1）调优；换真人像后复查 */
-			margin-top: clamp(150px, 22%, 200px);
-			z-index: 2;
-		}
+			.cluster-back {
+				flex: 0 0 auto;
+				width: 50%;
+				margin-left: -12%;
+				/* 叠压量按当前测试图对（前 12:5 / 后 16:9）调优；换真人像后复查 */
+				margin-top: clamp(150px, 22%, 200px);
+				z-index: 2;
+			}
 		/* 被压住的那张，题注右侧让出叠压区 —— 邻居盖住的是留白，不是字 */
 		.cluster-front .print-cap {
 			padding-right: 22%;
@@ -205,46 +206,46 @@ import { AUTHOR_EMAIL } from '../consts';
 		{/* 页面语义 h1：开场是纯视觉叠卡，文字栏已按拍板移除，h1 转为不可见承担 */}
 		<h1 class="sr-only">关于拾光集，和它背后的人。</h1>
 
-		{/* ── 双卡叠压开场：前卡肖像，后卡数字化身（测试图，可随时换） ── */}
-		<section class="section" data-od-id="about-intro">
-			<div class="container">
-				<div class="card-cluster">
-					<div class="cluster-front wall-item" style="--rot:-1.6deg; --i:0">
-						<figure class="print">
-							<Image
-								class="print-img"
-								src={PortraitImage}
-								alt="测试图：荒野中的拉力赛车（占位，待替换为作者肖像）"
-								width={900}
-								layout="none"
-								loading="eager"
-								fetchpriority="high"
-								decoding="async"
-							/>
-							<figcaption class="print-cap">
-								<p class="print-note">测试图：荒野拉力。</p>
-							</figcaption>
-						</figure>
-					</div>
-					<div class="cluster-back wall-item" style="--rot:1.4deg; --i:1">
-						<figure class="print">
-							<Image
-								class="print-img"
-								src={AvatarImage}
-								alt="卡通风格的开发者形象插画：戴眼镜的程序员坐在发光的屏幕前"
-								width={720}
-								layout="none"
-								loading="lazy"
-								decoding="async"
-							/>
-							<figcaption class="print-cap">
-								<p class="print-note">屏幕里的另一个我。</p>
-							</figcaption>
-						</figure>
+		{/* ── 双卡叠压开场：前卡 Pegasus 拉力赛车，后卡复联4 钢铁侠（测试图，可随时换） ── */}
+			<section class="section" data-od-id="about-intro">
+				<div class="container">
+					<div class="card-cluster">
+						<div class="cluster-front wall-item" style="--rot:-1.6deg; --i:0">
+							<figure class="print">
+								<Image
+									class="print-img"
+									src={PegasusImage}
+									alt="测试图：白色拉力赛车在荒野尘土中飞驰（Pegasus，前卡槽位待替换为作者肖像）"
+									width={960}
+									layout="none"
+									loading="eager"
+									fetchpriority="high"
+									decoding="async"
+								/>
+								<figcaption class="print-cap">
+									<p class="print-note">Pegasus</p>
+								</figcaption>
+							</figure>
+						</div>
+						<div class="cluster-back wall-item" style="--rot:1.4deg; --i:1">
+							<figure class="print">
+								<Image
+									class="print-img"
+									src={AvengersImage}
+									alt="《复仇者联盟4：终局之战》剧照：钢铁侠在飞船里伸向头盔"
+									width={1080}
+									layout="none"
+									loading="lazy"
+									decoding="async"
+								/>
+								<figcaption class="print-cap">
+									<p class="print-note">iron man in Avengers Endgame</p>
+								</figcaption>
+							</figure>
+						</div>
 					</div>
 				</div>
-			</div>
-		</section>
+			</section>
 
 		{/* ── 技能 · 工具：朴素列表，内容结构简单，随时可改写 ── */}
 		<section class="section" data-od-id="about-skills">
