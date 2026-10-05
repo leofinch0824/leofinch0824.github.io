@@ -103,7 +103,7 @@ typography:
     fontWeight: 500
   prose:
     fontFamily: "-apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Segoe UI, system-ui, sans-serif"
-    fontSize: "17.5px"
+    fontSize: "clamp(16.5px, 15.1px + 0.23vw, 19px)"
     fontWeight: 400
     lineHeight: 1.92
   card-title:
@@ -264,7 +264,7 @@ components:
 
 | 角色 | 规格 | 用在哪 |
 |---|---|---|
-| 长文正文 | 400, 17.5px / 1.92（920px 起 17，600px 起 16.5） | `prose`，版心 36em |
+| 长文正文 | 400, 流式 clamp(16.5px, 15.1px + 0.23vw, 19px) / 1.92（600px 视口起 16.5，920px 约 17.2，1700px 起 19） | `prose`，量度 36em 随字号实现 |
 | 正文基础 | 400, 16px / 1.62 | UI 文字、段落默认 |
 | 导语 | 400, 18px / 1.78, muted | `lead` |
 | 卡正文 | 400, 15px / 1.74–1.78 | backface 值、spec 值、相纸卡注脚 |
@@ -302,7 +302,7 @@ tick 年份、导航当前页、RSS 强调链）；正文与元信息永远 400�
 
 ## Layout
 
-容器 1180px、左右槽 32px。密度是「相册摊开」而非「仪表盘」：区块间距用 clamp(48px, 7vw, 88px)，相册里没有框线，只有留白。记忆墙是 3 列网格（行距 clamp(26px, 3.4vw, 44px)、列距 clamp(20px, 2.6vw, 34px)），末张跨两列补满；920px 起全部塌成单列。年份轨迹是四格等分按钮，以发丝线分隔。文章页版心 680px、正文 36em，头图相框允许略出血到文字列之外。间距阶：8 / 12 / 20 / 32 / 56 / 96px。
+容器 1180px、左右槽 32px。密度是「相册摊开」而非「仪表盘」：区块间距用 clamp(48px, 7vw, 88px)，相册里没有框线，只有留白。记忆墙是 3 列网格（行距 clamp(26px, 3.4vw, 44px)、列距 clamp(20px, 2.6vw, 34px)），末张跨两列补满；920px 起全部塌成单列。年份轨迹是四格等分按钮，以发丝线分隔。文章页版心 = 36em 正文量度 + 双侧 gutter（`calc(36 × --fs-article + 2 × gutter)`，约 638–748px 随字号流动），头图、版权卡、翻页等版心元素与正文左右缘恒对齐，头图相框允许略出血到文字列之外。间距阶：8 / 12 / 20 / 32 / 56 / 96px。
 
 顶栏 sticky、毛玻璃（底色 88% 透明混合 + blur(14px)），站名与导航词禁止词中断行；页头不放订阅按钮，订阅入口收口于页脚面板（2026-10-05）。
 
