@@ -3,15 +3,19 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import MemoryWall from '../components/MemoryWall.astro';
+import TagTrail from '../components/TagTrail.astro';
 import YearTrail from '../components/YearTrail.astro';
-import { prepareWall, WALL_LIMIT } from '../utils/posts';
+import { prepareTags, prepareWall, WALL_LIMIT } from '../utils/posts';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
 // 首页：卷首（格言式站标 + 元信息条）+ 记忆墙（橱窗：只渲染最近 WALL_LIMIT 张）
-// + 年份轨迹（年份链接 → /blog/[year]/）。订阅引导收口于页脚。
+// + 年份轨迹（年份链接 → /blog/[year]/）+ 标签轨迹（标签胶囊 → /tags/[tag]/）。
+// 订阅引导收口于页脚。
 const wall = prepareWall(await getCollection('blog'));
 // 墙上只放最近这些张；总量与最早/最新仍按全量算（元信息是全站事实）。
 const wallCards = wall.cards.slice(0, WALL_LIMIT);
+// 标签与年份同构：同一份 wall 再分一次桶，与 /tags/[tag]/ 的路由数据同源。
+const tags = prepareTags(wall.cards);
 const total = wall.cards.length;
 const latestCard = wall.cards[0];
 const earliest = wall.cards[wall.cards.length - 1];
@@ -56,5 +60,6 @@ const earliest = wall.cards[wall.cards.length - 1];
 
 		<MemoryWall cards={wallCards} />
 		<YearTrail wall={wall} />
+		{tags.length > 0 && <TagTrail tags={tags} />}
 	</main>
 </Base>

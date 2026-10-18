@@ -81,6 +81,31 @@ export function sortByPubDateDesc(posts: readonly BlogPost[]): BlogPost[] {
 	return [...posts].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 }
 
+/** 标签轨迹上的一格。 */
+export interface TagGroup {
+	name: string;
+	/** 该标签张数 */
+	count: number;
+	/** 该标签下的相纸，pubDate 新→旧（继承 cards 顺序） */
+	cards: WallCard[];
+}
+
+/** 标签分桶：cards 已由 prepareWall 排成新→旧，桶内保持同一顺序；
+ *  胶囊按张数降序、同数按字典序。首页标签胶囊与 /tags/[tag]/ 共用这一份。 */
+export function prepareTags(cards: readonly WallCard[]): TagGroup[] {
+	const byTag = new Map<string, WallCard[]>();
+	for (const card of cards) {
+		for (const tag of card.post.data.tags ?? []) {
+			const bucket = byTag.get(tag);
+			if (bucket) bucket.push(card);
+			else byTag.set(tag, [card]);
+		}
+	}
+	return [...byTag]
+		.map(([name, list]) => ({ name, count: list.length, cards: list }))
+		.sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+}
+
 /** 把集合条目整理成记忆墙数据：排序、编号、阅读时长、按年分组、默认展开年。 */
 export function prepareWall(posts: readonly BlogPost[]): Wall {
 	const sorted = sortByPubDateDesc(posts);
