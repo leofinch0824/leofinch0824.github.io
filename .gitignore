@@ -56,3 +56,9 @@ Desktop.ini
 .agents/
 # impeccable 本地评审产物（critique 内含本机绝对路径，仅本地留存）
 .impeccable/
+
+# UI 原型（纯静态 HTML，只 <link> global.css，本地看效果用，不进仓库）
+prototype/
+
+# ZCode skills 锁文件（工具产物）
+skills-lock.json

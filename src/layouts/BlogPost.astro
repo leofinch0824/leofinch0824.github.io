@@ -22,8 +22,6 @@ interface Props {
 
 const { post, no, minutes, newer, newerNo, older, olderNo } = Astro.props;
 const { title, description, pubDate, updatedDate, heroImage, category, tags } = post.data;
-// 元信息行第三段：分类 / 标签，形态如「算法 / 数据结构」
-const metaTopic = [category, ...(tags ?? [])].join(' / ');
 // 版权声明卡用：与 BaseHead 的 canonical 同源（Astro.site + 当前路径）
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -38,6 +36,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 			margin: 0;
 			padding: 0;
 		}
+		/* 元信息行标签链接：静止与 .meta 一致（全局 a 继承色、无下划线），仅 hover 示意可点 */
+		.article-meta .meta-tag:hover {
+			color: var(--accent);
+		}
 	</style>
 	<main id="content">
 		<article class="article">
@@ -49,7 +51,17 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 					<div class="article-meta">
 						<span class="meta num"><FormattedDate date={pubDate} /></span>
 						<span class="meta">约 {minutes} 分钟</span>
-						<span class="meta">{metaTopic}</span>
+						<span class="meta">
+							{category}
+							{(tags ?? []).map((tag) => (
+								<>
+									{' / '}
+									<a class="meta-tag" href={`/tags/${tag}/`}>
+										{tag}
+									</a>
+								</>
+							))}
+						</span>
 						{
 							updatedDate && (
 								<span class="meta">

@@ -1,0 +1,121 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { prepareTags, prepareWall, type TagGroup, type WallCard } from '../../utils/posts';
+import { SITE_TITLE } from '../../consts';
+
+// 归档 · 标签相册页：与年份页同构的「翻阅维度」——每个标签产出一页
+// /tags/<tag>/，形态照抄 YearAlbum（眉标 + 标签胶囊 + 相册行 + 返回归档）。
+export async function getStaticPaths() {
+	const wall = prepareWall(await getCollection('blog'));
+	// 标签分桶与首页 TagTrail 共用 prepareTags，桶内已由 prepareWall 排成新→旧。
+	const allTags = prepareTags(wall.cards);
+	return allTags.map(({ name, cards }) => ({
+		params: { tag: name },
+		props: { tag: name, cards, allTags },
+	}));
+}
+
+interface Props {
+	tag: string;
+	cards: WallCard[];
+	allTags: TagGroup[];
+}
+
+const { tag, cards, allTags } = Astro.props;
+// 该标签涉及的分类（去重，按新→旧首次出现）——与 YearGroup.categories 同语义
+const categories = [...new Set(cards.map((card) => card.post.data.category))];
+// 相册行日期只到「月 · 日」（原型 archive.tpl.html:66 的形态，同 YearAlbum）
+const monthDay = (date: Date) =>
+	`${String(date.getMonth() + 1).padStart(2, '0')} · ${String(date.getDate()).padStart(2, '0')}`;
+---
+
+<Base
+	title={`标签 · ${tag} · ${SITE_TITLE}`}
+	description={`标记为「${tag}」的 ${cards.length} 张相纸。`}
+	lang="zh-CN"
+>
+	<main id="content">
+		<section class="section intro" data-od-id="archive-tag">
+			<div class="container">
+				<h1 class="eyebrow">标签 · {tag}</h1>
+				<nav class="year-jump" aria-label="跳转到标签">
+					{
+						allTags.map((t) => (
+							<a href={`/tags/${t.name}/`} aria-current={t.name === tag ? 'page' : undefined}>
+								{t.name} · {t.count}
+							</a>
+						))
+					}
+				</nav>
+
+				<div class="year-album">
+					<div class="year-head">
+						<h2 class="year-title">{tag}</h2>
+						<span class="year-rule" aria-hidden="true" />
+						<span class="year-meta">
+							{cards.length} 张 · {categories.join('、')}
+						</span>
+					</div>
+					<ul class="album">
+						{
+							cards.map((card) => (
+								<li class="album-row">
+									<a href={`/blog/${card.post.id}/`}>
+										<span class:list={['album-thumb', { 'album-thumb--empty': !card.post.data.heroImage }]}>
+											{card.post.data.heroImage && (
+												<Image
+													src={card.post.data.heroImage}
+													alt=""
+													width={200}
+													layout="none"
+													loading="lazy"
+													decoding="async"
+												/>
+											)}
+										</span>
+										<div class="album-body">
+											<p class="album-date">{monthDay(card.post.data.pubDate)}</p>
+											<h3>{card.post.data.title}</h3>
+											<p class="album-dek">{card.post.data.description}</p>
+										</div>
+										<span class="album-tag tag">{card.post.data.category}</span>
+										<span class="album-frame">№ {card.no}</span>
+									</a>
+								</li>
+							))
+						}
+					</ul>
+				</div>
+
+				<nav class="page-turn" aria-label="返回归档">
+					<a class="turn" href="/blog/">
+						<span class="turn-label">← 归档</span>
+						<span class="turn-title">全部相纸</span>
+					</a>
+				</nav>
+			</div>
+		</section>
+	</main>
+</Base>
+
+<style>
+	/* 过渡兜底解除（同 YearAlbum）：global.css 末尾暂留的 main{width:720px} 是给
+	   旧版列表页的居中列用的；标签页是通栏容器布局。只写布局。 */
+	main {
+		width: auto;
+		max-width: none;
+		margin: 0;
+		padding: 0;
+	}
+	/* 无照片文章的归档缩略位：3:2 空相框卡位（表面色/发丝线/投影继承 .album-thumb 令牌样式）。 */
+	.album-thumb--empty {
+		width: 100%;
+		aspect-ratio: 3 / 2;
+		align-self: start;
+	}
+	.year-album {
+		margin-top: var(--gap-lg);
+	}
+</style>

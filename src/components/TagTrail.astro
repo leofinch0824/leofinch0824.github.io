@@ -1,0 +1,37 @@
+---
+import type { TagGroup } from '../utils/posts';
+
+interface Props {
+	tags: TagGroup[];
+}
+
+const { tags } = Astro.props;
+---
+
+<section class="section" data-od-id="tags">
+	<div class="container">
+		<p class="eyebrow">标签</p>
+		<h2 class="tags-title">按标签翻阅</h2>
+		{/* 复用归档页 year-jump 胶囊样式（global.css，全令牌），指向 /tags/[tag]/。 */}
+		<nav class="year-jump" aria-label="跳转到标签">
+			{
+				tags.map((t) => (
+					<a href={`/tags/${t.name}/`}>
+						{t.name} · {t.count}
+					</a>
+				))
+			}
+		</nav>
+		<p class="meta tags-status">点开一个标签，翻到那卷相册页。</p>
+	</div>
+</section>
+
+<style>
+	/* 只写布局：两处间距对齐 YearTrail 定稿值 */
+	.tags-title {
+		margin-bottom: var(--gap-lg);
+	}
+	.tags-status {
+		margin-top: var(--gap-md);
+	}
+</style>

@@ -4,7 +4,7 @@ description: '本文同时是一篇版式验收文：行内与独立公式、多
 pubDate: '2026-10-04'
 heroImage: '../../assets/test-pool/snowymontain1.png'
 category: '技术'
-tags: ['markdown']
+tags: ['markdown', '排版', 'astro']
 ---
 
 Here is a sample of some basic Markdown syntax that can be used when writing Markdown content in Astro.
